@@ -84,55 +84,6 @@ export const resetStore = () => {
   };
 };
 
-export const UpdateDoctor = (data, success, failed) => {
-  return (dispatch) => {
-    dispatch(startLoading());
-    // setting header
-    const config = {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: '*/*',
-    };
-    axios
-      .post(`${Host}/doctors/profile/update`, data, config)
-      .then((result) => {
-        if (result.data.status) {
-          const data = result.data.data;
-
-          const _data = {
-            id: data._id,
-            name: data.basic.name,
-            email: data.email,
-            phone: data.phone,
-            ...data,
-          };
-
-          dispatch(saveNewUser(_data, 'doctor'));
-          success({
-            status: true,
-            message: 'Doctor Updated',
-          });
-        } else {
-          failed({
-            status: false,
-            message: result.data.error.slice(0, 20),
-          });
-          dispatch(
-            haveingError({
-              error: 'something went wrong',
-            }),
-          );
-        }
-      })
-      .catch((err) => {
-        failed({
-          status: false,
-          message: 'something went wrong',
-        });
-        dispatch(haveingError(err));
-      });
-  };
-};
-
 export const LoginPatient = (data, success, failed) => {
   return (dispatch) => {
     // setup loading screen

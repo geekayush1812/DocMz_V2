@@ -15,7 +15,7 @@ const Avater = ({
   type = 0,
   style,
 }) => {
-  const size = [25, 30, 35, 45, 55, 65, 70, 90, 100];
+  const size = [25, 30, 35, 45, 55, 65, 70];
   return (
     <View>
       <Image

@@ -199,19 +199,16 @@ export const FetchAllAppointments = (docId, date) => {
       );
       const response = req.data;
       console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-      let appointments = response.data.appointments
-        .filter((item) => item.booked)
-        .reduce((acc, cur) => {
-          const date = new Date(cur.bookedFor).getDate();
-          if (!acc[date]) {
-            acc[date] = [];
-          }
-          // if (cur.booked)
-          acc[date].push(cur);
-          return acc;
-        }, []);
+      let appointments = response.data.appointments;
+      appointments = appointments.reduce((acc, cur) => {
+        const date = new Date(cur.bookedFor).getDate();
+        if (!acc[date]) {
+          acc[date] = [];
+        }
+        acc[date].push(cur);
+        return acc;
+      }, []);
 
-      console.log(appointments);
       dispatch(appointmentLoadedAll(appointments));
     } catch (e) {
       console.log(e);
