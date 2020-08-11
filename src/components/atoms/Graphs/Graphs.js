@@ -8,51 +8,6 @@ export default function Graph({data, hasAxis = true}) {
   const dataval = [50, 10, 40, 95, -4, -24, 35, 53, -53, 24, 50, -20, -80];
   console.log(data, 'graph data');
   const contentInset = {top: 20, bottom: 20};
-  // const CustomGrid = ({x, y, data, ticks}) => {
-  //   console.log(data);
-  //   return (
-  //     <G>
-  //       {
-  //         // Horizontal grid
-  //         ticks.map((tick) => (
-  //           <Line
-  //             key={tick}
-  //             x1={'0%'}
-  //             x2={'100%'}
-  //             y1={y(tick)}
-  //             y2={y(tick)}
-  //             stroke={'#96CDE1'}
-  //           />
-  //         ))
-  //       }
-  //       {
-  //         // Vertical grid
-  //         data[0].data != undefined
-  //           ? data[0].data.map((_, index) => (
-  //               <Line
-  //                 key={index}
-  //                 y1={'10%'}
-  //                 y2={'90%'}
-  //                 x1={x(index)}
-  //                 x2={x(index)}
-  //                 stroke={'#96CDE1'}
-  //               />
-  //             ))
-  //           : data.map((_, index) => (
-  //               <Line
-  //                 key={index}
-  //                 y1={'10%'}
-  //                 y2={'90%'}
-  //                 x1={x(index)}
-  //                 x2={x(index)}
-  //                 stroke={'#96CDE1'}
-  //               />
-  //             ))
-  //       }
-  //     </G>
-  //   );
-  // };
-
   return (
     <View style={{height: 120, flexDirection: 'row', width: '90%'}}>
       {hasAxis ? (

@@ -16,7 +16,16 @@ import {
 import DmzButton from '../../atoms/DmzButton/DmzButton';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const AddReport = ({visible, onCancel, onUpload}) => {
+const AddReport = ({
+  visible,
+  onCancel,
+  onUpload,
+  selectFile,
+  document,
+  description,
+  setDocument,
+  setDescription,
+}) => {
   const [file, setFile] = useState(null);
 
   return (
@@ -30,7 +39,7 @@ const AddReport = ({visible, onCancel, onUpload}) => {
         Upload Report
       </Text>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={selectFile}>
         {file ? (
           <Text style={styles.text}>{file.name}</Text>
         ) : (
@@ -39,10 +48,23 @@ const AddReport = ({visible, onCancel, onUpload}) => {
           </Text>
         )}
       </TouchableOpacity>
-
+      <TextInput
+        value={document}
+        onChangeText={(text) => setDocument(text)}
+        placeholderTextColor={INPUT_PLACEHOLDER}
+        placeholder="Type of record"
+        style={styles.TextInput}
+      />
+      <TextInput
+        value={description}
+        onChangeText={(text) => setDescription(text)}
+        placeholderTextColor={INPUT_PLACEHOLDER}
+        placeholder="Description"
+        style={styles.TextInput}
+      />
       <DmzButton
         onPress={() => {
-          onUpload(file);
+          onUpload();
         }}
         style={{
           Text: {
@@ -76,5 +98,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 5,
     marginTop: 7,
+  },
+  TextInput: {
+    fontFamily: 'Montserrat-Regular',
+    fontSize: 14,
+    alignSelf: 'stretch',
+    borderBottomWidth: 1.5,
+    borderColor: NEW_PRIMARY_BACKGROUND,
+    padding: 5,
+    marginBottom: 7,
   },
 });

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -16,7 +16,10 @@ import {
 } from '../../../styles/colors';
 import SignleField from '../../../components/molecules/Modal/SingleField';
 import ThreeField from '../../../components/molecules/Modal/ThreeField';
-
+import {useSelector, useDispatch} from 'react-redux';
+import moment from 'moment';
+import Graph from '../../../components/atoms/Graphs/Graphs';
+import {UpdateVitals} from '../../../redux/action/patientAccountAction';
 const PADDING = 10;
 
 const Vitals = () => {
@@ -26,6 +29,46 @@ const Vitals = () => {
   const [sugarModal, setSugarModal] = useState(false);
   const [tempModal, setTempModal] = useState(false);
   const [bpModal, setBpModal] = useState(false);
+  const {patient} = useSelector((state) => state.PatientAccountReducer);
+  const dispatch = useDispatch();
+  const [vitalsInfo, setVitalsInfo] = useState({
+    height: '',
+    weight: '',
+    temperature: '',
+    oxygen: '',
+    heartRate: '',
+    bloodPressure: '',
+    respiration: '',
+  });
+
+  const cmToFeet = (val) => {
+    var realFeet = (parseInt(val, 10) * 0.3937) / 12;
+    var feet = Math.floor(realFeet);
+    var inches = ((realFeet - feet) * 12).toPrecision(3);
+    const res = {
+      feet: feet,
+      inches: inches,
+    };
+    return res;
+  };
+
+  useEffect(() => {
+    console.log(patient);
+    setVitalsInfo({
+      height: patient?.height?.value ? patient.height : '',
+      weight: patient?.weight?.value ? patient.weight : '',
+      temperature: patient?.temperature?.value ? patient.temperature : '',
+      oxygen: patient?.oxygen?.value ? patient.oxygen : '',
+      heartRate: patient?.heartRate.length ? patient.heartRate : [],
+      bloodPressure: patient?.bloodPressure.length ? patient.bloodPressure : [],
+      respiration: patient?.respiration?.value ? patient.respiration : '',
+    });
+  }, [patient]);
+
+  const updateVitals = (res, callback = () => {}) => {
+    dispatch(UpdateVitals(res, patient._id, patient.meta));
+    callback();
+  };
 
   return (
     <>
@@ -34,8 +77,20 @@ const Vitals = () => {
         onCancel={() => setHeightModal(false)}
         headingText="Add Height"
         labelText="Height"
-        unit="ft"
-        onUpdate={(temp) => {}}
+        unit="cm"
+        onUpdate={(temp) => {
+          updateVitals(
+            {
+              field: 'height',
+              data: {
+                value: temp,
+                modifiedBy: 'patient',
+                date: new Date().toISOString(),
+              },
+            },
+            () => setHeightModal(false),
+          );
+        }}
       />
       <SignleField
         visible={heartModal}
@@ -50,14 +105,38 @@ const Vitals = () => {
         onCancel={() => setWeightModal(false)}
         headingText="Add Weight"
         labelText={['Weight (kg)', 'Fat Mass (kg)']}
-        onUpdate={() => {}}
+        onUpdate={(weight, unit, date) => {
+          updateVitals(
+            {
+              field: 'weight',
+              data: {
+                value: weight,
+                modifiedBy: 'patient',
+                date: new Date().toISOString(),
+              },
+            },
+            () => setWeightModal(false),
+          );
+        }}
       />
       <ThreeField
         visible={tempModal}
         onCancel={() => setTempModal(false)}
         headingText="Record Temperature"
         labelText={['C', 'F']}
-        onUpdate={() => {}}
+        onUpdate={(celcius, faren, date) => {
+          updateVitals(
+            {
+              field: 'temperature',
+              data: {
+                value: celcius,
+                modifiedBy: 'patient',
+                date: new Date().toISOString(),
+              },
+            },
+            () => setTempModal(false),
+          );
+        }}
       />
       <ThreeField
         visible={bpModal}
@@ -81,11 +160,14 @@ const Vitals = () => {
         <View style={{flexDirection: 'row'}}>
           <View style={[styles.card, {flex: 1}]}>
             <Text style={styles.cardHeaderText}>Weight</Text>
-            <Text style={styles.text1}>69.4 kg</Text>
+            <Text style={styles.text1}>{vitalsInfo.weight.value} kg</Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>
-                <Text style={styles.text3}>Updated on : 22 May ‘20</Text>
+                <Text style={styles.text3}>
+                  Updated on :{' '}
+                  {moment(vitalsInfo.weight.date).format("MM MMM 'YY")}
+                </Text>
                 <Text style={styles.text2}>BMI 26.0</Text>
               </View>
               <TouchableOpacity onPress={() => setWeightModal(true)}>
@@ -104,12 +186,18 @@ const Vitals = () => {
 
           <View style={[styles.card, {flex: 1}]}>
             <Text style={styles.cardHeaderText}>Height</Text>
-            <Text style={styles.text1}>5 ft, 9 in</Text>
+            <Text style={styles.text1}>
+              {cmToFeet(vitalsInfo.height.value).feet} ft ,
+              {cmToFeet(vitalsInfo.height.value).inches} in
+            </Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>
-                <Text style={styles.text2}>(175.26 cm)</Text>
-                <Text style={styles.text3}>Recorded on : 22 May ‘20</Text>
+                <Text style={styles.text2}>({vitalsInfo.height.value} cm)</Text>
+                <Text style={styles.text3}>
+                  Recorded on :{' '}
+                  {moment(vitalsInfo.height.date).format("MM MMM 'YY")}
+                </Text>
               </View>
               <TouchableOpacity onPress={() => setHeightModal(true)}>
                 <Image
@@ -131,8 +219,15 @@ const Vitals = () => {
 
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 3, marginRight: 20}}>
-              <View style={{height: 100, backgroundColor: GREY_CARD}} />
-              <Text style={styles.text3}>Updated on : 22 May ‘20</Text>
+              <Graph
+                data={[0, 30, 49, 78, 120, 132]}
+                hasAxis={true}
+                style={{alignSelf: 'center'}}
+              />
+              <Text style={styles.text3}>
+                Updated on :
+                {moment(vitalsInfo.bloodPressure.date).format("MM MMM 'YY")}
+              </Text>
             </View>
 
             <View style={{flex: 1}}>
@@ -196,7 +291,11 @@ const Vitals = () => {
 
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 3, marginRight: 20}}>
-              <View style={{height: 100, backgroundColor: GREY_CARD}} />
+              <Graph
+                data={[10, 20, 39, 88, 83, 67]}
+                hasAxis={true}
+                style={{alignSelf: 'center'}}
+              />
               <Text style={styles.text3}>Updated on : 22 May ‘20</Text>
             </View>
 
@@ -226,7 +325,7 @@ const Vitals = () => {
         <View style={{flexDirection: 'row'}}>
           <View style={[styles.card, {flex: 1}]}>
             <Text style={styles.cardHeaderText}>Temperature</Text>
-            <Text style={styles.text1}>101.5 C</Text>
+            <Text style={styles.text1}>{vitalsInfo.temperature.value} C</Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>

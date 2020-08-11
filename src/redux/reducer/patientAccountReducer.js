@@ -12,6 +12,9 @@ const initialState = {
   bookingAppointment: false,
   bookedAppointment: '',
   errorBookingAppointment: '',
+  uploadingRecords: false,
+  uploadedRecords: '',
+  errorUploadingRecords: '',
 };
 
 const PatientAccountReducer = (state = initialState, action) => {
@@ -98,6 +101,23 @@ const PatientAccountReducer = (state = initialState, action) => {
         ...state,
         errorBookingAppointment: action.payload,
         bookingAppointment: false,
+      };
+    case 'RECORDS_UPLOADING':
+      return {
+        ...state,
+        uploadingRecords: true,
+      };
+    case 'RECORDS_UPLOADED':
+      return {
+        ...state,
+        uploadingRecords: false,
+        uploadedRecords: action.payload,
+      };
+    case 'RECORDS_UPLOADING_ERROR':
+      return {
+        ...state,
+        uploadingRecords: false,
+        errorUploadingRecords: action.payload,
       };
     default:
       return state;

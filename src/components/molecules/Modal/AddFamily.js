@@ -16,14 +16,18 @@ import {
 import DmzButton from '../../atoms/DmzButton/DmzButton';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {array} from 'prop-types';
-
+import moment from 'moment';
+import DatePicker from 'react-native-datepicker';
 const AddFamily = ({visible, onCancel, onUpdate}) => {
   const [details, setDetails] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     relation: '',
-    age: '',
-    bloodType: '',
-    medicalHistory: [''],
+    email: '',
+    birthDay: '',
+    gender: '',
+    contact: '',
+    medicalHistory: [],
   });
 
   return (
@@ -36,19 +40,41 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
         }}>
         Add Member
       </Text>
-      <TextInput
-        value={details.name}
-        onChangeText={(text) => setDetails({...details, name: text})}
-        placeholderTextColor={INPUT_PLACEHOLDER}
-        placeholder="Name"
-        style={styles.text}
-      />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignSelf: 'stretch',
+          justifyContent: 'space-between',
+          marginBottom: 5,
+        }}>
+        <TextInput
+          value={details.firstName}
+          onChangeText={(text) => setDetails({...details, firstName: text})}
+          placeholderTextColor={INPUT_PLACEHOLDER}
+          placeholder="First Name"
+          style={[styles.text, {width: '45%'}]}
+        />
+        <TextInput
+          value={details.lastName}
+          onChangeText={(text) => setDetails({...details, lastName: text})}
+          placeholderTextColor={INPUT_PLACEHOLDER}
+          placeholder="Last Name"
+          style={[styles.text, {width: '45%'}]}
+        />
+      </View>
 
       <TextInput
         value={details.relation}
         onChangeText={(text) => setDetails({...details, relation: text})}
         placeholderTextColor={INPUT_PLACEHOLDER}
         placeholder="Relationship"
+        style={styles.text}
+      />
+      <TextInput
+        value={details.email}
+        onChangeText={(text) => setDetails({...details, email: text})}
+        placeholderTextColor={INPUT_PLACEHOLDER}
+        placeholder="Email"
         style={styles.text}
       />
 
@@ -67,22 +93,55 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
           justifyContent: 'space-between',
           marginBottom: 5,
         }}>
+        <View style={[styles.text, {width: '45%'}]}>
+          <DatePicker
+            date={details.birthDay}
+            mode="date"
+            placeholder="Date of Birth"
+            format="MM/DD/YYYY"
+            minDate="01/01/1900"
+            maxDate={moment(new Date(), 'MM/DD/YYYY')}
+            showIcon={false}
+            allowFontScaling={true}
+            customStyles={{
+              dateInput: {
+                borderWidth: 0,
+                fontSize: 15,
+                height: 40,
+              },
+              placeholderText: {
+                color: '#77777795',
+                width: '100%',
+                marginLeft: 30,
+              },
+              dateText: {
+                color: '#000',
+                width: '100%',
+                marginLeft: 30,
+              },
+            }}
+            style={{
+              width: '100%',
+            }}
+            onDateChange={(txt) => setDetails({...details, birthDay: txt})}
+          />
+        </View>
+
         <TextInput
-          value={details.age}
-          onChangeText={(text) => setDetails({...details, age: text})}
+          value={details.gender}
+          onChangeText={(text) => setDetails({...details, gender: text})}
           placeholderTextColor={INPUT_PLACEHOLDER}
-          placeholder="Age"
-          style={[styles.text, {width: '45%'}]}
-          keyboardType="number-pad"
-        />
-        <TextInput
-          value={details.bloodType}
-          onChangeText={(text) => setDetails({...details, bloodType: text})}
-          placeholderTextColor={INPUT_PLACEHOLDER}
-          placeholder="Bloodtype"
+          placeholder="Gender"
           style={[styles.text, {width: '45%'}]}
         />
       </View>
+      <TextInput
+        value={details.contact}
+        onChangeText={(text) => setDetails({...details, contact: text})}
+        placeholderTextColor={INPUT_PLACEHOLDER}
+        placeholder="Contact"
+        style={styles.text}
+      />
 
       {details.medicalHistory.map((item, i) => (
         <View

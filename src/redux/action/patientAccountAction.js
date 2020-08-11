@@ -14,6 +14,10 @@ const APPOINTMENT_SLOT_ERROR = 'APPOINTMENT_SLOT_ERROR';
 const BOOKING_APPOINTMENT = 'BOOKING_APPOINTMENT';
 const BOOKED_APPOINTMENT = 'BOOKED_APPOINTMENT';
 const ERROR_BOOKING_APPOINTMENT = 'ERROR_BOOKING_APPOINTMENT';
+
+const RECORDS_UPLOADING = 'RECORDS_UPLOADING';
+const RECORDS_UPLOADED = 'RECORDS_UPLOADED';
+const RECORDS_UPLOADING_ERROR = 'RECORDS_UPLOADING_ERROR';
 const saveUserAccount = (data, dataVitals) => {
   console.log(data, '----------------', dataVitals);
   return {
@@ -93,6 +97,25 @@ const errorBookingAppointment = (err) => {
   };
 };
 
+const uploadingRecords = () => {
+  return {
+    type: RECORDS_UPLOADING,
+  };
+};
+
+const uploadedRecords = (data) => {
+  return {
+    type: RECORDS_UPLOADED,
+    payload: data,
+  };
+};
+const errorUploadingRecords = (err) => {
+  return {
+    type: RECORDS_UPLOADING_ERROR,
+    payload: err,
+  };
+};
+
 export const resetUserAccountReducer = () => {
   return {
     type: RESET,
@@ -137,9 +160,7 @@ export const GetPatientInfo = (id) => {
 };
 
 export const UpdateVitals = (response, userID, metaId) => {
-  console.log('ininin');
   return (dispatch) => {
-    // console.log('authAction > GetPatientInfor', data);
     dispatch(startLoading());
     const _data = {
       id: userID,
@@ -283,27 +304,6 @@ export const RemoveFevDoc = (docId, patientId) => {
       console.log(request);
       dispatch(GetPatientInfo(patientId));
     } catch (e) {
-      console.log(e);
-    }
-  };
-};
-
-export const RemoveAppointment = (data) => {
-  return async (dispatch) => {
-    const config = {
-      Accept: '*/*',
-      'Content-Type': 'application/x-www-form-urlencoded',
-    };
-    try {
-      const request = await axios.post(
-        `${Host}/appointment/cancel`,
-        data,
-        config,
-      );
-      console.log('#######################');
-      console.log(request.data);
-    } catch (e) {
-      console.log('******************');
       console.log(e);
     }
   };
@@ -467,6 +467,52 @@ export const bookAppointment = (data) => {
       })
       .catch((err) => {
         dispatch(errorBookingAppointment(err));
+      });
+  };
+};
+
+export const RemoveAppointment = (data) => {
+  return async (dispatch) => {
+    const config = {
+      Accept: '*/*',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    try {
+      const request = await axios.post(
+        `${Host}/appointment/cancel`,
+        data,
+        config,
+      );
+      console.log('#######################');
+      console.log(request.data);
+    } catch (e) {
+      console.log('******************');
+      console.log(e);
+    }
+  };
+};
+
+export const UploadRecords = (fileData) => {
+  return (dispatch) => {
+    dispatch(uploadingRecords());
+    let data = new FormData();
+    data.append('file', fileData.file);
+    data.append('document', fileData.document);
+    data.append('description', fileData.description);
+    data.append('id', fileData.id);
+
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    axios
+      .post(`${Host}/patient/upload/records`, data, config)
+      .then((response) => {
+        dispatch(uploadedRecords(response));
+      })
+      .catch((err) => {
+        dispatch(errorUploadingRecords(err));
       });
   };
 };

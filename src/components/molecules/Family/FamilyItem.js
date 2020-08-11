@@ -33,7 +33,7 @@ const FamilyItem = ({data}) => (
             paddingVertical: 2,
             marginRight: 10,
           }}>
-          {data.name}
+          {data.firstName + ' ' + data.lastName}
         </Text>
         <Text
           style={{
@@ -41,7 +41,9 @@ const FamilyItem = ({data}) => (
             fontSize: 11,
             paddingVertical: 2,
           }}>
-          {`(${data.age} yrs)`}
+          {`(${
+            new Date().getFullYear() - new Date(data.birthdate).getFullYear()
+          } yrs)`}
         </Text>
       </View>
 
@@ -52,11 +54,11 @@ const FamilyItem = ({data}) => (
           paddingVertical: 2,
           color: NEW_PRIMARY_BACKGROUND,
         }}>
-        {data.relation}
+        {data.relationship}
       </Text>
 
       <View style={{flexDirection: 'row', marginRight: 10}}>
-        {data.problems.map((problem, i) => (
+        {data?.problems?.map((problem, i) => (
           <Text
             style={{
               fontFamily: 'Montserrat-Regular',

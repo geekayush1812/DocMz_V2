@@ -88,7 +88,7 @@ const ThreeField = ({headingText, labelText, onCancel, visible, onUpdate}) => {
 
       <DmzButton
         onPress={() => {
-          onUpdate();
+          onUpdate(field1, field2, date);
         }}
         style={{
           Text: {
