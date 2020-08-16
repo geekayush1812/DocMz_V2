@@ -108,8 +108,6 @@ const ConfirmAppointment = ({navigation}) => {
   };
 
   const onPress = (id) => {
-    // setActiveId(id);
-    // __id = id
     Animated.sequence([
       Animated.timing(PopupTranslateY, {
         toValue: showPopup ? 0 : 1,

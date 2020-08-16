@@ -37,7 +37,7 @@ import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import ViewPager from '@react-native-community/viewpager';
 import SignupSplash from '../DmzSignup/SignupSplash';
 import AlertModal from '../../../components/molecules/Modal/AlertModal';
-
+import UserProfile from '../../../assets/svg/male_profile.svg';
 export default function DmzLoginV2(props) {
   const [credential, setCredential] = useState({email: '', password: ''});
   const [loginAs, setLoginAs] = useState('patient');
@@ -185,16 +185,17 @@ export default function DmzLoginV2(props) {
           }}
           key="1">
           <DmzText text="Welcome back!" style={styles.HeaderText} />
-          <Image
-            source={require('../../../assets/jpg/person4.jpg')}
+          <View
             style={{
-              height: 110,
-              width: 110,
-              borderRadius: 100,
-              margin: 10,
-              marginTop: 25,
-            }}
-          />
+              backgroundColor: '#ededed',
+              height: 100,
+              width: 100,
+              paddingVertical: 20,
+              paddingHorizontal: 20,
+              borderRadius: 64,
+            }}>
+            <UserProfile />
+          </View>
           <TextInputIcon
             style={styles.inputContainer}
             inputHandler={handleEmail}

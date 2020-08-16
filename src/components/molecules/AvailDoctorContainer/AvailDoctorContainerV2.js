@@ -83,12 +83,12 @@ function AvailDoctorContainerV2({
               }
               style={{
                 Container: {
-                  height: 60,
-                  width: 60,
-                  borderRadius: 60,
+                  height: 80,
+                  width: 80,
+                  borderRadius: 80,
                 },
                 Image: {
-                  borderRadius: 60,
+                  borderRadius: 80,
                 },
               }}
             />
@@ -107,13 +107,14 @@ const Styles = StyleSheet.create({
     marginLeft: 20,
     marginRight: 20,
     marginBottom: 15,
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
     height: 'auto',
-    position: 'relative',
-    paddingBottom: 25,
     borderRadius: 13,
-    elevation: 2,
-    backgroundColor: PRIMARY_BACKGROUND,
+    elevation: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: 'rgba(0,0,0,0.18)',
+    backgroundColor: '#fff',
   },
 });
 export default AvailDoctorContainerV2;

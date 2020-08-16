@@ -45,6 +45,7 @@ import {
   PRIMARY_BACKGROUND,
   SECONDARY_BACKGROUND,
   INPUT_PLACEHOLDER,
+  NEW_PRIMARY_BACKGROUND,
 } from '../../../styles/colors';
 import Toast from 'react-native-root-toast';
 import {getSpecialty} from '../../../redux/action/doctor/myDoctorAction';
@@ -84,7 +85,7 @@ export default function LandingPageScreen({navigation}) {
   const {specialtyLoading, specialty} = useSelector(
     (state) => state.MyDoctorReducer,
   );
-
+  console.log(doctors);
   const [searchKey, setSearchKey] = useState('');
   const [activeId, setActiveId] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
@@ -381,7 +382,6 @@ export default function LandingPageScreen({navigation}) {
         )}>
         <Animated.View
           style={{
-            // borderWidth: 1,
             paddingTop: 40,
             opacity: headerInterpolated,
             transform: [
@@ -462,10 +462,9 @@ export default function LandingPageScreen({navigation}) {
                       numberOfLines={1}
                       style={{
                         fontSize: 13,
-                        color: NEW_HEADER_TEXT,
+                        color: NEW_PRIMARY_BACKGROUND,
                         fontFamily: 'Montserrat-Medium',
                         marginTop: 5,
-                        // fontWeight: 'bold',
                       }}>
                       {u.length > 15 ? u.slice(0, 15).concat('...') : u}
                     </Text>
@@ -504,13 +503,11 @@ export default function LandingPageScreen({navigation}) {
               fontSize: 20,
             },
           }}
-          HeaderText={'Available Doctors'}>
+          HeaderText={toggle ? 'Available Doctors' : 'Book Doctors'}>
           {loading || searchDoctorsLoading || superDocsLoading ? (
-            // {/* {false ? ( }
             <ListingWithThumbnailLoader style={{marginTop: 20}} />
           ) : searchedDoctors.length && searchKey !== '' ? (
             <FlatList
-              // extraData={doctors}
               keyExtractor={(item) => item._id}
               data={searchedDoctors}
               nestedScrollEnabled
@@ -534,11 +531,8 @@ export default function LandingPageScreen({navigation}) {
                   onPress={() => onPress(item._id)}
                   id={item._id}
                   index={index}
-                  schedule={[1, 2, 3]}
                   name={item.basic.name.slice(0, 15).concat('...')}
-                  // schedule={item.output.filter(
-                  //   it => it.bookedFor.slice(0, 10) === '2020-05-07',
-                  // )}
+                  schedule={item.output}
                 />
               )}
             />
@@ -597,9 +591,7 @@ export default function LandingPageScreen({navigation}) {
                     id={item._id}
                     index={index}
                     name={item.basic.name.slice(0, 15).concat('...')}
-                    // schedule={item.output.filter(
-                    //   o => o.bookedFor.slice(0, 10) === '2020-05-07',
-                    // )}
+                    schedule={item.output}
                   />
                 );
               }}
@@ -642,9 +634,7 @@ export default function LandingPageScreen({navigation}) {
                   onPress={() => onPress(item._id)}
                   id={item._id}
                   name={item.basic.name.slice(0, 15).concat('...')}
-                  // schedule={item.output.filter(
-                  //   o => o.bookedFor.slice(0, 10) === '2020-05-07',
-                  // )}
+                  schedule={item.output}
                 />
               )}
             />

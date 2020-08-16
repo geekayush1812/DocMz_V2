@@ -27,6 +27,7 @@ import {
 import {AccessToken, LoginManager, LoginButton} from 'react-native-fbsdk';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import auth from '@react-native-firebase/auth';
+import UserProfile from '../../../assets/svg/male_profile.svg';
 
 export default function SignUpStep1Screen(props) {
   const {credential, setCredential, isLoading} = props;
@@ -112,7 +113,7 @@ export default function SignUpStep1Screen(props) {
           }}
           text="Hey there!"
         />
-        <Image
+        {/* <Image
           source={require('../../../assets/images/doc_2.png')}
           style={{
             alignSelf: 'center',
@@ -120,7 +121,19 @@ export default function SignUpStep1Screen(props) {
           }}
           resizeMode="cover"
           resizeMethod="scale"
-        />
+        /> */}
+        <View
+          style={{
+            backgroundColor: '#ededed',
+            height: 100,
+            width: 100,
+            paddingVertical: 20,
+            paddingHorizontal: 20,
+            borderRadius: 64,
+            alignSelf: 'center',
+          }}>
+          <UserProfile />
+        </View>
         <TextInputIcon
           placeholder="First Name"
           inputHandler={handleFirstName}

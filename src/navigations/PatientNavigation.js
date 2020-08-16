@@ -6,6 +6,7 @@ import Setting from '../screens/patient/settings/Setting';
 import Wishlist from '../screens/patient/wishlist/Wishlist';
 
 import Appointments from '../screens/patient/appointments/NewAppointments';
+import AppointmentsDoctor from '../screens/doctor/Appointments/Appointments';
 // import Appointments from '../screens/patient/appointments/Appointments';
 import Consultations from '../screens/patient/consultations/Consultations';
 import MyDoctors from '../screens/patient/mydoctors/MyDoctors';
@@ -50,7 +51,7 @@ import NewCard from '../screens/examples/payments/NewCard';
 import NewWaitingRoom from '../screens/patient/waitingRoom/NewWaitingRoom';
 import VoiceCall from '../screens/patient/Calls/Voicecall';
 import MedicalHistory from '../screens/examples/MedicalHistory/MedicalHistory';
-
+import HealthCare from '../screens/patient/HealthCare/HealthCare';
 // const PatientBottomNavigation = createSwitchNavigator(
 //   {
 //     patientHomeScreen: Home,
@@ -125,8 +126,8 @@ const PatientNavigationHome = createBottomTabNavigator(
   // const PatientNavigation = createBottomTabNavigator(
   {
     patientHomeScreen: {
-      // screen: PatientNavigationHome,
-      screen: LandingPageScreen,
+      // screen: LandingPageScreen,
+      screen: AppointmentsDoctor,
       navigationOptions: {
         tabBarIcon: ({focused, horizontal, tintColor}) => {
           return (
