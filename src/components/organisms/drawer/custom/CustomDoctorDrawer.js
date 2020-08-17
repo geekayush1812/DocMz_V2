@@ -41,6 +41,12 @@ const Navigation = [
   },
   {
     active: true,
+    name: 'My Appointments',
+    icon: 'share-variant',
+    navigateTo: 'Appointments',
+  },
+  {
+    active: true,
     name: 'Referrals',
     icon: 'share-variant',
     navigateTo: 'Referrals',

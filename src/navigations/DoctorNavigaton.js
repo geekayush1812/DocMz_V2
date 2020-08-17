@@ -20,7 +20,9 @@ import Referrals from '../screens/doctor/Referrals/Referrals';
 import Skins from '../screens/doctor/Skins/Skins';
 import Languages from '../screens/doctor/Languages/Languages';
 import Settings from '../screens/doctor/Settings/Settings';
-
+import Appointments from '../screens/doctor/Appointments/Appointments';
+import Dashboard from '../screens/doctor/Dashboard/Dashboard';
+import Onboarding from '../screens/doctor/Onboarding/Onboarding';
 const {width: screenWidth} = Dimensions.get('screen');
 
 const DoctorNavigationContent = createBottomTabNavigator(
@@ -104,11 +106,14 @@ const DoctorDrawer = createDrawerNavigator(
     Skins: Skins,
     Languages: Languages,
     Settings: Settings,
+    Appointments: Appointments,
+    Dashboard: Dashboard,
+    Onboarding: Onboarding,
     // AddAppointments: AddAppointments,
     // AddQuestionnaire: AddQuestionnaire,
   },
   {
-    initialRouteName: 'Languages',
+    initialRouteName: 'Onboarding',
     drawerPosition: 'right',
     headerMode: 'none',
     drawerType: 'none',

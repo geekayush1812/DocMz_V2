@@ -110,6 +110,12 @@ const Navigation = [
   },
   {
     active: true,
+    name: 'My HealthCare',
+    icon: 'book',
+    navigateTo: 'HealthCare',
+  },
+  {
+    active: true,
     name: 'Appointments',
     icon: 'book',
     navigateTo: 'Appointments',
@@ -138,6 +144,7 @@ const Navigation = [
     icon: 'help-rhombus-outline',
     navigateTo: 'Help',
   },
+
   // {
   //   active: true,
   //   name: 'Are you doctor ?',

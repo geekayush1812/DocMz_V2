@@ -5,10 +5,11 @@ import ProfilePic from '../../../components/atoms/ProfilePic/ProfilePic';
 import Clock from '../../../assets/svg/clock.svg';
 import RecentPatients from '../../../assets/svg/recent_patients.svg';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-function Dashboard() {
+function Dashboard({navigation}) {
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <TopNavBar
+        navigation={navigation}
         headerText={'My Dashboard'}
         LeftComp={
           <ProfilePic

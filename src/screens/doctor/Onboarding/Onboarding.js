@@ -19,7 +19,7 @@ import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
 import RadioGroupV2 from '../../../components/molecules/RadioGroup/RadioGroupV2';
 import TextInputIcon from '../../../components/atoms/TextInputCustom/TextInputIcon';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-function Onboarding() {
+function Onboarding({navigation}) {
   const [memberCredential, setMemberCredential] = useState({
     id: '',
     name: '',
@@ -385,6 +385,9 @@ function Onboarding() {
         </View>
 
         <DmzButton
+          onPress={() => {
+            navigation.navigate('Dashboard');
+          }}
           style={{
             Text: {
               width: '100%',

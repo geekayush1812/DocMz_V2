@@ -126,8 +126,8 @@ const PatientNavigationHome = createBottomTabNavigator(
   // const PatientNavigation = createBottomTabNavigator(
   {
     patientHomeScreen: {
-      // screen: LandingPageScreen,
-      screen: AppointmentsDoctor,
+      screen: LandingPageScreen,
+      // screen: AppointmentsDoctor,
       navigationOptions: {
         tabBarIcon: ({focused, horizontal, tintColor}) => {
           return (
@@ -204,6 +204,7 @@ const PatientNavigation = createDrawerNavigator(
     Profile: {screen: ProfileStack},
     Address: {screen: AddressStack},
     VoiceCall: {screen: VoiceCall},
+    HealthCare,
   },
   {
     initialRouteName: 'Home',
