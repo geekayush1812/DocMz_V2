@@ -11,9 +11,11 @@ import Toast from 'react-native-root-toast';
 import {useDispatch, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import {UploadProfilePic} from '../../../redux/action/doctoreAction';
+import {UploadProfilePicPatient} from '../../../redux/action/patientAccountAction';
 import SignUpStep2Screen from './SignUpStep2Screen';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import AlertModal from '../../../components/molecules/Modal/AlertModal';
+import GenericError from '../../../components/molecules/Modal/GenericError';
 
 // import Svg from 'react-native-svg';
 
@@ -63,7 +65,9 @@ function DmzSignupV2(props) {
       const data = JSON.parse(res);
       console.log(data.id);
       console.log(imageData);
-      signupAs === 'doctor' && dispatch(UploadProfilePic(data.id, imageData));
+      signupAs === 'doctor'
+        ? dispatch(UploadProfilePic(data.id, imageData))
+        : dispatch(UploadProfilePicPatient(data.id, imageData));
       props.navigation.navigate('PatientHomePage');
     });
     //   : props.navigation.goBack(null);
@@ -160,7 +164,7 @@ function DmzSignupV2(props) {
 
   return (
     <>
-      <AlertModal
+      <GenericError
         {...modal}
         onCancel={() => {
           setModal({text: '', visible: false});
@@ -194,6 +198,8 @@ function DmzSignupV2(props) {
         </View>
         <View key="1">
           <SignUpStep1Screen
+            onChoosePicture={onChoosePicture}
+            imageData={imageData}
             credential={credential}
             setCredential={setCredential}
             isLoading={isLoading}

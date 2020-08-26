@@ -14,7 +14,6 @@ import QuestionnairePP from '../screens/patient/questionnaire/QuestionnairePP';
 import DoctorProfile from '../screens/examples/DoctorProfile/DoctorProfile';
 // import Settings from '../screens/examples/Settings/Settings';
 import {createAppContainer} from 'react-navigation';
-import Patients from '../screens/doctor/Patients/Patients';
 import PatientDetails from '../screens/doctor/PatientDetails/PatientDetails';
 import Referrals from '../screens/doctor/Referrals/Referrals';
 import Skins from '../screens/doctor/Skins/Skins';
@@ -23,6 +22,7 @@ import Settings from '../screens/doctor/Settings/Settings';
 import Appointments from '../screens/doctor/Appointments/Appointments';
 import Dashboard from '../screens/doctor/Dashboard/Dashboard';
 import Onboarding from '../screens/doctor/Onboarding/Onboarding';
+import Patients from '../screens/doctor/Patients/Patients';
 const {width: screenWidth} = Dimensions.get('screen');
 
 const DoctorNavigationContent = createBottomTabNavigator(
@@ -109,8 +109,7 @@ const DoctorDrawer = createDrawerNavigator(
     Appointments: Appointments,
     Dashboard: Dashboard,
     Onboarding: Onboarding,
-    // AddAppointments: AddAppointments,
-    // AddQuestionnaire: AddQuestionnaire,
+    PatientsList: Patients,
   },
   {
     initialRouteName: 'Onboarding',
@@ -118,7 +117,6 @@ const DoctorDrawer = createDrawerNavigator(
     headerMode: 'none',
     drawerType: 'none',
     drawerWidth: screenWidth,
-    // hideStatusBar: true,
     drawerBackgroundColor: 'rgba(255,255,255,.9)',
     contentComponent: (props) => <CustomDoctorDrawer {...props} />,
     contentOptions: {

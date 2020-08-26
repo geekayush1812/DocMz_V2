@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, ScrollView} from 'react-native';
+import {View, Text, ScrollView, TouchableOpacity} from 'react-native';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import ProfilePic from '../../../components/atoms/ProfilePic/ProfilePic';
 import Clock from '../../../assets/svg/clock.svg';
@@ -424,7 +424,7 @@ function Dashboard({navigation}) {
               <RecentPatients />
             </View>
             <Text style={{fontSize: 16, marginLeft: '5%'}}>
-              Upcoming Appointments
+              Recent Patients
             </Text>
           </View>
 
@@ -487,13 +487,16 @@ function Dashboard({navigation}) {
                   </Text>
                 </View>
               </View>
-              <View>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('PatientsList');
+                }}>
                 <MaterialIcon
                   name="chevron-right"
                   size={28}
                   color={'#a09e9e'}
                 />
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
           <View

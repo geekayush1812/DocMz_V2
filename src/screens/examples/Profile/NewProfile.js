@@ -13,8 +13,21 @@ import {useSelector} from 'react-redux';
 import {Host} from '../../../utils/connection';
 
 const NewProfile = ({navigation}) => {
-  const {data} = useSelector((state) => state.AuthReducer);
-
+  const {data, isLogedin, isDoctor} = useSelector((state) => state.AuthReducer);
+  let imageSource = require('../../../assets/jpg/person3.jpg');
+  if (data && isLogedin && !isDoctor) {
+    imageSource = {
+      uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
+    };
+  } else if (data && isLogedin && isDoctor) {
+    imageSource = {
+      uri: `${Host}${data.picture[0]
+        .replace('public', '')
+        .replace('\\\\', '/')}`,
+    };
+  } else {
+    imageSource = require('../../../assets/jpg/person3.jpg');
+  }
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <TopNavBar
@@ -30,11 +43,7 @@ const NewProfile = ({navigation}) => {
             alignSelf: 'center',
           }}>
           <Image
-            source={
-              data?.picture && data?.picture[0]
-                ? {uri: Host + data.picture[0].replace('public', '')}
-                : require('../../../assets/jpg/person3.jpg')
-            }
+            source={imageSource}
             style={{height: 120, width: 120, borderRadius: 60, margin: 15}}
             resizeMode="cover"
           />
@@ -46,7 +55,6 @@ const NewProfile = ({navigation}) => {
             }}>
             {(data.firstName ?? '') + ' ' + (data.lastName ?? '')}
           </Text>
-
           <View
             style={{
               flexDirection: 'row',
@@ -77,7 +85,6 @@ const NewProfile = ({navigation}) => {
             </View>
           </View>
         </View>
-
         <View style={{marginHorizontal: 30, marginVertical: 15}}>
           <TouchableOpacity
             onPress={() => navigation.navigate('MedicalHistory', {})}>
@@ -113,7 +120,8 @@ const NewProfile = ({navigation}) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('HealthCare', {})}>
             <View style={styles.listRow}>
               <Image
                 source={require('../../../assets/icons/profile/healthcare.png')}
@@ -163,7 +171,6 @@ const NewProfile = ({navigation}) => {
             </View>
           </TouchableOpacity>
         </View>
-
         <View
           style={{
             flexDirection: 'row',

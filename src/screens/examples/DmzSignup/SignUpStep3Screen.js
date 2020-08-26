@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,9 @@ import {
   NEW_PRIMARY_COLOR,
   INPUT_PLACEHOLDER,
 } from '../../../styles/colors';
+import {Picker} from '@react-native-community/picker';
+import {useSelector, useDispatch} from 'react-redux';
+import {getSpecialty} from '../../../redux/action/doctor/myDoctorAction';
 
 const height = Dimensions.get('screen').height;
 
@@ -36,6 +39,12 @@ export default function SignUpStep3Screen(props) {
   const handleSpecialty = (specialty) => {
     setCredential({...credential, specialty});
   };
+  const dispatch = useDispatch();
+  const {specialty} = useSelector((state) => state.MyDoctorReducer);
+  useEffect(() => {
+    dispatch(getSpecialty());
+  }, []);
+
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView
@@ -119,16 +128,26 @@ export default function SignUpStep3Screen(props) {
           validationCallback={() => credential.registration_number.length >= 8}
           value={credential.registration_number}
         />
-
-        <TextInputIcon
-          placeholder="Mention area of Expertise"
-          inputHandler={handleSpecialty}
-          placeholderTextColor={INPUT_PLACEHOLDER}
-          style={styles.inputStyle}
-          textStyle={styles.textStyle}
-          validationCallback={() => credential.specialty.length > 0}
-          value={credential.specialty}
-        />
+        <View
+          style={{
+            width: '70%',
+            alignSelf: 'center',
+            borderBottomColor: NEW_PRIMARY_COLOR,
+            borderBottomWidth: 1,
+          }}>
+          <Picker
+            selectedValue={credential.specialty}
+            style={{
+              width: '100%',
+            }}
+            onValueChange={(itemValue, itemIndex) =>
+              handleSpecialty(itemValue)
+            }>
+            {specialty?.map((item) => {
+              return <Picker.Item label={item} value={item} />;
+            })}
+          </Picker>
+        </View>
         <DmzButton
           onPress={props.onPress}
           style={{

@@ -388,7 +388,7 @@ export const RemoveFamilyMember = (docId, patientId) => {
   };
 };
 
-export const UploadProfilePic = (id, ImageData) => {
+export const UploadProfilePicPatient = (id, ImageData) => {
   return (dispatch) => {
     dispatch(startLoading());
     const Image = {
@@ -400,21 +400,16 @@ export const UploadProfilePic = (id, ImageData) => {
     data.append('myFile', Image);
     data.append('id', id);
     const config = {
-      method: 'POST',
       headers: {
-        Accept: 'application/json',
         'Content-Type': 'multipart/form-data',
       },
-      body: data,
     };
-    fetch(`${Host}/patient/upload/image`, config)
+    axios
+      .post(`${Host}/patient/upload/image`, data, config)
       .then((responseStatus) => {
-        console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-        console.log(responseStatus);
         dispatch(profilePicUploaded(Image));
       })
       .catch((err) => {
-        console.log(err);
         dispatch(havingError(err));
       });
   };

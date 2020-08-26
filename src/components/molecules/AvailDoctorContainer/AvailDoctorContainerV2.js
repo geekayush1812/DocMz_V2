@@ -49,53 +49,44 @@ function AvailDoctorContainerV2({
 
   let imageSource = require('../../../assets/jpg/person1.jpg');
   return (
-    <TouchableWithoutFeedback
-      style={[
-        Styles.AvailableDoctorsCardContainer,
-        // {transform: [{translateX: cardView}]},
-      ]}
-      onPress={() => {
-        navigation.navigate('docPatientStrem', {data: data});
+    <BasicCard
+      style={{
+        CardContainer: Styles.AvailableDoctorsBasicCard,
       }}>
-      <BasicCard
-        style={{
-          CardContainer: Styles.AvailableDoctorsBasicCard,
-        }}>
-        <AvailDoctorContentV2
-          toggle={toggle}
-          DoctorName={`Dr. ${name}`}
-          rating={4}
-          onPress={onPress}
-          Specialization={data.specialty || 'General Dentist'}
-          schedule={schedule}
-          navigation={navigation}
-          data={data}
-          Profile={
-            <ProfilePic
-              sourceurl={
-                data.picture.length > 0
-                  ? {
-                      uri: `${Host}${data.picture[0]
-                        .replace('public', '')
-                        .replace('\\\\', '/')}`,
-                    }
-                  : imageSource
-              }
-              style={{
-                Container: {
-                  height: 80,
-                  width: 80,
-                  borderRadius: 80,
-                },
-                Image: {
-                  borderRadius: 80,
-                },
-              }}
-            />
-          }
-        />
-      </BasicCard>
-    </TouchableWithoutFeedback>
+      <AvailDoctorContentV2
+        toggle={toggle}
+        DoctorName={`Dr. ${name}`}
+        rating={4}
+        onPress={onPress}
+        Specialization={data.specialty || 'General Dentist'}
+        schedule={schedule}
+        navigation={navigation}
+        data={data}
+        Profile={
+          <ProfilePic
+            sourceurl={
+              data.picture.length > 0
+                ? {
+                    uri: `${Host}${data.picture[0]
+                      .replace('public', '')
+                      .replace('\\\\', '/')}`,
+                  }
+                : imageSource
+            }
+            style={{
+              Container: {
+                height: 80,
+                width: 80,
+                borderRadius: 80,
+              },
+              Image: {
+                borderRadius: 80,
+              },
+            }}
+          />
+        }
+      />
+    </BasicCard>
   );
 }
 

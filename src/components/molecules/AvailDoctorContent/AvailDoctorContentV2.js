@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import RatingStars from '../../atoms/ratingStars/RatingStarts';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -13,6 +13,8 @@ import {
   NEW_PRIMARY_COLOR,
 } from '../../../styles/colors';
 import moment from 'moment';
+import {useSelector, useDispatch} from 'react-redux';
+import {AddFevDoc} from '../../../redux/action/patientAccountAction';
 function AvailDoctorContentV2({
   Profile,
   DoctorName,
@@ -25,14 +27,29 @@ function AvailDoctorContentV2({
   toggle,
 }) {
   const [heartActive, setHeartActive] = useState(false);
+  const {isLogedin} = useSelector((state) => state.AuthReducer);
+  const {patient} = useSelector((state) => state.PatientAccountReducer);
+  const dispatch = useDispatch();
   const heartHandle = () => {
-    setHeartActive(!heartActive);
+    if (!isLogedin) {
+      navigation.navigate('authentication');
+    } else {
+      dispatch(AddFevDoc(data._id, patient._id));
+    }
   };
+  useEffect(() => {
+    const res = patient?.favourites.some((item) => {
+      return item._id === data._id;
+    });
+    setHeartActive(res);
+  }, [patient]);
   return (
     <>
       <TouchableOpacity
         style={CardContentStyles.AvailableDoctorsCardContent}
-        onPress={() => {}}>
+        onPress={() => {
+          navigation.navigate('docPatientStrem', {data: data});
+        }}>
         {Profile}
         <View style={CardContentStyles.AvailableDoctorsDetails}>
           <Text
@@ -99,7 +116,9 @@ function AvailDoctorContentV2({
               color={heartActive ? '#ef786e' : '#a09e9e'}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onPress} style={{zIndex: 2000}}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('docPatientStrem', {data: data})}
+            style={{zIndex: 2000}}>
             <FontAwesomeIcon
               name="angle-right"
               size={30}
@@ -111,6 +130,7 @@ function AvailDoctorContentV2({
     </>
   );
 }
+import {fromPairs} from 'lodash';
 const CardContentStyles = StyleSheet.create({
   AvailableDoctorsCardContent: {
     flexDirection: 'row',

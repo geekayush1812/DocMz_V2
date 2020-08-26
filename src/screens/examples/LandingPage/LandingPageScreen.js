@@ -1,30 +1,21 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useRef, useEffect} from 'react';
-import ToggleButton from '../../../components/molecules/ToggleButton/ToggleButton';
 import NewToggleButton from '../../../components/molecules/ToggleButton/NewToggleButton';
 import SearchBarSolid from '../../../components/molecules/SearchBarSolid/SearchBarSolid';
-import Filter from '../../../assets/svg/filter2.svg';
 import BasicCard from '../../../components/atoms/BasicCard/BasicCard';
-import Fontisto from 'react-native-vector-icons/Fontisto';
 import Section from '../../../components/molecules/Section/Section';
 import AvailDoctorContainerV2 from '../../../components/molecules/AvailDoctorContainer/AvailDoctorContainerV2';
-import RadialGradient from 'react-native-radial-gradient';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
-import CurrentDoctorContainer from '../../../components/molecules/AvailDoctorContainer/CurrentDoctorContainer';
 import {useDispatch, useSelector} from 'react-redux';
-import Icon from 'react-native-vector-icons/EvilIcons';
 
 import {
   View,
-  // Easing,
   ScrollView,
-  ActivityIndicator,
   Text,
   FlatList,
   Dimensions,
-  BackHandler,
   Animated,
   Image,
+  TouchableOpacity,
 } from 'react-native';
 // import Animated from 'react-native-reanimated';
 import {
@@ -49,25 +40,10 @@ import {
 } from '../../../styles/colors';
 import Toast from 'react-native-root-toast';
 import {getSpecialty} from '../../../redux/action/doctor/myDoctorAction';
-import {multiply} from 'react-native-reanimated';
-import ConnectionError from '../../../components/molecules/Modal/ConnectionError';
-import GenericError from '../../../components/molecules/Modal/GenericError';
-import CancelConfirm from '../../../components/molecules/Modal/CancelConfirm';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {NavigationActions} from 'react-navigation';
 export default function LandingPageScreen({navigation}) {
   const height = Dimensions.get('window').height;
-  const DocCards = ['Family Physicians', 'Pulmonologist', 'Family Physicians'];
-  // const AllDocs = [
-  //   'Dropkin Jared',
-  //   'Co Ekaterine',
-  //   'Martin Chein',
-  //   'Dropkin Jared',
-  //   'Co Ekaterine',
-  //   'Martin Chein',
-  //   'Dropkin Jared',
-  //   'Co Ekaterine',
-  //   'Martin Chein',
-  // ];
-
   const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
   const PopupTranslateY = useRef(new Animated.Value(0)).current;
@@ -96,8 +72,12 @@ export default function LandingPageScreen({navigation}) {
   const [trigger, setTrigger] = useState(true);
   var __id = '';
 
-  if (isDoctor && isLogedin) navigation.navigate('doctorHomePage');
-
+  if (isDoctor && isLogedin) {
+    navigation.reset(
+      [NavigationActions.navigate({routeName: 'DoctorHomePage'})],
+      0,
+    );
+  }
   useEffect(() => {
     dispatch(fetchDoctorLite('', 0, false));
     isLogedin && dispatch(GetPatientInfo(data.id));
@@ -109,6 +89,9 @@ export default function LandingPageScreen({navigation}) {
     require('../../../assets/icons/lungs.png'),
     require('../../../assets/icons/heart.png'),
     require('../../../assets/icons/neuro.png'),
+    require('../../../assets/icons/heart.png'),
+    require('../../../assets/icons/neuro.png'),
+    require('../../../assets/icons/heart.png'),
   ];
 
   const headerPos = useRef(new Animated.Value(0)).current;
@@ -437,7 +420,7 @@ export default function LandingPageScreen({navigation}) {
                 paddingHorizontal: 25,
               }}
               showsHorizontalScrollIndicator={false}>
-              {tempSpeciality.map((u, i) => {
+              {specialty.map((u, i) => {
                 return (
                   <BasicCard
                     key={i}
@@ -543,10 +526,10 @@ export default function LandingPageScreen({navigation}) {
               // onMomentumScrollBegin={() => setTrigger(false)}
               onEndReached={({distanceFromEnd}) => {
                 console.log('end reached');
-                if (!trigger) {
-                  fetch();
-                  setTrigger(true);
-                }
+                // if (!trigger) {
+                // fetch();
+                //   setTrigger(true);
+                // }
               }}
               // onScroll={onScroll}
               keyExtractor={(item) => item._id}
@@ -574,14 +557,10 @@ export default function LandingPageScreen({navigation}) {
                 </View>
               }
               onEndReachedThreshold={0.1}
-              ListFooterComponent={moreDoctorLoading && <ActivityIndicator />}
               // extraData={doctors}
               data={doctors}
               renderItem={({item, index}) => {
-                console.log(
-                  item.basic.name.slice(0, 15).concat('...'),
-                  item._id,
-                );
+                console.log(item);
                 return (
                   <AvailDoctorContainerV2
                     toggle={toggle}
@@ -639,6 +618,11 @@ export default function LandingPageScreen({navigation}) {
               )}
             />
           )}
+          <TouchableOpacity
+            onPress={fetch}
+            style={{marginBottom: '10%', alignSelf: 'center'}}>
+            <MaterialIcon name={'reload'} size={28} color={'black'} />
+          </TouchableOpacity>
         </Section>
       </AnimatedScrollView>
     </View>

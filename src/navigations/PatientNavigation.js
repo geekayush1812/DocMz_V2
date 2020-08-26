@@ -52,6 +52,8 @@ import NewWaitingRoom from '../screens/patient/waitingRoom/NewWaitingRoom';
 import VoiceCall from '../screens/patient/Calls/Voicecall';
 import MedicalHistory from '../screens/examples/MedicalHistory/MedicalHistory';
 import HealthCare from '../screens/patient/HealthCare/HealthCare';
+import PatientDetails from '../screens/doctor/PatientDetails/PatientDetails';
+import PatientList from '../screens/doctor/Patients/Patients';
 // const PatientBottomNavigation = createSwitchNavigator(
 //   {
 //     patientHomeScreen: Home,
@@ -127,7 +129,7 @@ const PatientNavigationHome = createBottomTabNavigator(
   {
     patientHomeScreen: {
       screen: LandingPageScreen,
-      // screen: AppointmentsDoctor,
+      // screen: PatientDetails,
       navigationOptions: {
         tabBarIcon: ({focused, horizontal, tintColor}) => {
           return (
@@ -214,7 +216,7 @@ const PatientNavigation = createDrawerNavigator(
     drawerWidth: screenWidth,
     // hideStatusBar: true,
     drawerBackgroundColor: 'rgba(255,255,255,.9)',
-    contentComponent: (props) => <Custom {...props} />,
+    contentComponent: (props) => <ProfileScreen {...props} />,
     contentOptions: {
       activeTintColor: '#fff',
       activeBackgroundColor: '#6b52ae',

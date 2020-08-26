@@ -147,7 +147,7 @@ export default function SignUpStep2Screen(props) {
                 marginBottom: 5,
               },
             }}
-            text="CONFIRM"
+            text={signupAs === 'doctor' ? 'Next' : 'CONFIRM'}
           />
           <View
             style={{

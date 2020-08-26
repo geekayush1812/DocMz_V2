@@ -1,175 +1,140 @@
-import React, {useRef} from 'react';
-import {
-  Animated,
-  Text,
-  Dimensions,
-  PanResponder,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import RadialGradient from 'react-native-radial-gradient';
+import React from 'react';
+import {View, Image, ScrollView, Text, TouchableOpacity} from 'react-native';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {ScrollView} from 'react-native-gesture-handler';
-function Patients({navigation}) {
-  const {height, width} = Dimensions.get('window');
-  const patients = [
+import SearchBarSolid from '../../../components/molecules/SearchBarSolid/SearchBarSolid';
+import {
+  SEARCH_PLACEHOLDER_COLOR,
+  SECONDARY_BACKGROUND,
+} from '../../../styles/colors';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+function PatientList({navigation}) {
+  const patientList = [
     {
-      name: 'Oliver Queen',
-      lastVisit: '10.4.2020',
+      name: 'Hunter Richards',
+      reason: ' - General Checkup',
+      lastVisit: 'Last visit: 10 May 20 ',
     },
     {
-      name: 'Berry Alen',
-      lastVisit: '10.5.2020',
+      name: 'Stella Washington',
+      reason: ' - UTI',
+      lastVisit: 'Last visit: 10 May 20',
     },
     {
-      name: 'Vibe',
-      lastVisit: '10.4.2020',
+      name: 'Veronica Stevens',
+      reason: ' - Kidney Stones',
+      lastVisit: 'Last visit: 10 May 20',
     },
     {
-      name: 'Dibni',
-      lastVisit: '10.5.2020',
+      name: 'Jack Barnett',
+      reason: ' - Fever',
+      lastVisit: 'Last visit: 10 May 20',
+    },
+    {
+      name: 'Amy Border',
+      reason: ' - General Checkup',
+      lastVisit: 'Last visit: 10 May 20',
+    },
+    {
+      name: 'Alan Robert',
+      reason: '  - Osteopathy',
+      lastVisit: 'Last visit: 10 May 20',
+    },
+    {
+      name: 'Jayden Barnes',
+      reason: ' - General Checkup',
+      lastVisit: 'Last visit: 10 May 20',
+    },
+    {
+      name: 'Veronica Stevens',
+      reason: ' - Kidney Stones',
+      lastVisit: 'Last visit: 10 May 20',
     },
   ];
-  /**handling animation gesture */
-
-  const panning = useRef(new Animated.Value(height * 0.3)).current;
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onPanResponderGrant: (evt, gestureState) => {
-        panning.setOffset(panning.__getValue());
-      },
-      onPanResponderMove: (evt, gestureState) => {
-        const scroll = panning.__getValue();
-        if (scroll > 10 || gestureState.dy > 0)
-          panning.setValue(gestureState.dy);
-        if (scroll < 0) panning.setOffset(0);
-      },
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onPanResponderRelease: (evt, gestureState) => {
-        if (!(panning.__getValue() > height * 0.6))
-          panning.setOffset(panning.__getValue());
-        panning.setValue(0);
-      },
-      onShouldBlockNativeResponder: (evt, gestureState) => {
-        return true;
-      },
-    }),
-  ).current;
-
   return (
-    <RadialGradient
-      style={{width: '100%', height: '100%', zIndex: 0}}
-      colors={['#F8F7FF', '#E9E5FF']}
-      stops={[0.0, 0.2, 0.75]}
-      center={[130, 100]}
-      radius={200}>
-      <TopNavBar
-        // onRightButtonPress={() => {}}
-        navigation={navigation}
+    <View style={{flex: 1, backgroundColor: '#fff'}}>
+      <TopNavBar headerText={'Patients List'}></TopNavBar>
+      <View
         style={{
-          Container: {
-            height: '5%',
-            marginTop: 10,
-          },
-        }}></TopNavBar>
-      <Text
-        style={{
-          fontSize: 32,
-          textAlign: 'center',
-          color: '#6859A2',
-          fontWeight: 'bold',
+          backgroundColor: '#fff',
+          elevation: 4,
+          paddingVertical: '4%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginTop: '2%',
         }}>
-        Patients
-      </Text>
-      <Animated.View
-        style={{
-          ...StyleSheet.absoluteFill,
-          backgroundColor: '#FFFFFF',
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          paddingHorizontal: 35,
-          paddingVertical: 10,
-          width: '100%',
-          height: 'auto',
-          transform: [{translateY: panning}],
-          zIndex: 10,
-          elevation: 2,
-        }}>
-        <View
-          {...panResponder.panHandlers}
-          style={{height: 40, width: '100%'}}></View>
-        <ScrollView>
-          {patients.map((item) => {
-            return (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('PatientDetails');
-                }}>
+        <SearchBarSolid
+          withIcon
+          placeholderTextColor={SEARCH_PLACEHOLDER_COLOR}
+          searchIcon={
+            <Image
+              source={require('../../../assets/icons/search.png')}
+              style={{height: 20, width: 18}}
+              color={SEARCH_PLACEHOLDER_COLOR}
+            />
+          }
+          style={{
+            backgroundColor: SECONDARY_BACKGROUND,
+            borderRadius: 10,
+            elevation: 2,
+          }}
+        />
+      </View>
+      <ScrollView
+        style={{backgroundColor: '#f8f8f8', flex: 1, paddingVertical: '5%'}}>
+        {patientList.map((item, index) => (
+          <View
+            key={index}
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '95%',
+              alignSelf: 'center',
+              backgroundColor: '#fff',
+              elevation: 2,
+              padding: '3%',
+              borderRadius: 10,
+              marginBottom: '4%',
+            }}>
+            <View style={{width: '90%'}}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <View
                   style={{
-                    flexDirection: 'row',
-                    paddingVertical: 40,
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#AAA4C5',
+                    height: 8,
+                    width: 8,
+                    borderRadius: 15,
+                    backgroundColor: '#efa860',
+                  }}></View>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    marginLeft: '2%',
+                    letterSpacing: 0.5,
                   }}>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        color: '#9C77BC',
-                      }}>
-                      1
-                    </Text>
-                  </View>
-                  <View style={{flex: 4, paddingHorizontal: 10}}>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        color: '#6859A2',
-                      }}>
-                      {item.name}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 'normal',
-                        color: '#AAA4C5',
-                        marginTop: 5,
-                      }}>
-                      Last Visit: {item.lastVisit}
-                    </Text>
-                  </View>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'flex-end',
-                      alignItems: 'flex-end',
-                    }}>
-                    <MaterialCommunityIcons
-                      name="chevron-right"
-                      size={25}
-                      color={'#9C77BC'}
-                    />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </Animated.View>
-    </RadialGradient>
+                  {item.name}
+                </Text>
+                <Text>{item.reason}</Text>
+              </View>
+              <Text style={{marginLeft: '4.5%', color: '#a09e9e'}}>
+                {item.lastVisit}
+              </Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('PatientDetails');
+              }}>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={32}
+                color={'#a4a2a2'}
+              />
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
+    </View>
   );
 }
-export default Patients;
+
+export default PatientList;

@@ -38,6 +38,7 @@ import ViewPager from '@react-native-community/viewpager';
 import SignupSplash from '../DmzSignup/SignupSplash';
 import AlertModal from '../../../components/molecules/Modal/AlertModal';
 import UserProfile from '../../../assets/svg/male_profile.svg';
+import GenericError from '../../../components/molecules/Modal/GenericError';
 export default function DmzLoginV2(props) {
   const [credential, setCredential] = useState({email: '', password: ''});
   const [loginAs, setLoginAs] = useState('patient');
@@ -145,7 +146,7 @@ export default function DmzLoginV2(props) {
 
   return (
     <>
-      <AlertModal
+      <GenericError
         {...modal}
         onCancel={() => {
           setModal({text: '', visible: false});

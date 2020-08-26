@@ -30,7 +30,13 @@ import auth from '@react-native-firebase/auth';
 import UserProfile from '../../../assets/svg/male_profile.svg';
 
 export default function SignUpStep1Screen(props) {
-  const {credential, setCredential, isLoading} = props;
+  const {
+    credential,
+    setCredential,
+    isLoading,
+    onChoosePicture,
+    imageData,
+  } = props;
   const handleFirstName = (firstName) => {
     setCredential({...credential, firstName});
   };
@@ -122,7 +128,8 @@ export default function SignUpStep1Screen(props) {
           resizeMode="cover"
           resizeMethod="scale"
         /> */}
-        <View
+        <TouchableOpacity
+          onPress={onChoosePicture}
           style={{
             backgroundColor: '#ededed',
             height: 100,
@@ -132,8 +139,15 @@ export default function SignUpStep1Screen(props) {
             borderRadius: 64,
             alignSelf: 'center',
           }}>
-          <UserProfile />
-        </View>
+          {imageData?.uri ? (
+            <Image
+              source={{uri: imageData.uri}}
+              style={{height: '100%', width: '100%', resizeMode: 'contain'}}
+            />
+          ) : (
+            <UserProfile />
+          )}
+        </TouchableOpacity>
         <TextInputIcon
           placeholder="First Name"
           inputHandler={handleFirstName}
@@ -283,7 +297,7 @@ export default function SignUpStep1Screen(props) {
               elevation: 3,
             },
           }}
-          text="SIGN UP"
+          text="Next"
           isLoading={isLoading}
           disabled={isLoading}
         />

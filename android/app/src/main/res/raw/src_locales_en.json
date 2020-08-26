@@ -1,5 +1,130 @@
 {
-  "Testing": {
-    "lang": "Region and {{test}} Language"
+  "doctor": {
+    "AddAppoitments": {},
+    "AddQuestionnaire": {
+      "AddCategory": {
+        "add_category": "Add Category",
+        "name_of_category": "Name of the Category",
+        "question_type": "Question Type",
+        "type_your_question": "Type your question",
+        "submit": "Submit",
+        "any_sub_question": "Any Sub Questions?"
+      },
+      "Categories": {
+        "categories": "Categories",
+        "vitals": "VITALS",
+        "each_criteria_can_be_edited_and_modified": "Each criteria can be edited and modified.",
+        "view": "View",
+        "add_category": "ADD CATEGORY"
+      }
+    },
+    "Chats": {
+      "search": "search"
+    },
+    "DoctorDetail": {},
+    "FindDoctor": {
+      "now": "NOW",
+      "search_your_patient": "seach your patient",
+      "available_doctors": "Available Doctors"
+    },
+    "home": {
+      "appointments": "Appointments",
+      "hello": "Hello",
+      "you_have": "You have"
+    },
+    "Languages": {
+      "region_and_lang": "Region and Language",
+      "region": "Region",
+      "language": "Language"
+    },
+    "PatientDetails": {
+      "patient_details": "Patient Details",
+      "medical_history": "Medical History",
+      "reports": "Reports",
+      "appointments": "Appointments",
+      "notes": "Notes",
+      "save_changes": "SAVE CHANGES"
+    },
+    "Patients": {
+      "patients": "Patients",
+      "last_visit": "Last Visit"
+    },
+    "Profile": {
+      "upload": "Upload",
+      "appointments": "Appointments",
+      "questionaire": "Questionaire",
+      "logout": "Logout"
+    },
+    "Referrals": {
+      "refer_a_friend": "Refer a Friend",
+      "rewards": "Rewards",
+      "refer_friends.": "Refer friends.",
+      "unlock_rewards": "Unlock rewards"
+    },
+    "Settings": {
+      "settings": "Settings",
+      "notification": "Notification",
+      "on": "ON",
+      "off": "OFF",
+      "signout": "Signout"
+    },
+    "Skins": {}
+  },
+  "patient": {
+    "appointmentForm": {},
+    "appointments": {
+      "appointment": "Appointment"
+    },
+    "consultations": {
+      "consult": "Consult"
+    },
+    "docProfileLite": {
+      "about": {},
+      "DocProfileLite": {}
+    },
+    "familyMember": {
+      "family_member": "Family Member",
+      "no_member_found": "No member found",
+      "add_member": "Add Member",
+      "first_name": "First name",
+      "last_name": "Last name",
+      "email": "Email",
+      "phone_number": "Phone Number",
+      "male": "Male",
+      "female": "Female",
+      "transgender": "Transgender",
+      "date_of_birth": "Date Of Birth",
+      "relationship": "Relationship",
+      "cancel": "Cancel",
+      "add": "Add"
+    },
+    "home": {
+      "find_a_doctor": "Find a Doctor",
+      "now": "NOW",
+      "schedule": "SCHEDULE",
+      "search_your_patient": "search your patient",
+      "available_doctors": "Available Doctors",
+      "empty": "Empty",
+      "empty_superDocs": "Empty superDocs"
+    },
+    "medicalrecords": {
+      "hello": "Hello",
+      "medical_history": "Medical History",
+      "add_a_new_medication": "Add a new medication",
+      "save": "Save",
+      "search_medicine": "Search Medicine",
+      "dose_appearance": "Dose Appearance",
+      "colors": "Colors",
+      "take_as_per_needed": "Take as per needed",
+      "schedule": "Schedule",
+      "start_date": "Start Date",
+      "select_start_date": "Select Start Date",
+      "end_date": "End Date",
+      "reminders_&_Dosage": "Reminders & Dosage"
+    },
+    "more": {
+      "help": {},
+      "settings": {}
+    }
   }
 }
