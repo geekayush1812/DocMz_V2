@@ -11,6 +11,11 @@ const inititalState = {
   specialtyLoading: false,
   specialty: [],
   specialtyLoadingError: '',
+  updatingDoctor: false,
+  updatingDoctorError: '',
+  recentPatientLoading: false,
+  recentPatient: [],
+  recentPatientError: '',
 };
 
 const MyDoctorReducer = (state = inititalState, action) => {
@@ -90,6 +95,41 @@ const MyDoctorReducer = (state = inititalState, action) => {
         ...state,
         specialtyLoading: false,
         specialtyLoadingError: action.payload,
+      };
+    case 'UPDATING_DOCTOR_PROFILE':
+      return {
+        ...state,
+        updatingDoctor: true,
+      };
+    case 'UPDATED_DOCTOR_PROFILE':
+      return {
+        ...state,
+        updatingDoctor: false,
+        updatingDoctorError: '',
+      };
+    case 'UPDATING_DOCTOR_ERROR':
+      return {
+        ...state,
+        updatingDoctor: false,
+        updatingDoctorError: action.payload,
+      };
+    case 'GETTING_RECENT_PATIENTS':
+      return {
+        ...state,
+        recentPatientLoading: true,
+      };
+    case 'GOT_RECENT_PATIENTS':
+      return {
+        ...state,
+        recentPatientLoading: false,
+        recentPatient: action.payload,
+        recentPatientError: '',
+      };
+    case 'GETTING_RECENT_PATIENTS_ERROR':
+      return {
+        ...state,
+        recentPatientLoading: false,
+        recentPatientError: action.payload,
       };
     default:
       return state;

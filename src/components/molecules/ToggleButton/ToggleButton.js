@@ -28,7 +28,6 @@ function ToggleButton({
 }) {
   const onTouch = () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    console.log('pressed');
     onToggle();
   };
   return (

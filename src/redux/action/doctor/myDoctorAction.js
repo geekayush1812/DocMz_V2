@@ -14,6 +14,12 @@ const ERROR_ALL_APPOINTMENT_FETCHING = 'ERROR_ALL_APPOINTMENT_FETCHING';
 const SPECIALTY_LOADING = 'SPECIALTY_LOADING';
 const SPECIALTY_LOADED = 'SPECIALTY_LOADED';
 const SPECIALTY_ERROR = 'SPECIALTY_ERROR';
+const UPDATING_DOCTOR_PROFILE = 'UPDATING_DOCTOR_PROFILE';
+const UPDATED_DOCTOR_PROFILE = 'UPDATED_DOCTOR_PROFILE';
+const UPDATING_DOCTOR_ERROR = 'UPDATING_DOCTOR_ERROR';
+const GETTING_RECENT_PATIENTS = 'GETTING_RECENT_PATIENTS';
+const GOT_RECENT_PATIENTS = 'GOT_RECENT_PATIENTS';
+const GETTING_RECENT_PATIENTS_ERROR = 'GETTING_RECENT_PATIENTS_ERROR';
 
 const saveDoc = (data) => {
   return {
@@ -96,13 +102,40 @@ const specialtyError = (error) => {
   };
 };
 
-/*
-       {
-             "limit":"3", 
-             "doctor":"5dad6ba6f4ab551864e63f01",
-            "date":"2019-11-16T10:24:39.736Z"
-       }
-*/
+const updatingDoctorProfile = () => {
+  return {
+    type: UPDATING_DOCTOR_PROFILE,
+  };
+};
+const updatingDoctorError = (err) => {
+  return {
+    type: UPDATING_DOCTOR_ERROR,
+    payload: err,
+  };
+};
+const updatedDoctorProfile = () => {
+  return {
+    type: UPDATED_DOCTOR_PROFILE,
+  };
+};
+
+const gettingRecentPatient = () => {
+  return {
+    type: GETTING_RECENT_PATIENTS,
+  };
+};
+const gotRecentPatients = (patients) => {
+  return {
+    type: GOT_RECENT_PATIENTS,
+    payload: patients,
+  };
+};
+const gettingRecentPatientError = (err) => {
+  return {
+    type: GETTING_RECENT_PATIENTS_ERROR,
+    payload: err,
+  };
+};
 
 export const GettingDocterLatestInfo = (id, limit = 3) => {
   return (dispatch) => {
@@ -248,4 +281,36 @@ export const getSpecialty = (pageNo = 0, size = 5) => {
       dispatch(specialtyError(e));
     }
   };
+};
+export const UpdateDoctorProfile = (data, callback) => (dispatch) => {
+  const config = {
+    Accept: '*/*',
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+  dispatch(updatingDoctorProfile());
+
+  try {
+    axios
+      .post(`${Host}/doctors/profile/update`, data, config)
+      .then((response) => {
+        dispatch(updatedDoctorProfile());
+        console.log(response.data.data);
+        dispatch(saveDoc(response.data.data));
+        callback();
+      });
+  } catch (e) {
+    dispatch(updatingDoctorError(e));
+  }
+};
+
+export const GetRecentPatient = (docId) => (dispatch) => {
+  dispatch(gettingRecentPatient());
+  axios
+    .get(`${Host}/doctors/recentpatients/${docId}`)
+    .then((response) => {
+      dispatch(gotRecentPatients(response.data.data));
+    })
+    .catch((e) => {
+      dispatch(gettingRecentPatientError(e));
+    });
 };

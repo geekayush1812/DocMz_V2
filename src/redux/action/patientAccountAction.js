@@ -18,8 +18,15 @@ const ERROR_BOOKING_APPOINTMENT = 'ERROR_BOOKING_APPOINTMENT';
 const RECORDS_UPLOADING = 'RECORDS_UPLOADING';
 const RECORDS_UPLOADED = 'RECORDS_UPLOADED';
 const RECORDS_UPLOADING_ERROR = 'RECORDS_UPLOADING_ERROR';
+
+const ADD_MEDICINE_LOADING = 'ADD_MEDICINE_LOADING';
+const MEDICINE_ADDED = 'MEDICINE_ADDED';
+const ADD_MEDICINE_ERROR = 'ADD_MEDICINE_ERROR';
+const GETTING_MEDICINE = 'GETTING_MEDICINE';
+const DONE_GETTING_MEDICINE = 'DONE_GETTING_MEDICINE';
+const ERROR_GETTING_MEDICINE = 'ERROR_GETTING_MEDICINE';
+
 const saveUserAccount = (data, dataVitals) => {
-  console.log(data, '----------------', dataVitals);
   return {
     type: SAVE,
     payload: data,
@@ -115,6 +122,91 @@ const errorUploadingRecords = (err) => {
     payload: err,
   };
 };
+
+/**
+ *   medicine actions
+ */
+const addingMedicine = () => {
+  return {
+    type: ADD_MEDICINE_LOADING,
+  };
+};
+const medicineAdded = () => {
+  return {
+    type: MEDICINE_ADDED,
+  };
+};
+const addingMedicineError = (e) => {
+  return {
+    type: ADD_MEDICINE_ERROR,
+    payload: e,
+  };
+};
+const gettingMedicine = () => {
+  return {
+    type: GETTING_MEDICINE,
+  };
+};
+const doneGettingMedicine = (medicines) => {
+  return {
+    type: DONE_GETTING_MEDICINE,
+    payload: medicines,
+  };
+};
+const errorGettingMedicine = (e) => {
+  return {
+    type: ERROR_GETTING_MEDICINE,
+    payload: e,
+  };
+};
+
+export const GetMedicine = (metaId) => (dispatch) => {
+  const config = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+  dispatch(gettingMedicine());
+  axios
+    .get(`${Host}/medicine/get/${metaId}`, config)
+    .then((res) => {
+      if (res.status) {
+        dispatch(doneGettingMedicine(res.data.data));
+      } else {
+        throw new Error('Internal error.Try again!!');
+      }
+    })
+    .catch((e) => {
+      dispatch(errorGettingMedicine(e));
+    });
+};
+
+export const AddMedicine = (data) => (dispatch) => {
+  //data:{metaId,medicines}
+  const config = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+  dispatch(addingMedicine());
+  axios
+    .post(`${Host}/medicine/addbypatient`, data, config)
+    .then((res) => {
+      if (res.status) {
+        dispatch(medicineAdded());
+        dispatch(GetMedicine(data.metaId));
+      } else {
+        throw new Error('Internal error.Try again!!');
+      }
+    })
+    .catch((e) => {
+      dispatch(addingMedicineError(e));
+    });
+};
+
+/**
+ *   END MEDICINE ACTIONS
+ */
+
+/**
+ *
+ */
 
 export const resetUserAccountReducer = () => {
   return {

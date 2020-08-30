@@ -5,6 +5,8 @@ const initialState = {
   data: [],
   error: [],
   appointment: [],
+  blockingDoctor: false,
+  blockingDoctorError: '',
 };
 
 const AuthReducer = (state = initialState, action) => {
@@ -58,38 +60,26 @@ const AuthReducer = (state = initialState, action) => {
           (xappointment) => !xappointment.cancelledByPatient,
         ),
       };
+    case 'BLOCK_DOCTOR_LOADING':
+      return {
+        ...state,
+        blockingDoctor: true,
+      };
+    case 'DOCTOR_BLOCKED':
+      return {
+        ...state,
+        blockingDoctor: false,
+        blockingDoctorError: '',
+      };
+    case 'BLOCK_DOCTOR_ERROR':
+      return {
+        ...state,
+        blockingDoctor: false,
+        blockingDoctorError: action.payload,
+      };
     default:
       return state;
   }
 };
 
 export default AuthReducer;
-
-// const initialState = {
-//   data: [],
-//   fullData: []
-// };
-
-// const AuthReducer = (state = initialState, action) => {
-//   switch (action.type) {
-//     case 'AUTHENTICATED':
-//       console.log('Authenticated.');
-//       console.log(action);
-//       return {
-//         ...state,
-//         data: action.data,
-//       };
-
-//     case 'FULLDATA':
-//       console.log('Authenticated.vvvvv');
-//       console.log(action);
-//       return {
-//         ...state,
-//         fullData: action.data,
-//       };
-//     default:
-//       return state;
-//   }
-// };
-
-// export default AuthReducer;

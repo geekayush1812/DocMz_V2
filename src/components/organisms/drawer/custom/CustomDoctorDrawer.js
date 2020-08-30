@@ -1,7 +1,13 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Text, KeyboardAvoidingView} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+} from 'react-native';
 import Avater from '../../../atoms/Avater/Avater';
 import DmzText from '../../../atoms/DmzText/DmzText';
 import Option from '../../../molecules/Option/Option';
@@ -19,7 +25,7 @@ import PatientLocation from '../../../../screens/examples/PatientLocation/Patien
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ToggleButton from '../../../molecules/ToggleButton/ToggleButton';
 import TopNavBar from '../../../molecules/TopNavBar/TopNavBar';
-import {UpdateDoctor} from '../../../../redux/action/auth';
+import {UpdateDoctor, BlockDoctor} from '../../../../redux/action/auth';
 const Navigation = [
   {
     active: true,
@@ -68,7 +74,8 @@ const Custom = ({navigation, activeItemKey}) => {
       .join(' ');
     return splited;
   };
-  const {data} = useSelector((state) => state.AuthReducer);
+  const state = useSelector((state) => state.AuthReducer);
+  const {data, blockingDoctor, blockingDoctorError} = state;
   const dispatch = useDispatch();
   const onUpdateDoctor = () => {
     dispatch(
@@ -79,175 +86,185 @@ const Custom = ({navigation, activeItemKey}) => {
       ),
     );
   };
+  const onBlock = () => {
+    dispatch(BlockDoctor(data._id));
+  };
+  useEffect(() => {
+    console.log(blockingDoctor);
+  }, [blockingDoctor]);
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          height: '33%',
-        }}>
-        <TopNavBar
-          onLeftButtonPress={() => {
-            navigation.navigate('Home');
-            navigation.toggleDrawer();
-          }}
-          hideRightComp
-          LeftComp={
-            <MaterialCommunityIcons
-              name={'chevron-left'}
-              size={32}
-              color="#F8F7FF"
-            />
-          }
-          style={{Container: {marginTop: 5}}}
-        />
-        <View style={styles.profile}>
-          <TouchableOpacity
-            // onPress={onProfileClick}
-            style={{flexDirection: 'row'}}>
-            <Avater type={7} style={{borderRadius: 10, borderWidth: 4}} />
-            <View style={{marginLeft: 30}}>
-              <DmzText
-                text={
-                  !data || data.length == 0
-                    ? ''
-                    : `Dr. ${data.firstName.toTitleCase()} ${data.lastName}`
-                }
-                style={{fontSize: 22, color: '#fff'}}
+    <>
+      <View style={styles.container}>
+        <View
+          style={{
+            height: '33%',
+          }}>
+          <TopNavBar
+            onLeftButtonPress={() => {
+              navigation.navigate('Home');
+              navigation.toggleDrawer();
+            }}
+            hideRightComp
+            LeftComp={
+              <MaterialCommunityIcons
+                name={'chevron-left'}
+                size={32}
+                color="#F8F7FF"
               />
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            }
+            style={{Container: {marginTop: 5}}}
+          />
+          <View style={styles.profile}>
+            <TouchableOpacity
+              // onPress={onProfileClick}
+              style={{flexDirection: 'row'}}>
+              <Avater type={7} style={{borderRadius: 10, borderWidth: 4}} />
+              <View style={{marginLeft: 30}}>
                 <DmzText
-                  text={'4.92'}
+                  text={
+                    !data || data.length == 0
+                      ? ''
+                      : `Dr. ${data.firstName.toTitleCase()} ${data.lastName}`
+                  }
+                  style={{fontSize: 22, color: '#fff'}}
+                />
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <DmzText
+                    text={'4.92'}
+                    style={{
+                      fontSize: 14,
+                      color: '#fff',
+                      fontWeight: 'normal',
+                    }}
+                  />
+                  <MaterialCommunityIcons
+                    style={{marginLeft: 5}}
+                    name="star"
+                    color={'#fff'}
+                    size={18}
+                  />
+                </View>
+                <DmzText
+                  text={'Edit your profile'}
                   style={{
                     fontSize: 14,
                     color: '#fff',
                     fontWeight: 'normal',
                   }}
                 />
-                <MaterialCommunityIcons
-                  style={{marginLeft: 5}}
-                  name="star"
-                  color={'#fff'}
-                  size={18}
-                />
               </View>
-              <DmzText
-                text={'Edit your profile'}
-                style={{
-                  fontSize: 14,
-                  color: '#fff',
-                  fontWeight: 'normal',
-                }}
-              />
-            </View>
-          </TouchableOpacity>
-          <StepsTracker
-            text="Complete Your Profile (30%)"
-            textStyle={{
-              fontSize: 14,
-              color: '#F8F7FF',
-              lineHeight: 30,
-              textAlign: 'center',
-            }}
-            style={{
-              width: '80%',
-              flexDirection: 'column-reverse',
-              marginTop: 5,
-            }}
-            completed={33}
-            completedColor={'#EA508F'}
-            incompletedColor={'#FFFFFF'}
-          />
+            </TouchableOpacity>
+            <StepsTracker
+              text="Complete Your Profile (30%)"
+              textStyle={{
+                fontSize: 14,
+                color: '#F8F7FF',
+                lineHeight: 30,
+                textAlign: 'center',
+              }}
+              style={{
+                width: '80%',
+                flexDirection: 'column-reverse',
+                marginTop: 5,
+              }}
+              completed={33}
+              completedColor={'#EA508F'}
+              incompletedColor={'#FFFFFF'}
+            />
+          </View>
         </View>
-      </View>
-      <View
-        style={{
-          flex: 1,
-          borderTopLeftRadius: 30,
-          borderTopRightRadius: 30,
-          overflow: 'hidden',
-          width: '100%',
-          backgroundColor: '#E9E5FF',
-          // paddingTop: 25,
-        }}>
-        <ScrollView
+        <View
           style={{
             flex: 1,
-            paddingHorizontal: 70,
+            borderTopLeftRadius: 30,
+            borderTopRightRadius: 30,
+            overflow: 'hidden',
+            width: '100%',
+            backgroundColor: '#E9E5FF',
+            // paddingTop: 25,
           }}>
-          <Section style={{paddingVertical: 30, paddingBottom: 40}}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <Text
-                style={{color: '#9C77BC', fontWeight: 'bold', fontSize: 15}}>
-                Doctor on demand
-              </Text>
-              <ToggleButton
-                toggle={data.is_superDoc}
-                onToggle={onUpdateDoctor}
-                style={{borderRadius: 10, width: 120}}
-                dotStyle={{
-                  backgroundColor: '#9C77BC',
-                  width: 50,
-                  height: 25,
-                  borderRadius: 8,
-                }}
-                textStyle={{fontSize: 14, color: '#EA508F'}}
-                text0="ON"
-                text1="OFF"
-              />
-            </View>
-
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                marginTop: 25,
-              }}>
-              <Text
-                style={{color: '#9C77BC', fontWeight: 'bold', fontSize: 15}}>
-                Block
-              </Text>
-              <ToggleButton
-                style={{borderRadius: 10, width: 120}}
-                dotStyle={{
-                  backgroundColor: '#9C77BC',
-                  width: 50,
-                  height: 25,
-                  borderRadius: 8,
-                }}
-                textStyle={{fontSize: 14, color: '#EA508F'}}
-                text0="ON"
-                text1="OFF"
-              />
-            </View>
-          </Section>
-          {Navigation.map((item, index) => {
-            return (
-              <Section>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate(item.navigateTo);
+          <ScrollView
+            style={{
+              flex: 1,
+              paddingHorizontal: 70,
+            }}>
+            <Section style={{paddingVertical: 30, paddingBottom: 40}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <Text
+                  style={{color: '#9C77BC', fontWeight: 'bold', fontSize: 15}}>
+                  Doctor on demand
+                </Text>
+                <ToggleButton
+                  toggle={data.is_superDoc}
+                  onToggle={onUpdateDoctor}
+                  style={{borderRadius: 10, width: 120}}
+                  dotStyle={{
+                    backgroundColor: '#9C77BC',
+                    width: 50,
+                    height: 25,
+                    borderRadius: 8,
                   }}
-                  style={{paddingVertical: 10}}>
-                  <Text
-                    style={{
-                      color: '#6859A2',
-                      fontSize: 15,
-                    }}>
-                    {item.name}
-                  </Text>
-                </TouchableOpacity>
-              </Section>
-            );
-          })}
-        </ScrollView>
+                  textStyle={{fontSize: 14, color: '#EA508F'}}
+                  text0="ON"
+                  text1="OFF"
+                />
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: 25,
+                }}>
+                <Text
+                  style={{color: '#9C77BC', fontWeight: 'bold', fontSize: 15}}>
+                  Block
+                </Text>
+                <ToggleButton
+                  toggle={data.block}
+                  onToggle={onBlock}
+                  style={{borderRadius: 10, width: 120}}
+                  dotStyle={{
+                    backgroundColor: '#9C77BC',
+                    width: 50,
+                    height: 25,
+                    borderRadius: 8,
+                  }}
+                  textStyle={{fontSize: 14, color: '#EA508F'}}
+                  text0="ON"
+                  text1="OFF"
+                />
+              </View>
+            </Section>
+            {Navigation.map((item, index) => {
+              return (
+                <Section>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate(item.navigateTo);
+                    }}
+                    style={{paddingVertical: 10}}>
+                    <Text
+                      style={{
+                        color: '#6859A2',
+                        fontSize: 15,
+                      }}>
+                      {item.name}
+                    </Text>
+                  </TouchableOpacity>
+                </Section>
+              );
+            })}
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </>
   );
 };
 
@@ -255,6 +272,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#9C77BC',
     flex: 1,
+    zIndex: 99,
   },
   section: {
     backgroundColor: '#fafafa',

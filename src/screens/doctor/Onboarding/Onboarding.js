@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,28 +7,79 @@ import {
   TextInput,
   Image,
 } from 'react-native';
-import {
-  NEW_HEADER_TEXT,
-  GREY_OUTLINE,
-  SECONDARY_COLOR,
-  INPUT_PLACEHOLDER,
-} from '../../../styles/colors';
-import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
+import {SECONDARY_COLOR} from '../../../styles/colors';
 import {Picker} from '@react-native-community/picker';
 import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
 import RadioGroupV2 from '../../../components/molecules/RadioGroup/RadioGroupV2';
-import TextInputIcon from '../../../components/atoms/TextInputCustom/TextInputIcon';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  getSpecialty,
+  UpdateDoctorProfile,
+} from '../../../redux/action/doctor/myDoctorAction';
+
 function Onboarding({navigation}) {
-  const [memberCredential, setMemberCredential] = useState({
-    id: '',
-    name: '',
-    contact: '',
-    date: '',
-  });
-  const [activeKey, setActiveKey] = useState('');
+  const [activeGender, setActiveGender] = useState('');
   const [city, setCity] = useState('');
-  const [speciality, setSpeciality] = useState('');
+  const [specialitySelected, setSpecialitySelected] = useState('');
+  const [year, setYearSelected] = useState('');
+  const [registrationCouncil, setRegistrationCouncil] = useState('');
+  const [registrationYear, setRegistrationYear] = useState('');
+  const [degree, setDegree] = useState('');
+  const [registrationNumber, setRegistrationNumber] = useState('');
+  const [college, setCollege] = useState('');
+  const [yearOfExperience, setYearOfExperience] = useState('');
+  const [clinicAndHospital, setClinicAndHospital] = useState('');
+
+  const dispatch = useDispatch();
+  const {data, isLogedin, isDoctor} = useSelector((state) => state.AuthReducer);
+  const {specialtyLoading, specialty} = useSelector(
+    (state) => state.MyDoctorReducer,
+  );
+
+  useEffect(() => {
+    !specialtyLoading && dispatch(getSpecialty());
+  }, []);
+
+  let imageSource = '';
+  if (data && isLogedin && !isDoctor) {
+    imageSource = {
+      uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
+    };
+  } else if (data && isLogedin && isDoctor && data.picture.length > 0) {
+    imageSource = {
+      uri: `${Host}${data.picture[0]
+        .replace('public', '')
+        .replace('\\\\', '/')}`,
+    };
+  } else {
+    imageSource = require('../../../assets/jpg/person3.jpg');
+  }
+
+  const handleSubmit = () => {
+    const obj = {
+      id: data._id,
+      gender: activeGender,
+      education: [
+        {
+          degree: degree,
+          university: college,
+          year: year,
+        },
+      ],
+      registration: {
+        regNo: registrationNumber,
+        regCouncil: registrationCouncil,
+        regYear: registrationYear,
+      },
+      experience: yearOfExperience,
+    };
+    dispatch(
+      UpdateDoctorProfile(obj, () => {
+        navigation.navigate('Dashboard');
+      }),
+    );
+  };
 
   return (
     <View style={OnboardingStyle.Container}>
@@ -81,7 +132,7 @@ function Onboarding({navigation}) {
                 borderColor: '#dddddd',
                 borderWidth: 2,
               }}
-              source={require('../../../assets/jpg/person1.jpg')}></Image>
+              source={imageSource}></Image>
           </View>
           <Text
             style={{
@@ -90,7 +141,7 @@ function Onboarding({navigation}) {
               letterSpacing: 1.2,
               marginTop: '4%',
             }}>
-            Dr.Co Ekaterain
+            Dr.{data.basic.name}
           </Text>
         </View>
 
@@ -113,8 +164,8 @@ function Onboarding({navigation}) {
             }}>
             <RadioGroupV2
               horizontal
-              activeKey={activeKey}
-              setActiveKey={setActiveKey}
+              activeKey={activeGender}
+              setActiveKey={setActiveGender}
               Item={[
                 {value: 'Male', id: 'male'},
                 {value: 'Female', id: 'female'},
@@ -131,7 +182,7 @@ function Onboarding({navigation}) {
               style={{width: '100%', color: '#8e9393'}}
               onValueChange={(itemValue, itemIndex) => setCity(itemValue)}>
               <Picker.Item label="Select City" value="" />
-              <Picker.Item label="Bangalore" value="bang" />
+              <Picker.Item label="Bangalore" value="bangalore" />
               <Picker.Item label="Pune" value="pune" />
             </Picker>
           </View>
@@ -140,14 +191,15 @@ function Onboarding({navigation}) {
               paddingHorizontal: '6%',
             }}>
             <Picker
-              selectedValue={speciality}
+              selectedValue={specialitySelected}
               style={{width: '100%', color: '#8e9393'}}
               onValueChange={(itemValue, itemIndex) =>
-                setSpeciality(itemValue)
+                setSpecialitySelected(itemValue)
               }>
               <Picker.Item label="Speciality" value="" />
-              <Picker.Item label="Dentist" value="dentist" />
-              <Picker.Item label="Cardiologist" value="cardio" />
+              {specialty.map((item) => {
+                return <Picker.Item label={item} value={item} />;
+              })}
             </Picker>
           </View>
         </View>
@@ -180,36 +232,46 @@ function Onboarding({navigation}) {
               borderColor: '#e0e0e0',
             }}>
             <Picker
-              selectedValue={city}
+              selectedValue={degree}
               style={{width: '100%', color: '#8e9393'}}
-              onValueChange={(itemValue, itemIndex) => setCity(itemValue)}>
+              onValueChange={(itemValue, itemIndex) => setDegree(itemValue)}>
               <Picker.Item label="Degree" value="" />
-              <Picker.Item label="Bangalore" value="bang" />
-              <Picker.Item label="Pune" value="pune" />
+              <Picker.Item label="MBBS" value="MBBS" />
+              <Picker.Item label="MS" value="MS" />
             </Picker>
           </View>
           <View
             style={{
-              paddingVertical: 15,
-              paddingHorizontal: '8%',
+              paddingHorizontal: '7%',
               borderBottomWidth: 1,
               borderColor: '#e0e0e0',
             }}>
-            <Text style={{color: '#8e9393'}}>College/University</Text>
+            <TextInput
+              onChangeText={(text) => {
+                setCollege(text);
+              }}
+              value={college}
+              style={{fontSize: 16}}
+              placeholder="College/University"></TextInput>
           </View>
           <View
             style={{
               paddingHorizontal: '6%',
             }}>
             <Picker
-              selectedValue={speciality}
+              selectedValue={year}
               style={{width: '100%', color: '#8e9393'}}
               onValueChange={(itemValue, itemIndex) =>
-                setSpeciality(itemValue)
+                setYearSelected(itemValue)
               }>
               <Picker.Item label="Year" value="" />
-              <Picker.Item label="Dentist" value="dentist" />
-              <Picker.Item label="Cardiologist" value="cardio" />
+              <Picker.Item label="2020" value="2020" />
+              <Picker.Item label="2019" value="2019" />
+              <Picker.Item label="2018" value="2018" />
+              <Picker.Item label="2017" value="2017" />
+              <Picker.Item label="2016" value="2016" />
+              <Picker.Item label="2015" value="2015" />
+              <Picker.Item label="2014" value="2014" />
             </Picker>
           </View>
         </View>
@@ -241,14 +303,13 @@ function Onboarding({navigation}) {
               borderBottomWidth: 1,
               borderColor: '#e0e0e0',
             }}>
-            <Picker
-              selectedValue={city}
-              style={{width: '100%', color: '#8e9393'}}
-              onValueChange={(itemValue, itemIndex) => setCity(itemValue)}>
-              <Picker.Item label="Registration Number" value="" />
-              <Picker.Item label="Bangalore" value="bang" />
-              <Picker.Item label="Pune" value="pune" />
-            </Picker>
+            <TextInput
+              onChangeText={(text) => {
+                setRegistrationNumber(text);
+              }}
+              value={registrationNumber}
+              style={{fontSize: 16, marginLeft: '2%'}}
+              placeholder="Registration Number"></TextInput>
           </View>
           <View
             style={{
@@ -257,14 +318,14 @@ function Onboarding({navigation}) {
               borderColor: '#e0e0e0',
             }}>
             <Picker
-              selectedValue={speciality}
+              selectedValue={registrationCouncil}
               style={{width: '100%', color: '#8e9393'}}
               onValueChange={(itemValue, itemIndex) =>
-                setSpeciality(itemValue)
+                setRegistrationCouncil(itemValue)
               }>
               <Picker.Item label="Registration Council" value="" />
-              <Picker.Item label="Dentist" value="dentist" />
-              <Picker.Item label="Cardiologist" value="cardio" />
+              <Picker.Item label="Council XYZ1" value="CouncilXYZ1" />
+              <Picker.Item label="Council XYZ2" value="CouncilXYZ2" />
             </Picker>
           </View>
 
@@ -273,14 +334,25 @@ function Onboarding({navigation}) {
               paddingHorizontal: '6%',
             }}>
             <Picker
-              selectedValue={speciality}
+              selectedValue={registrationYear}
               style={{width: '100%', color: '#8e9393'}}
               onValueChange={(itemValue, itemIndex) =>
-                setSpeciality(itemValue)
+                setRegistrationYear(itemValue)
               }>
               <Picker.Item label="Registration Year" value="" />
-              <Picker.Item label="Dentist" value="dentist" />
-              <Picker.Item label="Cardiologist" value="cardio" />
+              <Picker.Item label="2020" value="2020" />
+              <Picker.Item label="2019" value="2019" />
+              <Picker.Item label="2018" value="2018" />
+              <Picker.Item label="2017" value="2017" />
+              <Picker.Item label="2016" value="2016" />
+              <Picker.Item label="2015" value="2015" />
+              <Picker.Item label="2014" value="2014" />
+              <Picker.Item label="2013" value="2013" />
+              <Picker.Item label="2012" value="2012" />
+              <Picker.Item label="2011" value="2011" />
+              <Picker.Item label="2010" value="2010" />
+              <Picker.Item label="2009" value="2009" />
+              <Picker.Item label="2008" value="2008" />
             </Picker>
           </View>
         </View>
@@ -355,29 +427,42 @@ function Onboarding({navigation}) {
           }}>
           <View
             style={{
-              paddingHorizontal: '6%',
+              paddingLeft: '5%',
               borderBottomWidth: 1,
               borderColor: '#e0e0e0',
             }}>
             <Picker
-              selectedValue={speciality}
+              selectedValue={yearOfExperience}
               style={{width: '100%', color: '#8e9393', fontWeight: '100'}}
               onValueChange={(itemValue, itemIndex) =>
-                setSpeciality(itemValue)
+                setYearOfExperience(itemValue)
               }>
-              <Picker.Item label="Registration Council" value="" />
-              <Picker.Item label="Dentist" value="dentist" />
-              <Picker.Item label="Cardiologist" value="cardio" />
+              <Picker.Item label="Year of Experience" value="" />
+              <Picker.Item label="0 year" value="0" />
+              <Picker.Item label="1 year" value="1" />
+              <Picker.Item label="2 year" value="2" />
+              <Picker.Item label="3 year" value="3" />
+              <Picker.Item label="4 year" value="4" />
+              <Picker.Item label="5 year" value="5" />
+              <Picker.Item label="6 year" value="6" />
+              <Picker.Item label="7 year" value="7" />
+              <Picker.Item label="8 year" value="8" />
             </Picker>
           </View>
           <View
             style={{
-              paddingHorizontal: '6%',
+              paddingHorizontal: '7%',
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
             }}>
-            <TextInput placeholder="Add Clinic/Hospital"></TextInput>
+            <TextInput
+              onChangeText={(text) => {
+                setClinicAndHospital(text);
+              }}
+              value={clinicAndHospital}
+              style={{fontSize: 16}}
+              placeholder="Add Clinic/Hospital"></TextInput>
             <TouchableOpacity>
               <Text style={{fontSize: 18, color: '#8e9393'}}>+</Text>
             </TouchableOpacity>
@@ -385,9 +470,7 @@ function Onboarding({navigation}) {
         </View>
 
         <DmzButton
-          onPress={() => {
-            navigation.navigate('Dashboard');
-          }}
+          onPress={handleSubmit}
           style={{
             Text: {
               width: '100%',

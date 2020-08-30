@@ -27,9 +27,11 @@ const REMOVE_USER = 'REMOVE_USER';
 const SAVE_APPOINTMENT = 'SAVE_APPOINTMENT';
 const REMOVE_APPOINTMENT = 'REMOVE_APPOINTMENT';
 const STOP_LOADING = 'STOP_LOADING';
+const BLOCK_DOCTOR_LOADING = 'BLOCK_DOCTOR_LOADING';
+const DOCTOR_BLOCKED = 'DOCTOR_BLOCKED';
+const BLOCK_DOCTOR_ERROR = 'BLOCK_DOCTOR_ERROR';
 
 const saveNewUser = (data, type) => {
-  console.log(type.localeCompare('patient'));
   return {
     type: SAVE_USER,
     userData: data,
@@ -52,6 +54,25 @@ const startLoading = () => {
 const stoptLoading = () => {
   return {
     type: STOP_LOADING,
+  };
+};
+
+const blockingDoctor = () => {
+  return {
+    type: BLOCK_DOCTOR_LOADING,
+  };
+};
+
+const doctorBlocked = () => {
+  return {
+    type: DOCTOR_BLOCKED,
+  };
+};
+
+const blockingDoctorError = (e) => {
+  return {
+    type: BLOCK_DOCTOR_ERROR,
+    payload: e,
   };
 };
 
@@ -386,6 +407,24 @@ export const RemoveAppointmentData = (id) => {
       })
       .catch((err) => {
         dispatch(haveingError(err));
+      });
+  };
+};
+
+export const BlockDoctor = (id) => {
+  return (dispatch) => {
+    const config = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    dispatch(blockingDoctor());
+    axios
+      .post(`${Host}/doctors/toggleblock`, {id}, config)
+      .then((response) => {
+        dispatch(doctorBlocked());
+        dispatch(saveNewUser(response.data.data, 'doctor'));
+      })
+      .catch((e) => {
+        dispatch(blockingDoctorError(e));
       });
   };
 };

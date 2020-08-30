@@ -1,11 +1,35 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, ScrollView, TouchableOpacity} from 'react-native';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import ProfilePic from '../../../components/atoms/ProfilePic/ProfilePic';
 import Clock from '../../../assets/svg/clock.svg';
 import RecentPatients from '../../../assets/svg/recent_patients.svg';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  FONT_SIZE_12,
+  FONT_SIZE_10,
+  FONT_SIZE_28,
+  FONT_SIZE_16,
+  FONT_SIZE_24,
+} from '../../../styles/typography';
+import {GetRecentPatient} from '../../../redux/action/doctor/myDoctorAction';
 function Dashboard({navigation}) {
+  const {recentPatient, recentPatientLoading} = useSelector(
+    (state) => state.MyDoctorReducer,
+  );
+  const {data} = useSelector((state) => state.AuthReducer);
+
+  const upcomingOppointment = [
+    {name: 'Veronica Stevens', reason: ' -General Checkup'},
+    {name: 'Alan Robert', reason: ' -Osteopathy'},
+    {name: 'Amy Border', reason: ' -Cosmotology'},
+  ];
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(GetRecentPatient(data._id));
+  }, []);
+
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <TopNavBar
@@ -61,7 +85,7 @@ function Dashboard({navigation}) {
                 }}>
                 <Text
                   style={{
-                    fontSize: 28,
+                    fontSize: FONT_SIZE_28,
                     lineHeight: 32,
                     fontWeight: 'bold',
                     color: '#fff',
@@ -69,7 +93,7 @@ function Dashboard({navigation}) {
                   +
                 </Text>
               </View>
-              <Text style={{fontSize: 16}}>Waiting Room</Text>
+              <Text style={{fontSize: FONT_SIZE_16}}>Waiting Room</Text>
             </View>
             <View
               style={{
@@ -80,8 +104,10 @@ function Dashboard({navigation}) {
                 justifyContent: 'space-between',
                 paddingHorizontal: '5%',
               }}>
-              <Text style={{fontSize: 28, fontWeight: 'bold'}}>04</Text>
-              <Text style={{fontSize: 12, paddingHorizontal: '10%'}}>
+              <Text style={{fontSize: FONT_SIZE_28, fontWeight: 'bold'}}>
+                04
+              </Text>
+              <Text style={{fontSize: FONT_SIZE_12, paddingHorizontal: '10%'}}>
                 Patients waiting to be attended
               </Text>
             </View>
@@ -92,7 +118,7 @@ function Dashboard({navigation}) {
                 alignItems: 'center',
                 paddingVertical: '4%',
               }}>
-              <Text style={{color: '#ef786e', fontSize: 12}}>
+              <Text style={{color: '#ef786e', fontSize: FONT_SIZE_12}}>
                 Approx. wait time: 12 mins
               </Text>
             </View>
@@ -126,7 +152,7 @@ function Dashboard({navigation}) {
                 }}>
                 <Text
                   style={{
-                    fontSize: 24,
+                    fontSize: FONT_SIZE_24,
                     lineHeight: 28,
                     fontWeight: 'bold',
                     color: '#fff',
@@ -134,7 +160,7 @@ function Dashboard({navigation}) {
                   $
                 </Text>
               </View>
-              <Text style={{fontSize: 16}}>Revenue</Text>
+              <Text style={{fontSize: FONT_SIZE_16}}>Revenue</Text>
             </View>
             <View
               style={{
@@ -145,7 +171,9 @@ function Dashboard({navigation}) {
                 justifyContent: 'center',
                 paddingHorizontal: '5%',
               }}>
-              <Text style={{fontSize: 28, fontWeight: 'bold'}}>$6.5K</Text>
+              <Text style={{fontSize: FONT_SIZE_28, fontWeight: 'bold'}}>
+                $6.5K
+              </Text>
             </View>
             <View
               style={{
@@ -153,10 +181,11 @@ function Dashboard({navigation}) {
                 alignItems: 'center',
                 paddingVertical: '4%',
               }}>
-              <Text style={{fontSize: 10}}>Approx.revenue-June</Text>
+              <Text style={{fontSize: FONT_SIZE_10}}>Approx.revenue-June</Text>
             </View>
           </View>
         </View>
+
         <View
           style={{
             width: '85%',
@@ -186,213 +215,80 @@ function Dashboard({navigation}) {
               }}>
               <Clock />
             </View>
-            <Text style={{fontSize: 16, marginLeft: '5%'}}>
+            <Text style={{fontSize: FONT_SIZE_16, marginLeft: '5%'}}>
               Upcoming Appointments
             </Text>
           </View>
-
-          <View
-            style={{
-              width: '90%',
-              // backgroundColor: 'red',
-              alignSelf: 'center',
-              borderBottomWidth: 1.5,
-              borderColor: 'rgba(0,0,0,0.08)',
-              paddingVertical: '4%',
-            }}>
+          {upcomingOppointment.map((item) => (
             <View
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
+                width: '90%',
+                // backgroundColor: 'red',
+                alignSelf: 'center',
+                borderBottomWidth: 1.5,
+                borderColor: 'rgba(0,0,0,0.08)',
+                paddingVertical: '4%',
               }}>
-              <View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}>
+                <View>
                   <View
                     style={{
-                      height: 8,
-                      width: 8,
-                      borderRadius: 10,
-                      backgroundColor: '#efa860',
-                      marginRight: '2%',
-                    }}></View>
-                  <Text style={{fontWeight: 'bold'}}>Veronica Stevens</Text>
-                  <Text style={{fontSize: 12}}> - General Checkup</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: '6%',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginRight: '4%',
-                      fontWeight: 'bold',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
                     }}>
-                    10:00 am
-                  </Text>
-                  <Text style={{fontWeight: '900', color: '#efa860'}}>|</Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginLeft: '4%',
-                      color: '#a09e9e',
-                      fontWeight: 'bold',
-                    }}>
-                    30 mins
-                  </Text>
-                </View>
-              </View>
-              <View>
-                <MaterialIcon
-                  name="chevron-right"
-                  size={28}
-                  color={'#a09e9e'}
-                />
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              width: '90%',
-              // backgroundColor: 'red',
-              alignSelf: 'center',
-              borderBottomWidth: 1.5,
-              borderColor: 'rgba(0,0,0,0.08)',
-              paddingVertical: '4%',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
+                    <View
+                      style={{
+                        height: 8,
+                        width: 8,
+                        borderRadius: 10,
+                        backgroundColor: '#efa860',
+                        marginRight: '2%',
+                      }}></View>
+                    <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
+                    <Text style={{fontSize: FONT_SIZE_12}}>{item.reason}</Text>
+                  </View>
                   <View
                     style={{
-                      height: 8,
-                      width: 8,
-                      borderRadius: 10,
-                      backgroundColor: '#efa860',
-                      marginRight: '2%',
-                    }}></View>
-                  <Text style={{fontWeight: 'bold'}}>Alan Robert</Text>
-                  <Text style={{fontSize: 12}}> - Osteopathy</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: '6%',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginRight: '4%',
-                      fontWeight: 'bold',
+                      flexDirection: 'row',
+                      paddingHorizontal: '6%',
+                      alignItems: 'center',
                     }}>
-                    10:30 am
-                  </Text>
-                  <Text style={{fontWeight: '900', color: '#efa860'}}>|</Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginLeft: '4%',
-                      color: '#a09e9e',
-                      fontWeight: 'bold',
-                    }}>
-                    30 mins
-                  </Text>
+                    <Text
+                      style={{
+                        fontSize: FONT_SIZE_12,
+                        marginRight: '4%',
+                        fontWeight: 'bold',
+                      }}>
+                      10:00 am
+                    </Text>
+                    <Text style={{fontWeight: '900', color: '#efa860'}}>|</Text>
+                    <Text
+                      style={{
+                        fontSize: FONT_SIZE_12,
+                        marginLeft: '4%',
+                        color: '#a09e9e',
+                        fontWeight: 'bold',
+                      }}>
+                      30 mins
+                    </Text>
+                  </View>
                 </View>
-              </View>
-              <View>
-                <MaterialIcon
-                  name="chevron-right"
-                  size={28}
-                  color={'#a09e9e'}
-                />
+                <View>
+                  <MaterialIcon
+                    name="chevron-right"
+                    size={28}
+                    color={'#a09e9e'}
+                  />
+                </View>
               </View>
             </View>
-          </View>
-          <View
-            style={{
-              width: '90%',
-              // backgroundColor: 'red',
-              alignSelf: 'center',
-              paddingVertical: '4%',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View
-                    style={{
-                      height: 8,
-                      width: 8,
-                      borderRadius: 10,
-                      backgroundColor: '#efa860',
-                      marginRight: '2%',
-                    }}></View>
-                  <Text style={{fontWeight: 'bold'}}>Amy Border</Text>
-                  <Text style={{fontSize: 12}}> - Cosmotology</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: '6%',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginRight: '4%',
-                      fontWeight: 'bold',
-                    }}>
-                    11:00 am
-                  </Text>
-                  <Text style={{fontWeight: '900', color: '#efa860'}}>|</Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginLeft: '4%',
-                      color: '#a09e9e',
-                      fontWeight: 'bold',
-                    }}>
-                    30 mins
-                  </Text>
-                </View>
-              </View>
-              <View>
-                <MaterialIcon
-                  name="chevron-right"
-                  size={28}
-                  color={'#a09e9e'}
-                />
-              </View>
-            </View>
-          </View>
+          ))}
         </View>
         <View
           style={{
@@ -423,216 +319,95 @@ function Dashboard({navigation}) {
               }}>
               <RecentPatients />
             </View>
-            <Text style={{fontSize: 16, marginLeft: '5%'}}>
+            <Text style={{fontSize: FONT_SIZE_16, marginLeft: '5%'}}>
               Recent Patients
             </Text>
           </View>
-
-          <View
-            style={{
-              width: '90%',
-              // backgroundColor: 'red',
-              alignSelf: 'center',
-              borderBottomWidth: 1.5,
-              borderColor: 'rgba(0,0,0,0.08)',
-              paddingVertical: '4%',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View
-                    style={{
-                      height: 8,
-                      width: 8,
-                      borderRadius: 10,
-                      backgroundColor: '#efa860',
-                      marginRight: '2%',
-                    }}></View>
-                  <Text style={{fontWeight: 'bold'}}>Veronica Stevens</Text>
-                  <Text style={{fontSize: 12}}> - General Checkup</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: '6%',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginRight: '4%',
-                      fontWeight: 'bold',
-                    }}>
-                    10:00 am
-                  </Text>
-                  <Text style={{fontWeight: '900', color: '#efa860'}}>|</Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginLeft: '4%',
-                      color: '#a09e9e',
-                      fontWeight: 'bold',
-                    }}>
-                    30 mins
-                  </Text>
-                </View>
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('PatientsList');
+          {recentPatient.map((item) => {
+            const {patient, _id} = item;
+            return patient ? (
+              <View
+                key={_id}
+                style={{
+                  width: '90%',
+                  // backgroundColor: 'red',
+                  alignSelf: 'center',
+                  borderBottomWidth: 1.5,
+                  borderColor: 'rgba(0,0,0,0.08)',
+                  paddingVertical: '4%',
                 }}>
-                <MaterialIcon
-                  name="chevron-right"
-                  size={28}
-                  color={'#a09e9e'}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View
-            style={{
-              width: '90%',
-              // backgroundColor: 'red',
-              alignSelf: 'center',
-              borderBottomWidth: 1.5,
-              borderColor: 'rgba(0,0,0,0.08)',
-              paddingVertical: '4%',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View>
                 <View
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                   }}>
-                  <View
-                    style={{
-                      height: 8,
-                      width: 8,
-                      borderRadius: 10,
-                      backgroundColor: '#efa860',
-                      marginRight: '2%',
-                    }}></View>
-                  <Text style={{fontWeight: 'bold'}}>Alan Robert</Text>
-                  <Text style={{fontSize: 12}}> - Osteopathy</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: '6%',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginRight: '4%',
-                      fontWeight: 'bold',
+                  <View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}>
+                      <View
+                        style={{
+                          height: 8,
+                          width: 8,
+                          borderRadius: 10,
+                          backgroundColor: '#efa860',
+                          marginRight: '2%',
+                        }}></View>
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                        }}>{`${patient.firstName} ${patient.lastName}`}</Text>
+                      <Text style={{fontSize: FONT_SIZE_12}}>
+                        {' '}
+                        - General Checkup
+                      </Text>
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        paddingHorizontal: '6%',
+                        alignItems: 'center',
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: FONT_SIZE_12,
+                          marginRight: '4%',
+                          fontWeight: 'bold',
+                        }}>
+                        10:00 am
+                      </Text>
+                      <Text style={{fontWeight: '900', color: '#efa860'}}>
+                        |
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: FONT_SIZE_12,
+                          marginLeft: '4%',
+                          color: '#a09e9e',
+                          fontWeight: 'bold',
+                        }}>
+                        30 mins
+                      </Text>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('PatientDetails', {patient});
                     }}>
-                    10:30 am
-                  </Text>
-                  <Text style={{fontWeight: '900', color: '#efa860'}}>|</Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginLeft: '4%',
-                      color: '#a09e9e',
-                      fontWeight: 'bold',
-                    }}>
-                    30 mins
-                  </Text>
-                </View>
-              </View>
-              <View>
-                <MaterialIcon
-                  name="chevron-right"
-                  size={28}
-                  color={'#a09e9e'}
-                />
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              width: '90%',
-              // backgroundColor: 'red',
-              alignSelf: 'center',
-              paddingVertical: '4%',
-            }}>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View
-                    style={{
-                      height: 8,
-                      width: 8,
-                      borderRadius: 10,
-                      backgroundColor: '#efa860',
-                      marginRight: '2%',
-                    }}></View>
-                  <Text style={{fontWeight: 'bold'}}>Amy Border</Text>
-                  <Text style={{fontSize: 12}}> - Cosmotology</Text>
-                </View>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    paddingHorizontal: '6%',
-                    alignItems: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginRight: '4%',
-                      fontWeight: 'bold',
-                    }}>
-                    11:00 am
-                  </Text>
-                  <Text style={{fontWeight: '900', color: '#efa860'}}>|</Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      marginLeft: '4%',
-                      color: '#a09e9e',
-                      fontWeight: 'bold',
-                    }}>
-                    30 mins
-                  </Text>
+                    <MaterialIcon
+                      name="chevron-right"
+                      size={28}
+                      color={'#a09e9e'}
+                    />
+                  </TouchableOpacity>
                 </View>
               </View>
-              <View>
-                <MaterialIcon
-                  name="chevron-right"
-                  size={28}
-                  color={'#a09e9e'}
-                />
-              </View>
-            </View>
-          </View>
+            ) : null;
+          })}
         </View>
       </ScrollView>
     </View>

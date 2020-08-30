@@ -7,6 +7,7 @@ import {
   SECONDARY_BACKGROUND,
 } from '../../../styles/colors';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {FONT_SIZE_16} from '../../../styles/typography';
 function PatientList({navigation}) {
   const patientList = [
     {
@@ -107,7 +108,7 @@ function PatientList({navigation}) {
                   }}></View>
                 <Text
                   style={{
-                    fontSize: 16,
+                    fontSize: FONT_SIZE_16,
                     fontWeight: 'bold',
                     marginLeft: '2%',
                     letterSpacing: 0.5,

@@ -15,11 +15,12 @@ import {Host} from '../../../utils/connection';
 const NewProfile = ({navigation}) => {
   const {data, isLogedin, isDoctor} = useSelector((state) => state.AuthReducer);
   let imageSource = require('../../../assets/jpg/person3.jpg');
-  if (data && isLogedin && !isDoctor) {
+  console.log(data.picture);
+  if (data && isLogedin && !isDoctor && data.picture) {
     imageSource = {
       uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
     };
-  } else if (data && isLogedin && isDoctor) {
+  } else if (data && isLogedin && isDoctor && data.picture.length > 0) {
     imageSource = {
       uri: `${Host}${data.picture[0]
         .replace('public', '')

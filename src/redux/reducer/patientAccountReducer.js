@@ -15,7 +15,19 @@ const initialState = {
   uploadingRecords: false,
   uploadedRecords: '',
   errorUploadingRecords: '',
+  addMedicineLoading: false,
+  addMedicineError: '',
+  gettingMedicine: false,
+  medicines: [],
+  gettingMedicineError: '',
 };
+
+const ADD_MEDICINE_LOADING = 'ADD_MEDICINE_LOADING';
+const MEDICINE_ADDED = 'MEDICINE_ADDED';
+const ADD_MEDICINE_ERROR = 'ADD_MEDICINE_ERROR';
+const GETTING_MEDICINE = 'GETTING_MEDICINE';
+const DONE_GETTING_MEDICINE = 'DONE_GETTING_MEDICINE';
+const ERROR_GETTING_MEDICINE = 'ERROR_GETTING_MEDICINE';
 
 const PatientAccountReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -118,6 +130,41 @@ const PatientAccountReducer = (state = initialState, action) => {
         ...state,
         uploadingRecords: false,
         errorUploadingRecords: action.payload,
+      };
+    case 'ADD_MEDICINE_LOADING':
+      return {
+        ...state,
+        addMedicineLoading: true,
+      };
+    case 'MEDICINE_ADDED':
+      return {
+        ...state,
+        addMedicineLoading: false,
+        addMedicineError: '',
+      };
+    case 'ADD_MEDICINE_ERROR':
+      return {
+        ...state,
+        addMedicineLoading: false,
+        addMedicineError: action.payload,
+      };
+    case 'GETTING_MEDICINE':
+      return {
+        ...state,
+        gettingMedicine: true,
+      };
+    case 'DONE_GETTING_MEDICINE':
+      return {
+        ...state,
+        gettingMedicine: false,
+        medicines: action.payload,
+        gettingMedicineError: '',
+      };
+    case 'ERROR_GETTING_MEDICINE':
+      return {
+        ...state,
+        gettingMedicine: false,
+        gettingMedicineError: action.payload,
       };
     default:
       return state;

@@ -26,7 +26,7 @@ const AddMed = ({visible, onCancel, onUpdate}) => {
     name: '',
     category: '',
     amount: '',
-    date: '',
+    description: '',
     time: [
       {
         value: '',
@@ -95,24 +95,15 @@ const AddMed = ({visible, onCancel, onUpdate}) => {
           marginBottom: 15,
         }}>
         <TextInput
-          value={details.date}
-          onChangeText={(text) => setDetails({...details, date1: text})}
+          value={details.description}
+          onChangeText={(text) => setDetails({...details, description: text})}
           placeholderTextColor={INPUT_PLACEHOLDER}
-          placeholder="Course Duration"
+          placeholder="Course Description"
           style={[
             styles.text,
             {borderBottomWidth: 0, flex: 1, marginBottom: 0},
           ]}
-          editable={false}
         />
-        <TouchableOpacity>
-          <FontAwesome5
-            name="calendar-alt"
-            size={22}
-            color={NEW_PRIMARY_COLOR}
-            style={{marginHorizontal: 5}}
-          />
-        </TouchableOpacity>
       </View>
 
       <Text style={[styles.text, {borderBottomWidth: 0, marginBottom: 0}]}>
@@ -199,6 +190,7 @@ const AddMed = ({visible, onCancel, onUpdate}) => {
       <DmzButton
         onPress={() => {
           onUpdate(details);
+          onCancel();
         }}
         style={{
           Text: {

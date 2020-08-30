@@ -112,7 +112,7 @@ const DoctorDrawer = createDrawerNavigator(
     PatientsList: Patients,
   },
   {
-    initialRouteName: 'Onboarding',
+    initialRouteName: 'Dashboard',
     drawerPosition: 'right',
     headerMode: 'none',
     drawerType: 'none',

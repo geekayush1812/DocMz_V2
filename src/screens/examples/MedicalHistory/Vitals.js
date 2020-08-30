@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   Text,
   View,
@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import {
   GREY_BACKGROUND,
@@ -20,6 +21,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
 import Graph from '../../../components/atoms/Graphs/Graphs';
 import {UpdateVitals} from '../../../redux/action/patientAccountAction';
+import {LineChart} from 'react-native-chart-kit';
 const PADDING = 10;
 
 const Vitals = () => {
@@ -29,6 +31,44 @@ const Vitals = () => {
   const [sugarModal, setSugarModal] = useState(false);
   const [tempModal, setTempModal] = useState(false);
   const [bpModal, setBpModal] = useState(false);
+  const [graphData, setGraphData] = useState([
+    0,
+    0,
+    0,
+    0,
+    2,
+    -5,
+    10,
+    -5,
+    40,
+    -30,
+    -5,
+    -5,
+    10,
+    -8,
+    -5,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    2,
+    -5,
+    10,
+    -5,
+    40,
+    -30,
+    -5,
+    -5,
+    10,
+    -8,
+    -5,
+    0,
+    0,
+  ]);
+
   const {patient} = useSelector((state) => state.PatientAccountReducer);
   const dispatch = useDispatch();
   const [vitalsInfo, setVitalsInfo] = useState({
@@ -51,7 +91,6 @@ const Vitals = () => {
     };
     return res;
   };
-
   useEffect(() => {
     console.log(patient);
     setVitalsInfo({
@@ -219,10 +258,36 @@ const Vitals = () => {
 
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 3, marginRight: 20}}>
-              <Graph
-                data={[0, 30, 49, 78, 120, 132]}
-                hasAxis={true}
-                style={{alignSelf: 'center'}}
+              <LineChart
+                bezier
+                data={{
+                  datasets: [
+                    {
+                      data: [20, 45, 28, 80, 99, 43],
+                      color: (opacity = 1) => `#efa860`,
+                      strokeWidth: 3,
+                      withDots: false,
+                    },
+                  ],
+                }}
+                fromZero
+                withVerticalLabels={false}
+                withInnerLines={false}
+                withOuterLines={false}
+                width={250}
+                height={150}
+                chartConfig={{
+                  backgroundGradientFrom: '#fff',
+                  backgroundGradientFromOpacity: 0,
+                  backgroundGradientTo: '#fff',
+                  backgroundGradientToOpacity: 1,
+                  color: (opacity = 1) => `#a3a3a3`,
+                  fillShadowGradientOpacity: 0,
+                  propsForBackgroundLines: {
+                    // fill: '#b2f5f5',
+                    // // stroke: 'blue',
+                  },
+                }}
               />
               <Text style={styles.text3}>
                 Updated on :
@@ -292,10 +357,11 @@ const Vitals = () => {
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 3, marginRight: 20}}>
               <Graph
-                data={[10, 20, 39, 88, 83, 67]}
-                hasAxis={true}
+                data={graphData}
+                hasAxis={false}
                 style={{alignSelf: 'center'}}
               />
+
               <Text style={styles.text3}>Updated on : 22 May ‘20</Text>
             </View>
 
