@@ -10,33 +10,6 @@ import {
   AddMedicine,
 } from '../../../redux/action/patientAccountAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
-const dummyData = {
-  Diabetes: [
-    {
-      name: 'Galvus Met 50/500 mg',
-      frequency: 2,
-      completedDays: 16,
-      totalDays: 56,
-      alert: true,
-    },
-    {
-      name: 'Janumet 50/1 gm Tablet',
-      frequency: 2,
-      completedDays: 16,
-      totalDays: 56,
-      alert: false,
-    },
-  ],
-  Migrane: [
-    {
-      name: 'Esess 42',
-      frequency: 1,
-      completedDays: 6,
-      totalDays: 14,
-      alert: false,
-    },
-  ],
-};
 
 const Meds = () => {
   const [modalVisible, setVisible] = useState(false);

@@ -137,6 +137,51 @@ const gettingRecentPatientError = (err) => {
   };
 };
 
+/**
+ *  Appointment list Action
+ */
+
+const GETTING_APPOINTMENT_LIST = 'GETTING_APPOINTMENT_LIST';
+const GOT_APPOINTMENT_LIST = 'GOT_APPOINTMENT_LIST';
+const ERROR_GETTING_APPOINTMENT = 'ERROR_GETTING_APPOINTMENT';
+
+const gettingAppointments = () => {
+  return {
+    type: GETTING_APPOINTMENT_LIST,
+  };
+};
+const gotAppointments = (appointments) => {
+  return {
+    type: GOT_APPOINTMENT_LIST,
+    payload: appointments,
+  };
+};
+const errorGettingAppointments = (e) => {
+  return {
+    type: ERROR_GETTING_APPOINTMENT,
+    payload: e,
+  };
+};
+
+export const GetAppointments = (patientId) => (dispatch) => {
+  dispatch(gettingAppointments());
+  axios
+    .get(`${Host}/doctors/appointments/${patientId}`)
+    .then((response) => {
+      const {data, status} = response.data;
+      if (status) {
+        dispatch(gotAppointments(data));
+      } else throw new Error('Internal Error!! Try again.');
+    })
+    .catch((e) => {
+      dispatch(errorGettingAppointments(e));
+    });
+};
+
+/**
+ *  End Appointment list
+ */
+
 export const GettingDocterLatestInfo = (id, limit = 3) => {
   return (dispatch) => {
     dispatch(startLoading());

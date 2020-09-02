@@ -140,14 +140,15 @@ const NewProfile = ({navigation}) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Appointments', {})}>
             <View style={styles.listRow}>
               <Image
                 source={require('../../../assets/icons/profile/referals.png')}
                 style={{height: 30, width: 50, marginHorizontal: 10}}
                 resizeMode="contain"
               />
-              <Text style={[styles.smallText, {flex: 1}]}>Referrals</Text>
+              <Text style={[styles.smallText, {flex: 1}]}>My Appointments</Text>
               <Image
                 source={require('../../../assets/icons/back.png')}
                 style={styles.rowRightIcon}
@@ -156,14 +157,14 @@ const NewProfile = ({navigation}) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('MyDoctors')}>
             <View style={styles.listRow}>
               <Image
                 source={require('../../../assets/icons/profile/coupons.png')}
                 style={{height: 20, width: 50, marginHorizontal: 10}}
                 resizeMode="contain"
               />
-              <Text style={[styles.smallText, {flex: 1}]}>My Coupons</Text>
+              <Text style={[styles.smallText, {flex: 1}]}>My Doctors</Text>
               <Image
                 source={require('../../../assets/icons/back.png')}
                 style={styles.rowRightIcon}

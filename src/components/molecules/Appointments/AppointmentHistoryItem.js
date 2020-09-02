@@ -6,96 +6,94 @@ import {
   SECONDARY_COLOR,
   NEW_PRIMARY_COLOR,
 } from '../../../styles/colors';
-
-const AppointmentHistoryItem = ({
-  style,
-  docName,
-  docSpeciality,
-  appointmentName,
-}) => (
-  <View style={[styles.mainContainer, style ?? {}]}>
-    <Image
-      source={require('../../../assets/jpg/person1.jpg')}
-      style={{height: 70, width: 70, borderRadius: 35, margin: 10}}
-    />
-
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'space-evenly',
-        margin: 10,
-      }}>
-      <Text style={styles.docName}>{docName}</Text>
-      <Text style={styles.docSpeciality}>{docSpeciality}</Text>
-      <Text style={styles.appointmentName}>{appointmentName}</Text>
-    </View>
-
-    <View style={{justifyContent: 'space-evenly'}}>
-      <View>
-        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-          <Text
-            style={{
-              fontFamily: 'Montserrat-SemiBold',
-              fontSize: 12,
-              color: INPUT_PLACEHOLDER,
-            }}>
-            Fri,{' '}
-          </Text>
-          <Text
-            style={{
-              fontFamily: 'Montserrat-Regular',
-              fontSize: 12,
-              color: INPUT_PLACEHOLDER,
-            }}>
-            July 29
-          </Text>
-        </View>
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Regular',
-            fontSize: 9,
-            color: INPUT_PLACEHOLDER,
-          }}>
-          10:40 am - 11:00 am
-        </Text>
-      </View>
+import moment from 'moment';
+const AppointmentHistoryItem = ({style, item}) => {
+  const {doctor} = item;
+  return (
+    <View style={[styles.mainContainer, style ?? {}]}>
+      <Image
+        source={require('../../../assets/jpg/person1.jpg')}
+        style={{height: 70, width: 70, borderRadius: 35, margin: 10}}
+      />
 
       <View
         style={{
-          flexDirection: 'row',
+          flex: 1,
           justifyContent: 'space-evenly',
-          alignItems: 'center',
+          margin: 10,
         }}>
-        <View
-          style={[styles.iconContainer, {backgroundColor: SECONDARY_COLOR}]}>
-          <Image
-            source={require('../../../assets/icons/med.png')}
+        <Text style={styles.docName}>{doctor.basic.name}</Text>
+        <Text style={styles.docSpeciality}>{doctor.specialty}</Text>
+        <Text style={styles.appointmentName}>{doctor.appointmentName}</Text>
+      </View>
+
+      <View style={{justifyContent: 'space-evenly'}}>
+        <View>
+          <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+            <Text
+              style={{
+                fontFamily: 'Montserrat-SemiBold',
+                fontSize: 12,
+                color: INPUT_PLACEHOLDER,
+              }}>
+              {moment(item.bookedFor).format('dddd, ')}
+            </Text>
+            <Text
+              style={{
+                fontFamily: 'Montserrat-Regular',
+                fontSize: 12,
+                color: INPUT_PLACEHOLDER,
+              }}>
+              {moment(item.bookedFor).format('MMM DD')}
+            </Text>
+          </View>
+          <Text
             style={{
-              height: 15,
-              width: 16,
-            }}
-            resizeMode="contain"
-          />
+              fontFamily: 'Montserrat-Regular',
+              fontSize: 9,
+              color: INPUT_PLACEHOLDER,
+            }}>
+            {moment(item.bookedFor).format('hh:mm a')}
+          </Text>
         </View>
 
         <View
-          style={[
-            styles.iconContainer,
-            {backgroundColor: NEW_PRIMARY_BACKGROUND},
-          ]}>
-          <Image
-            source={require('../../../assets/icons/doc.png')}
-            style={{
-              height: 15,
-              width: 12,
-            }}
-            resizeMode="contain"
-          />
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            alignItems: 'center',
+          }}>
+          <View
+            style={[styles.iconContainer, {backgroundColor: SECONDARY_COLOR}]}>
+            <Image
+              source={require('../../../assets/icons/med.png')}
+              style={{
+                height: 15,
+                width: 16,
+              }}
+              resizeMode="contain"
+            />
+          </View>
+
+          <View
+            style={[
+              styles.iconContainer,
+              {backgroundColor: NEW_PRIMARY_BACKGROUND},
+            ]}>
+            <Image
+              source={require('../../../assets/icons/doc.png')}
+              style={{
+                height: 15,
+                width: 12,
+              }}
+              resizeMode="contain"
+            />
+          </View>
         </View>
       </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default AppointmentHistoryItem;
 

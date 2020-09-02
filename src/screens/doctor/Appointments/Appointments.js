@@ -11,10 +11,13 @@ import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import VerticalText from '../../../components/atoms/VerticalText/VerticalText';
 import moment from 'moment';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-export default function Appointments() {
+import {useSelector, useDispatch} from 'react-redux';
+import {GetAppointments} from '../../../redux/action/doctor/myDoctorAction';
+import {RemoveAppointment} from '../../../redux/action/patientAccountAction';
+export default function Appointments({navigation}) {
   const [months, setMonths] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const dispatch = useDispatch();
   const getMonths = () => {
     const monthList = moment.months();
     const coming12Months = monthList
@@ -25,6 +28,20 @@ export default function Appointments() {
   useEffect(() => {
     getMonths();
   }, []);
+  const {
+    appointments,
+    gettingAppointment,
+    errorGettingAppointment,
+  } = useSelector((state) => state.MyDoctorReducer);
+  const {data} = useSelector((state) => state.AuthReducer);
+
+  useEffect(() => {
+    !gettingAppointment && dispatch(GetAppointments(data._id));
+  }, []);
+  useEffect(() => {
+    console.log(appointments);
+  }, [appointments]);
+
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <TopNavBar headerText="My Appointments"></TopNavBar>
@@ -48,7 +65,7 @@ export default function Appointments() {
             adjustsFontSizeToFit
             style={{
               color: NEW_HEADER_TEXT,
-              fontSize: 20,
+              fontSize: 18,
               fontFamily: 'Montserrat-Bold',
             }}>
             Upcoming
@@ -66,7 +83,7 @@ export default function Appointments() {
             adjustsFontSizeToFit
             style={{
               color: INPUT_PLACEHOLDER,
-              fontSize: 20,
+              fontSize: 18,
               fontFamily: 'Montserrat-Regular',
             }}>
             History
@@ -93,7 +110,7 @@ export default function Appointments() {
                 }}>
                 <Text
                   style={{
-                    fontSize: 20,
+                    fontSize: 18,
                     color:
                       selectedIndex == index
                         ? NEW_HEADER_TEXT
@@ -143,81 +160,103 @@ export default function Appointments() {
             }}>
             10:00 am - 12:00 pm
           </Text>
-          <Card />
-          <Card />
-          <Text
-            style={{
-              fontSize: 22,
-              marginTop: '4%',
-              marginBottom: '3%',
-              marginLeft: '1%',
-            }}>
-            04:00 pm - 05:00 pm
-          </Text>
-          <Card />
-          <Card />
-          <Card />
+          {appointments.map((item) => {
+            return (
+              <Card
+                key={item._id}
+                item={item}
+                doctorId={data._id}
+                navigation={navigation}
+              />
+            );
+          })}
         </View>
       </ScrollView>
     </View>
   );
 }
 
-const Card = () => (
-  <View
-    style={{
-      backgroundColor: '#fff',
-      width: '100%',
-      elevation: 2,
-      borderRadius: 10,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      paddingHorizontal: '2%',
-      marginBottom: '5%',
-    }}>
+const Card = ({item, doctorId, navigation}) => {
+  const {patient} = item;
+  const dispatch = useDispatch();
+  const cancelAppointment = () => {
+    const data = {
+      id: doctorId,
+      patientId: patient._id,
+      reason: 'nil reason',
+      byDoctor: true,
+      byPatient: false,
+    };
+    dispatch(RemoveAppointment(data));
+    dispatch(GetAppointments(doctorId));
+  };
+  return (
     <View
       style={{
-        paddingVertical: '4%',
-        paddingHorizontal: '4%',
-        flex: 1,
+        backgroundColor: '#fff',
+        width: '100%',
+        elevation: 2,
+        borderRadius: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: '2%',
+        marginBottom: '5%',
       }}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <View
+        style={{
+          paddingVertical: '4%',
+          paddingHorizontal: '4%',
+          flex: 1,
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View
+            style={{
+              height: 8,
+              width: 8,
+              borderRadius: 8,
+              backgroundColor: '#efa860',
+            }}></View>
+          <Text style={{fontSize: 16, fontWeight: 'bold', marginLeft: '2%'}}>
+            {`${patient.firstName} ${patient.lastName}`}
+          </Text>
+          <Text style={{fontSize: 16}}> - General Checkup</Text>
+        </View>
         <View
           style={{
-            height: 8,
-            width: 8,
-            borderRadius: 8,
-            backgroundColor: '#efa860',
-          }}></View>
-        <Text style={{fontSize: 16, fontWeight: 'bold', marginLeft: '2%'}}>
-          Hunter Richards
-        </Text>
-        <Text style={{fontSize: 16}}> - General Checkup</Text>
+            flexDirection: 'row',
+            paddingLeft: '5%',
+            marginTop: '2%',
+          }}>
+          <Text style={{fontWeight: 'bold', marginRight: '4%'}}>
+            {moment(item.bookedFor).format('hh:mm a')}
+          </Text>
+          <Text style={{fontWeight: 'bold', color: '#efa860'}}>|</Text>
+          <Text style={{color: '#a09e9e', marginLeft: '4%'}}>30 mins</Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            marginTop: '2%',
+          }}>
+          <TouchableOpacity>
+            <Text style={{marginRight: '6%', color: '#37acac'}}>
+              RESCHEDULE
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={cancelAppointment}>
+            <Text style={{color: '#ef786e'}}>CANCEL</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingLeft: '5%',
-          marginTop: '2%',
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('PatientDetails', {patient});
         }}>
-        <Text style={{fontWeight: 'bold', marginRight: '4%'}}>10:30 am</Text>
-        <Text style={{fontWeight: 'bold', color: '#efa860'}}>|</Text>
-        <Text style={{color: '#a09e9e', marginLeft: '4%'}}>30 mins</Text>
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginTop: '2%',
-        }}>
-        <Text style={{marginRight: '6%', color: '#37acac'}}>RESCHEDULE</Text>
-        <Text style={{color: '#ef786e'}}>CANCEL</Text>
-      </View>
+        <MaterialIcon name={'chevron-right'} size={38} color={'#047b7b'} />
+      </TouchableOpacity>
     </View>
-    <View>
-      <MaterialIcon name={'chevron-right'} size={38} color={'#047b7b'} />
-    </View>
-  </View>
-);
+  );
+};

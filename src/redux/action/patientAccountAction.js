@@ -19,13 +19,6 @@ const RECORDS_UPLOADING = 'RECORDS_UPLOADING';
 const RECORDS_UPLOADED = 'RECORDS_UPLOADED';
 const RECORDS_UPLOADING_ERROR = 'RECORDS_UPLOADING_ERROR';
 
-const ADD_MEDICINE_LOADING = 'ADD_MEDICINE_LOADING';
-const MEDICINE_ADDED = 'MEDICINE_ADDED';
-const ADD_MEDICINE_ERROR = 'ADD_MEDICINE_ERROR';
-const GETTING_MEDICINE = 'GETTING_MEDICINE';
-const DONE_GETTING_MEDICINE = 'DONE_GETTING_MEDICINE';
-const ERROR_GETTING_MEDICINE = 'ERROR_GETTING_MEDICINE';
-
 const saveUserAccount = (data, dataVitals) => {
   return {
     type: SAVE,
@@ -126,6 +119,14 @@ const errorUploadingRecords = (err) => {
 /**
  *   medicine actions
  */
+
+const ADD_MEDICINE_LOADING = 'ADD_MEDICINE_LOADING';
+const MEDICINE_ADDED = 'MEDICINE_ADDED';
+const ADD_MEDICINE_ERROR = 'ADD_MEDICINE_ERROR';
+const GETTING_MEDICINE = 'GETTING_MEDICINE';
+const DONE_GETTING_MEDICINE = 'DONE_GETTING_MEDICINE';
+const ERROR_GETTING_MEDICINE = 'ERROR_GETTING_MEDICINE';
+
 const addingMedicine = () => {
   return {
     type: ADD_MEDICINE_LOADING,
@@ -168,7 +169,7 @@ export const GetMedicine = (metaId) => (dispatch) => {
   axios
     .get(`${Host}/medicine/get/${metaId}`, config)
     .then((res) => {
-      if (res.status) {
+      if (res.data.status) {
         dispatch(doneGettingMedicine(res.data.data));
       } else {
         throw new Error('Internal error.Try again!!');
@@ -188,7 +189,7 @@ export const AddMedicine = (data) => (dispatch) => {
   axios
     .post(`${Host}/medicine/addbypatient`, data, config)
     .then((res) => {
-      if (res.status) {
+      if (res.data.status) {
         dispatch(medicineAdded());
         dispatch(GetMedicine(data.metaId));
       } else {
@@ -205,7 +206,86 @@ export const AddMedicine = (data) => (dispatch) => {
  */
 
 /**
- *
+ *  Appointment list Action
+ */
+
+const GETTING_APPOINTMENT_LIST = 'GETTING_APPOINTMENT_LIST';
+const GOT_APPOINTMENT_LIST = 'GOT_APPOINTMENT_LIST';
+const ERROR_GETTING_APPOINTMENT = 'ERROR_GETTING_APPOINTMENT';
+
+const gettingAppointments = () => {
+  return {
+    type: GETTING_APPOINTMENT_LIST,
+  };
+};
+const gotAppointments = (appointments) => {
+  return {
+    type: GOT_APPOINTMENT_LIST,
+    payload: appointments,
+  };
+};
+const errorGettingAppointments = (e) => {
+  return {
+    type: ERROR_GETTING_APPOINTMENT,
+    payload: e,
+  };
+};
+
+export const GetAppointments = (patientId) => (dispatch) => {
+  dispatch(gettingAppointments());
+  axios
+    .get(`${Host}/patient/appointments/${patientId}`)
+    .then((response) => {
+      const {data, status} = response.data;
+      if (status) {
+        dispatch(gotAppointments(data));
+      } else throw new Error('Internal Error!! Try again.');
+    })
+    .catch((e) => {
+      dispatch(errorGettingAppointments(e));
+    });
+};
+
+/**
+ *  End Appointment list
+ */
+
+/**
+ *  Recent doctor Action
+ */
+
+const GETTING_RECENT_DOCTORS = 'GETTING_RECENT_DOCTORS';
+const GOT_RECENT_DOCTOR = 'GOT_RECENT_DOCTOR';
+const ERROR_GETTING_RECENT_DOCTOR = 'ERROR_GETTING_RECENT_DOCTOR';
+
+const gettingRecentDoctor = () => ({
+  type: GETTING_RECENT_DOCTORS,
+});
+const gotRecentDoctor = (recentDoctors) => ({
+  type: GOT_RECENT_DOCTOR,
+  payload: recentDoctors,
+});
+const errorGettingRecentDoctor = (e) => ({
+  type: ERROR_GETTING_RECENT_DOCTOR,
+  payload: e,
+});
+
+export const GetRecentDoctor = (patientId) => (dispatch) => {
+  dispatch(gettingRecentDoctor());
+  axios
+    .get(`${Host}/patient/recentdoctors/${patientId}`)
+    .then((res) => {
+      const {status, data} = res.data;
+      if (status) dispatch(gotRecentDoctor(data));
+      else throw new Error('Internal Error!!');
+    })
+    .catch((e) => {
+      dispatch(errorGettingRecentDoctor(e));
+    });
+};
+
+/**
+ *  End Recent doctor action
  */
 
 export const resetUserAccountReducer = () => {
@@ -216,36 +296,19 @@ export const resetUserAccountReducer = () => {
 
 export const GetPatientInfo = (id) => {
   return (dispatch) => {
-    console.log('authAction > GetPatientInfor', id);
     dispatch(startLoading());
 
     axios
-      .get(`${Host}/patient/getinfo/${id}`)
+      .get(`${Host}/patient/getfullinfo/${id}`)
       .then((result) => {
-        if (result.status) {
-          console.log('user data !! 1', result.data.data.meta);
+        if (result.data.status) {
           const data = result.data.data;
-          // GetPatientVitalInfo(result.data.data);
-          // dispatch(saveUserAccount(result.data.data));
-          axios
-            .post(`${Host}/patient/meta/get`, {
-              id: data.meta,
-            })
-            .then((res) => {
-              if (res.status) {
-                console.log('user data !! 2', res);
-                dispatch(saveUserAccount(data, res.data.data));
-              }
-            })
-            .catch((err) => {
-              console.log('user data !! 2 error');
-
-              dispatch(havingError(err));
-            });
+          dispatch(saveUserAccount(data, data.meta));
+        } else {
+          throw new Error('Internal Error!!');
         }
       })
       .catch((err) => {
-        console.log('user data !! 1 error');
         dispatch(havingError(err));
       });
   };
@@ -561,7 +624,6 @@ export const bookAppointment = (data) => {
 export const RemoveAppointment = (data) => {
   return async (dispatch) => {
     const config = {
-      Accept: '*/*',
       'Content-Type': 'application/x-www-form-urlencoded',
     };
     try {
@@ -570,10 +632,7 @@ export const RemoveAppointment = (data) => {
         data,
         config,
       );
-      console.log('#######################');
-      console.log(request.data);
     } catch (e) {
-      console.log('******************');
       console.log(e);
     }
   };

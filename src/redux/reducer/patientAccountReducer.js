@@ -20,14 +20,13 @@ const initialState = {
   gettingMedicine: false,
   medicines: [],
   gettingMedicineError: '',
+  gettingAppointments: false,
+  appointments: [],
+  errorGettingAppointments: '',
+  gettingRecentDoctors: false,
+  recentDoctors: [],
+  errorGettingRecentDoctors: '',
 };
-
-const ADD_MEDICINE_LOADING = 'ADD_MEDICINE_LOADING';
-const MEDICINE_ADDED = 'MEDICINE_ADDED';
-const ADD_MEDICINE_ERROR = 'ADD_MEDICINE_ERROR';
-const GETTING_MEDICINE = 'GETTING_MEDICINE';
-const DONE_GETTING_MEDICINE = 'DONE_GETTING_MEDICINE';
-const ERROR_GETTING_MEDICINE = 'ERROR_GETTING_MEDICINE';
 
 const PatientAccountReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -165,6 +164,44 @@ const PatientAccountReducer = (state = initialState, action) => {
         ...state,
         gettingMedicine: false,
         gettingMedicineError: action.payload,
+      };
+    case 'GETTING_APPOINTMENT_LIST':
+      return {
+        ...state,
+        gettingAppointments: true,
+      };
+    case 'GOT_APPOINTMENT_LIST':
+      return {
+        ...state,
+        gettingAppointments: false,
+        appointments: action.payload,
+        errorGettingAppointments: '',
+      };
+    case 'ERROR_GETTING_APPOINTMENT':
+      return {
+        ...state,
+        gettingAppointments: false,
+        appointments: '',
+        errorGettingAppointments: action.payload,
+      };
+    case 'GETTING_RECENT_DOCTORS':
+      return {
+        ...state,
+        gettingRecentDoctors: true,
+      };
+    case 'GOT_RECENT_DOCTOR':
+      return {
+        ...state,
+        gettingRecentDoctors: false,
+        recentDoctors: action.payload,
+        errorGettingRecentDoctors: '',
+      };
+    case 'ERROR_GETTING_RECENT_DOCTOR':
+      return {
+        ...state,
+        gettingRecentDoctors: false,
+        recentDoctors: '',
+        errorGettingRecentDoctors: action.payload,
       };
     default:
       return state;

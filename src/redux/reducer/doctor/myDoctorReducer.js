@@ -16,6 +16,9 @@ const inititalState = {
   recentPatientLoading: false,
   recentPatient: [],
   recentPatientError: '',
+  appointments: [],
+  gettingAppointment: false,
+  errorGettingAppointment: '',
 };
 
 const MyDoctorReducer = (state = inititalState, action) => {
@@ -130,6 +133,25 @@ const MyDoctorReducer = (state = inititalState, action) => {
         ...state,
         recentPatientLoading: false,
         recentPatientError: action.payload,
+      };
+    case 'GETTING_APPOINTMENT_LIST':
+      return {
+        ...state,
+        gettingAppointment: true,
+      };
+    case 'GOT_APPOINTMENT_LIST':
+      return {
+        ...state,
+        gettingAppointment: false,
+        appointments: action.payload,
+        errorGettingAppointment: '',
+      };
+    case 'ERROR_GETTING_APPOINTMENT':
+      return {
+        ...state,
+        gettingAppointment: false,
+        appointments: '',
+        errorGettingAppointment: action.payload,
       };
     default:
       return state;

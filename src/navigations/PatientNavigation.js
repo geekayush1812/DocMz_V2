@@ -1,13 +1,10 @@
 import React from 'react';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import {Dimensions} from 'react-native';
-import Home from '../screens/patient/home/Home';
 import Setting from '../screens/patient/settings/Setting';
 import Wishlist from '../screens/patient/wishlist/Wishlist';
 
-import Appointments from '../screens/patient/appointments/NewAppointments';
-import AppointmentsDoctor from '../screens/doctor/Appointments/Appointments';
-// import Appointments from '../screens/patient/appointments/Appointments';
+import Appointments from '../screens/patient/appointments/Appointments';
 import Consultations from '../screens/patient/consultations/Consultations';
 import MyDoctors from '../screens/patient/mydoctors/MyDoctors';
 import MedicalRecords from '../screens/patient/medicalrecords/MedicalRecords';
@@ -16,24 +13,16 @@ import Payments from '../screens/patient/payments/Payments';
 import AppSettings from '../screens/patient/more/settings/Settings';
 import Help from '../screens/patient/more/help/Help';
 import NotFound from '../components/organisms/NotFound/NotFound';
-
-import Custom from '../components/organisms/drawer/custom/Custom';
 import DocProfileLite from '../screens/patient/docProfileLite/DocProfileLite';
 import AppointmentForm from '../screens/patient/appointmentForm/AppointmentForm';
 import ConfirmAppointment from '../components/molecules/ConfirmAppointment/ConfirmAppointment';
-import BookingDetails from '../screens/patient/questionnaire/BookingDetails';
-// import FamilyMember from '../screens/patient/familyMember/FamilyMember';
 import FamilyMember from '../screens/patient/familyMember/Newfamily';
-import WaitingRoom from '../screens/patient/waitingRoom/WaitingRoom';
-// import ProfileScreen from '../screens/examples/Profile/Profile';
 import ProfileScreen from '../screens/examples/Profile/NewProfile';
 import LandingPageScreen from '../screens/examples/LandingPage/LandingPageScreen';
 import PatientAdressList from '../screens/examples/PatientAddress/PatientAdressList';
-import PatienDashboard from '../screens/examples/PatientDashboard/PatienDashboard';
 import AddAdressScreen from '../screens/examples/PatientAddress/AddAdressScreen';
 import PatientSubscription from '../screens/examples/PatientSubscription/PatientSubscription';
 import RedeemVoucher from '../screens/examples/RedeemVoucher/RedeemVoucher';
-import Calendar from '../screens/examples/PatientCalendar/PatientCalendarScreen';
 import {createAppContainer} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import EditPhoneNumber from '../components/molecules/EditPhoneNumber/EditPhoneNumber';
@@ -43,6 +32,7 @@ import EmailIdOtp from '../components/molecules/EditEmailId/EmailIdOtp';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {PRIMARY_COLOR} from '../styles/colors';
+import Custom from '../components/organisms/drawer/custom/Custom';
 import NewPatientDashboard from '../screens/examples/PatientDashboard/NewPatientDashboard';
 import NewPayment from '../screens/examples/payments/NewPayments';
 import Pay from '../screens/examples/payments/Pay';
@@ -54,55 +44,6 @@ import MedicalHistory from '../screens/examples/MedicalHistory/MedicalHistory';
 import HealthCare from '../screens/patient/HealthCare/HealthCare';
 import PatientDetails from '../screens/doctor/PatientDetails/PatientDetails';
 import PatientList from '../screens/doctor/Patients/Patients';
-// const PatientBottomNavigation = createSwitchNavigator(
-//   {
-//     patientHomeScreen: Home,
-//     patientSettingScreen: Setting,
-//     widhlistScreen: Wishlist,
-//   },
-//   {
-//     initialRouteName: 'patientHomeScreen',
-//     headerMode: 'none',
-//   },
-// );
-
-// const AppointmentsStack = createStackNavigator(
-//   {
-//     AppointmentForm,
-//     DocProfileLite,
-//     ConfirmAppointment
-//   },
-//   {
-//     initialRouteName: 'DocProfileLite',
-//     headerMode: 'none',
-//   },
-// );
-
-// const tabNav = createTabNavigator({
-//   about: About,
-//   calender: Calender,
-//   feedback: Feedback
-// }, {
-//   navigationOptions: ({ navigation }) => ({
-//     tabBarIcon: ({ focused, horizontal, tintColor }) => {
-//       const { routeName } = navigation.state;
-//       let iconName;
-//       if (routeName === 'Home') {
-//         iconName = `ios-information-circle${focused ? '' : '-outline'}`;
-//       } else if (routeName === 'Settings') {
-//         iconName = `ios-options${focused ? '' : '-outline'}`;
-//       }
-
-//       // You can return any component that you like here! We usually use an
-//       // icon component from react-native-vector-icons
-//       return <Ionicons name={iconName} size={horizontal ? 20 : 25} color={tintColor} />;
-//     },
-//   }),
-//   tabBarOptions: {
-//     activeTintColor: 'tomato',
-//     inactiveTintColor: 'gray',
-//   },
-// })
 
 const screenWidth = Dimensions.get('screen').width;
 const ProfileStack = createStackNavigator(
@@ -181,9 +122,7 @@ const PatientNavigationHome = createBottomTabNavigator(
 
 const PatientNavigation = createDrawerNavigator(
   {
-    // Home,
     Home: PatientNavigationHome,
-    // Home: Calendar,
     AppointmentsStack: {
       screen: DocProfileLite,
     },
