@@ -329,14 +329,16 @@ export const getSpecialty = (pageNo = 0, size = 5) => {
 };
 export const UpdateDoctorProfile = (data, callback) => (dispatch) => {
   const config = {
-    Accept: '*/*',
-    'Content-Type': 'application/x-www-form-urlencoded',
+    headers: {
+      'Content-Type': 'application/json',
+    },
   };
+  const _data = JSON.stringify(data);
   dispatch(updatingDoctorProfile());
 
   try {
     axios
-      .post(`${Host}/doctors/profile/update`, data, config)
+      .post(`${Host}/doctors/profile/update`, _data, config)
       .then((response) => {
         dispatch(updatedDoctorProfile());
         console.log(response.data.data);

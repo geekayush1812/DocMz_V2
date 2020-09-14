@@ -143,6 +143,7 @@ export default function SignUpStep3Screen(props) {
             onValueChange={(itemValue, itemIndex) =>
               handleSpecialty(itemValue)
             }>
+            <Picker.Item label={'Speciality'} value={''} />
             {specialty?.map((item) => {
               return <Picker.Item label={item} value={item} />;
             })}

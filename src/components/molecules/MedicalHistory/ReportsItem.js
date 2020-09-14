@@ -21,7 +21,7 @@ const ReportsItem = ({data}) => (
           fontSize: 16,
           paddingVertical: 2,
         }}>
-        {data.name}
+        {data.testName}
       </Text>
       <Text
         style={{
@@ -29,7 +29,7 @@ const ReportsItem = ({data}) => (
           fontSize: 13,
           paddingVertical: 2,
         }}>
-        {data.details}
+        {data.test_type}
       </Text>
       <Text
         style={{

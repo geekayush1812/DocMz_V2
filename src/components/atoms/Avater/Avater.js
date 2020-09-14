@@ -15,7 +15,7 @@ const Avater = ({src, type = 0, style}) => {
   return (
     <View>
       <Image
-        source={src ?? require('../../../assets/jpg/person1.jpg')}
+        source={src ?? require('../../../assets/images/dummy_profile.png')}
         style={[
           styles.container,
           {width: size[type], height: size[type]},

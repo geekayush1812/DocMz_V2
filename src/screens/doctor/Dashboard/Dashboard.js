@@ -14,12 +14,26 @@ import {
   FONT_SIZE_24,
 } from '../../../styles/typography';
 import {GetRecentPatient} from '../../../redux/action/doctor/myDoctorAction';
+import {Host} from '../../../utils/connection';
 function Dashboard({navigation}) {
   const {recentPatient, recentPatientLoading} = useSelector(
     (state) => state.MyDoctorReducer,
   );
-  const {data} = useSelector((state) => state.AuthReducer);
-
+  const {data, isLogedin, isDoctor} = useSelector((state) => state.AuthReducer);
+  let imageSource = '';
+  if (data && isLogedin && !isDoctor && data.picture) {
+    imageSource = {
+      uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
+    };
+  } else if (data && isLogedin && isDoctor && data.picture.length > 0) {
+    imageSource = {
+      uri: `${Host}${data.picture[0]
+        .replace('public', '')
+        .replace('\\\\', '/')}`,
+    };
+  } else {
+    imageSource = require('../../../assets/images/dummy_profile.png');
+  }
   const upcomingOppointment = [
     {name: 'Veronica Stevens', reason: ' -General Checkup'},
     {name: 'Alan Robert', reason: ' -Osteopathy'},
@@ -45,7 +59,7 @@ function Dashboard({navigation}) {
               },
               Image: {borderRadius: 50},
             }}
-            sourceurl={require('../../../assets/jpg/person3.jpg')}></ProfilePic>
+            sourceurl={imageSource}></ProfilePic>
         }></TopNavBar>
       <ScrollView>
         <View

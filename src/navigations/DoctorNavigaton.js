@@ -23,6 +23,7 @@ import Appointments from '../screens/doctor/Appointments/Appointments';
 import Dashboard from '../screens/doctor/Dashboard/Dashboard';
 import Onboarding from '../screens/doctor/Onboarding/Onboarding';
 import Patients from '../screens/doctor/Patients/Patients';
+import AddCategoryQuestions from '../screens/doctor/AddQuestionnaire/AddCategoryQuestions';
 const {width: screenWidth} = Dimensions.get('screen');
 
 const DoctorNavigationContent = createBottomTabNavigator(
@@ -50,7 +51,7 @@ const DoctorNavigationContent = createBottomTabNavigator(
     //   },
     // },
     Patients: {
-      screen: Patients,
+      screen: AddCategoryQuestions,
       navigationOptions: {
         tabBarIcon: ({focused, tintColor}) => {
           return (
@@ -92,8 +93,13 @@ const DoctorNavigationContent = createBottomTabNavigator(
     order: ['homeScreen', 'Patients'],
     tabBarOptions: {
       showLabel: false,
-      activeTintColor: '#9C77BC',
-      inactiveTintColor: '#E9E5FF',
+      activeTintColor: '#fff',
+      inactiveTintColor: 'rgba(255,255,255,0.4)',
+      style: {
+        backgroundColor: '#047b7b',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+      },
     },
   },
 );
@@ -112,7 +118,7 @@ const DoctorDrawer = createDrawerNavigator(
     PatientsList: Patients,
   },
   {
-    initialRouteName: 'Dashboard',
+    initialRouteName: 'Onboarding',
     drawerPosition: 'right',
     headerMode: 'none',
     drawerType: 'none',

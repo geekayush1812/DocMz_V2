@@ -153,6 +153,8 @@ const Appointments = ({navigation}) => {
               <Text style={styles.sectionHead}>Upcoming Appointments</Text>
               {gettingAppointments && extractingAppointmentList ? (
                 <ListingWithThumbnailLoader />
+              ) : upcomingAppointmentList.length === 0 ? (
+                <Text>0 Upcoming Appointments</Text>
               ) : (
                 upcomingAppointmentList.map((item) => (
                   <AppointmentUpcomingItem

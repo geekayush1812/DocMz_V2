@@ -47,7 +47,7 @@ function AvailDoctorContainerV2({
   //   outputRange: [-1 * width, 0],
   // });
 
-  let imageSource = require('../../../assets/jpg/person1.jpg');
+  let imageSource = require('../../../assets/images/dummy_profile.png');
   return (
     <BasicCard
       style={{

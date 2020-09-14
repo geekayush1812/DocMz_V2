@@ -316,46 +316,17 @@ export const GetPatientInfo = (id) => {
 
 export const UpdateVitals = (response, userID, metaId) => {
   return (dispatch) => {
-    dispatch(startLoading());
+    // dispatch(startLoading());/
     const _data = {
       id: userID,
-      meta: metaId,
+      meta: metaId._id,
       ...response,
     };
     axios
       .post(`${Host}/patient/medicalInfo/add`, _data)
       .then((result) => {
-        if (result.status) {
-          console.log('user data !! 3', result);
-          axios
-            .get(`${Host}/patient/getinfo/${userID}`)
-            .then((result2) => {
-              if (result2.status) {
-                console.log('user data !! 1', result2.data.data.meta);
-                const data = result2.data.data;
-                // GetPatientVitalInfo(result.data.data);
-                // dispatch(saveUserAccount(result.data.data));
-                axios
-                  .post(`${Host}/patient/meta/get`, {
-                    id: data.meta,
-                  })
-                  .then((res) => {
-                    if (res.status) {
-                      console.log('user data !! 2', res);
-                      dispatch(saveUserAccount(data, res.data.data));
-                    }
-                  })
-                  .catch((err) => {
-                    console.log('user data !! 2 error');
-
-                    dispatch(havingError(err));
-                  });
-              }
-            })
-            .catch((err) => {
-              console.log('user data !! 1 error');
-              dispatch(havingError(err));
-            });
+        if (result.data.status) {
+          dispatch(GetPatientInfo(userID));
           alert('Successfully Updated Profile.');
         }
       })
@@ -475,15 +446,12 @@ export const GetFamilyMember = (id) => {
     };
 
     const _data = {
-      metaId: id, //"5eb31e07e078c64910b9d29e",
-      // metaId: '5eb31e07e078c64910b9d29e',
+      metaId: id,
     };
 
     axios
       .post(`${Host}/patient/member/get`, _data, config)
       .then((res) => {
-        console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-        console.log(res.data);
         dispatch(saveFamilyMember(res.data.data.members));
       })
       .catch((err) => {
@@ -493,7 +461,7 @@ export const GetFamilyMember = (id) => {
 };
 
 export const AddFamilyMember = (obj, success, faild) => {
-  return async (dispatch) => {
+  return (dispatch) => {
     dispatch(startLoading());
     const config = {
       Accept: '*/*',
@@ -502,13 +470,11 @@ export const AddFamilyMember = (obj, success, faild) => {
 
     // obj.metaId = '5eb31e07e078c64910b9d29e';
 
-    await axios
+    axios
       .post(`${Host}/patient/member/add`, obj, config)
       .then((result) => {
-        if (result.status) {
-          console.log('Successfully Add your Family member.');
+        if (result.data.status) {
           success();
-          GetFamilyMember(obj.metaId);
         }
       })
       .catch((err) => {
@@ -638,14 +604,45 @@ export const RemoveAppointment = (data) => {
   };
 };
 
+/**
+ *
+ *  Records action
+ */
+const GETTING_RECORDS = 'GETTING_RECORDS';
+const GOT_RECORDS = 'GOT_RECORDS';
+const ERROR_GETTING_RECORDS = 'ERROR_GETTING_RECORDS';
+
+const gettingRecords = () => ({
+  type: GETTING_RECORDS,
+});
+const gotRecords = (records) => ({
+  type: GOT_RECORDS,
+  payload: records,
+});
+const errorGettingRecords = (err) => ({
+  type: ERROR_GETTING_RECORDS,
+  payload: err,
+});
+export const GetRecords = (metaId) => (dispatch) => {
+  dispatch(gettingRecords());
+  axios
+    .get(`${Host}/patient/reports/get/${metaId}`)
+    .then((res) => {
+      if (res.data.status) {
+        dispatch(gotRecords(res.data.data));
+      }
+    })
+    .catch((e) => {
+      dispatch(errorGettingRecords(e));
+    });
+};
 export const UploadRecords = (fileData) => {
   return (dispatch) => {
     dispatch(uploadingRecords());
     let data = new FormData();
-    data.append('file', fileData.file);
-    data.append('document', fileData.document);
-    data.append('description', fileData.description);
     data.append('id', fileData.id);
+    data.append('data', fileData.data);
+    data.append('files', fileData.files);
 
     const config = {
       headers: {
@@ -653,9 +650,11 @@ export const UploadRecords = (fileData) => {
       },
     };
     axios
-      .post(`${Host}/patient/upload/records`, data, config)
+      .post(`${Host}/patient/reports/add`, data, config)
       .then((response) => {
-        dispatch(uploadedRecords(response));
+        if (response.data.status)
+          dispatch(uploadedRecords(response.data.message));
+        dispatch(GetRecords(fileData.id));
       })
       .catch((err) => {
         dispatch(errorUploadingRecords(err));

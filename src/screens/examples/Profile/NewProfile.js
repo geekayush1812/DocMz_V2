@@ -9,13 +9,16 @@ import {
 } from 'react-native';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import {NEW_PRIMARY_COLOR, GREY_OUTLINE} from '../../../styles/colors';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {Host} from '../../../utils/connection';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {resetStore} from '../../../redux/action/auth';
 
 const NewProfile = ({navigation}) => {
   const {data, isLogedin, isDoctor} = useSelector((state) => state.AuthReducer);
-  let imageSource = require('../../../assets/jpg/person3.jpg');
-  console.log(data.picture);
+  const dispatch = useDispatch();
+  let imageSource = require('../../../assets/images/dummy_profile.png');
+
   if (data && isLogedin && !isDoctor && data.picture) {
     imageSource = {
       uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
@@ -27,8 +30,15 @@ const NewProfile = ({navigation}) => {
         .replace('\\\\', '/')}`,
     };
   } else {
-    imageSource = require('../../../assets/jpg/person3.jpg');
+    imageSource = require('../../../assets/images/dummy_profile.png');
   }
+  const onLogout = () => {
+    dispatch(
+      resetStore(() => {
+        navigation.replace('PatientHomePage');
+      }),
+    );
+  };
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <TopNavBar
@@ -170,6 +180,22 @@ const NewProfile = ({navigation}) => {
                 style={styles.rowRightIcon}
                 resizeMode="contain"
               />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={onLogout}>
+            <View style={styles.listRow}>
+              <View
+                style={{
+                  height: 20,
+                  width: 50,
+                  marginHorizontal: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <MaterialIcon name={'lock'} size={36} color={'#047b7b'} />
+              </View>
+
+              <Text style={[styles.smallText, {flex: 1}]}>Logout</Text>
             </View>
           </TouchableOpacity>
         </View>

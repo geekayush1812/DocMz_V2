@@ -20,7 +20,7 @@ import {
   FONT_SIZE_19,
   FONT_SIZE_18,
 } from '../../../styles/typography';
-
+import ExpandableList from '../../../components/molecules/ExpandableList/ExpandableList';
 function PatientDetails({navigation}) {
   const {patient} = navigation.state.params;
   console.log(patient);
@@ -133,334 +133,168 @@ function PatientDetails({navigation}) {
             </View>
           </View>
 
-          <View
+          <ExpandableList
             style={{
-              backgroundColor: '#fff',
-              elevation: 4,
               paddingVertical: '5%',
-              paddingHorizontal: '8%',
-              marginBottom: 5,
-            }}>
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'Symptoms'}>
+            <Text>hello</Text>
+          </ExpandableList>
+          <ExpandableList
+            style={{
+              paddingVertical: '5%',
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'Medical History'}>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
               }}>
-              <Text style={{fontSize: FONT_SIZE_19, fontWeight: 'bold'}}>
-                Symptoms
-              </Text>
-              <TouchableWithoutFeedback onPress={() => onExpand('symptoms')}>
-                <AnimatedIcon
-                  style={{
-                    transform: [
-                      {
-                        rotate: HeightExpand.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [
-                            '0deg',
-                            showContent['symptoms'] ? '-180deg' : '0deg',
-                          ],
-                        }),
-                      },
-                    ],
-                  }}
-                  name={'chevron-down'}
-                  size={30}
-                  color={'#047b7b'}
-                />
-              </TouchableWithoutFeedback>
+              <Text>Vitals</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
             </View>
-
-            {showContent['symptoms'] && (
-              <Animated.View
-                style={{
-                  height: HeightExpand.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, expandedHeight],
-                  }),
-                  marginTop: HeightExpand.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 30],
-                  }),
-                  overflow: 'hidden',
-                }}>
-                <View
-                  onLayout={onLayout}
-                  style={{
-                    paddingVertical: '5%',
-                    borderWidth: 1,
-                    borderColor: 'rgba(0,0,0,0.08)',
-                  }}>
-                  <Text>hello</Text>
-                </View>
-              </Animated.View>
-            )}
-          </View>
-          <View
-            style={{
-              backgroundColor: '#fff',
-              elevation: 4,
-              paddingVertical: '5%',
-              paddingHorizontal: '8%',
-              marginBottom: 5,
-            }}>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
               }}>
-              <Text style={{fontSize: FONT_SIZE_19, fontWeight: 'bold'}}>
-                Medical History
-              </Text>
-              <TouchableWithoutFeedback
-                onPress={() => onExpand('medicalHistory')}>
-                <AnimatedIcon
-                  style={
-                    showContent['medicalHistory']
-                      ? {
-                          transform: [
-                            {
-                              rotate: HeightExpand.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [
-                                  '0deg',
-                                  showContent['medicalHistory']
-                                    ? '-180deg'
-                                    : '0deg',
-                                ],
-                              }),
-                            },
-                          ],
-                        }
-                      : {}
-                  }
-                  name={'chevron-down'}
-                  size={30}
-                  color={'#047b7b'}
-                />
-              </TouchableWithoutFeedback>
+              <Text>Medication</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
             </View>
-
-            {showContent['medicalHistory'] && (
-              <Animated.View
-                style={{
-                  height: HeightExpand.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, expandedHeight],
-                  }),
-                  marginTop: HeightExpand.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 30],
-                  }),
-                  overflow: 'hidden',
-                }}>
-                <View
-                  onLayout={onLayout}
-                  style={{
-                    borderRadius: 12,
-                    borderWidth: 1.5,
-                    borderColor: 'rgba(0,0,0,0.1)',
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Vitals</Text>
-                    <MaterialIcon
-                      name={'chevron-right'}
-                      size={28}
-                      color={'#a09e9e'}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Medication</Text>
-                    <MaterialIcon
-                      name={'chevron-right'}
-                      size={28}
-                      color={'#a09e9e'}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Reports</Text>
-                    <MaterialIcon
-                      name={'chevron-right'}
-                      size={28}
-                      color={'#a09e9e'}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Surgeries</Text>
-                    <MaterialIcon
-                      name={'chevron-right'}
-                      size={28}
-                      color={'#a09e9e'}
-                    />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Allergies</Text>
-                    <MaterialIcon
-                      name={'chevron-right'}
-                      size={28}
-                      color={'#a09e9e'}
-                    />
-                  </View>
-                </View>
-              </Animated.View>
-            )}
-          </View>
-          <View
-            style={{
-              backgroundColor: '#fff',
-              elevation: 4,
-              paddingVertical: '5%',
-              paddingHorizontal: '8%',
-              marginBottom: 5,
-            }}>
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
               }}>
-              <Text style={{fontSize: FONT_SIZE_19, fontWeight: 'bold'}}>
-                Assessment & Plan
-              </Text>
-              <TouchableWithoutFeedback
-                onPress={() => onExpand('assessmentPlan')}>
-                <AnimatedIcon
-                  style={
-                    showContent['assessmentPlan']
-                      ? {
-                          transform: [
-                            {
-                              rotate: HeightExpand.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [
-                                  '0deg',
-                                  showContent['assessmentPlan']
-                                    ? '-180deg'
-                                    : '0deg',
-                                ],
-                              }),
-                            },
-                          ],
-                        }
-                      : {}
-                  }
-                  name={'chevron-down'}
-                  size={30}
-                  color={'#047b7b'}
-                />
-              </TouchableWithoutFeedback>
+              <Text>Reports</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
             </View>
-
-            {showContent['assessmentPlan'] && (
-              <Animated.View
-                style={{
-                  height: HeightExpand.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, expandedHeight],
-                  }),
-                  marginTop: HeightExpand.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 30],
-                  }),
-                  overflow: 'hidden',
-                }}>
-                <View
-                  onLayout={onLayout}
-                  style={{
-                    borderRadius: 12,
-                    borderWidth: 1.5,
-                    borderColor: 'rgba(0,0,0,0.1)',
-                  }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Assessment</Text>
-                    <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Add Tests</Text>
-                    <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingVertical: '4%',
-                      paddingHorizontal: '5%',
-                      borderBottomWidth: 1.5,
-                      borderBottomColor: 'rgba(0,0,0,0.1)',
-                    }}>
-                    <Text>Add Medications</Text>
-                    <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
-                  </View>
-                </View>
-              </Animated.View>
-            )}
-          </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Surgeries</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Allergies</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
+            </View>
+          </ExpandableList>
+          <ExpandableList
+            style={{
+              paddingVertical: '5%',
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'Assessment & Plan'}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Assessment</Text>
+              <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Add Tests</Text>
+              <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Add Medications</Text>
+              <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
+            </View>
+          </ExpandableList>
+          <ExpandableList
+            style={{
+              paddingVertical: '5%',
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'test'}>
+            <Text>hello</Text>
+          </ExpandableList>
 
           <TouchableOpacity
             style={{
@@ -495,3 +329,86 @@ function PatientDetails({navigation}) {
 }
 
 export default PatientDetails;
+
+// const ExpandableList = ({children, title}) => {
+//   const AnimatedIcon = Animated.createAnimatedComponent(MaterialIcon);
+//   const HeightExpand = useRef(new Animated.Value(0)).current;
+//   const [expandedHeight, setExpandedHeight] = useState(0);
+//   const onLayout = (e) => {
+//     setExpandedHeight(e.nativeEvent.layout.height);
+//   };
+//   const [showContent, setShowContent] = useState(false);
+//   const onToggleExpand = () => {
+//     setShowContent(!showContent);
+//     Animated.timing(HeightExpand, {
+//       delay: 200,
+//       easing: Easing.bounce,
+//       duration: 1000,
+//       useNativeDriver: false,
+//       toValue: showContent ? 0 : 1,
+//     }).start();
+//   };
+//   return (
+//     <View
+//       style={{
+//         backgroundColor: '#fff',
+//         elevation: 4,
+//         paddingVertical: '5%',
+//         paddingHorizontal: '8%',
+//         marginBottom: 5,
+//       }}>
+//       <View
+//         style={{
+//           flexDirection: 'row',
+//           alignItems: 'center',
+//           justifyContent: 'space-between',
+//         }}>
+//         <Text style={{fontSize: FONT_SIZE_19, fontWeight: 'bold'}}>
+//           {title}
+//         </Text>
+//         <TouchableWithoutFeedback onPress={onToggleExpand}>
+//           <AnimatedIcon
+//             style={{
+//               transform: [
+//                 {
+//                   rotate: HeightExpand.interpolate({
+//                     inputRange: [0, 1],
+//                     outputRange: ['0deg', showContent ? '-180deg' : '0deg'],
+//                   }),
+//                 },
+//               ],
+//             }}
+//             name={'chevron-down'}
+//             size={30}
+//             color={'#047b7b'}
+//           />
+//         </TouchableWithoutFeedback>
+//       </View>
+
+//       {showContent && (
+//         <Animated.View
+//           style={{
+//             height: HeightExpand.interpolate({
+//               inputRange: [0, 1],
+//               outputRange: [0, expandedHeight],
+//             }),
+//             marginTop: HeightExpand.interpolate({
+//               inputRange: [0, 1],
+//               outputRange: [0, 30],
+//             }),
+//             overflow: 'hidden',
+//           }}>
+//           <View
+//             onLayout={onLayout}
+//             style={{
+//               paddingVertical: '5%',
+//               borderWidth: 1,
+//               borderColor: 'rgba(0,0,0,0.08)',
+//             }}>
+//             {children}
+//           </View>
+//         </Animated.View>
+//       )}
+//     </View>
+//   );
+// };

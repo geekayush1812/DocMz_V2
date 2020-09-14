@@ -8,11 +8,7 @@ import DoctorNavigation from './DoctorNavigaton';
 import DocProfileLite from '../screens/patient/docProfileLite/DocProfileLite';
 import AppointmentForm from '../screens/patient/appointmentForm/AppointmentForm';
 import ConfirmAppointment from '../components/molecules/ConfirmAppointment/ConfirmAppointment';
-import Questionnaire from '../screens/patient/questionnaire/Questionnaire';
-import BookingDetails from '../screens/patient/questionnaire/BookingDetails';
 import NewQuestionnaire from '../screens/patient/questionnaire/NewQuestionnaire';
-import AllAnswer from '../screens/patient/questionnaire/AllAnswer';
-import SelectFiles from '../screens/patient/questionnaire/SelectFiles';
 import {useSelector} from 'react-redux';
 import WaitingRoom from '../screens/patient/waitingRoom/WaitingRoom';
 import DoctorProfile from '../screens/examples/DoctorProfile/DoctorProfile';
@@ -71,19 +67,6 @@ const docMainStream = createStackNavigator(
   },
 );
 
-const questionnaire = createStackNavigator(
-  {
-    AllAnswer,
-    BookingDetails,
-    NewQuestionnaire,
-    Questionnaire,
-  },
-  {
-    initialRouteName: 'BookingDetails',
-    headerMode: 'none',
-  },
-);
-
 const MainNavigation = createStackNavigator(
   {
     authentication: AuthNavigation,
@@ -91,13 +74,11 @@ const MainNavigation = createStackNavigator(
     DoctorHomePage: DoctorNavigation,
     PatientHomePage: PatientNavigation,
     docPatientStrem: docMainStream,
-    question: questionnaire,
-    selectFiles: SelectFiles,
     WaitingRoom: WaitingRoom,
   },
   {
     // initialRouteName: 'pageNavigation',
-    initialRouteName: 'PatientHomePage',
+    initialRouteName: 'pageNavigation',
     headerMode: 'none',
   },
 );

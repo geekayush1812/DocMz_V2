@@ -1,7 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {View, ActivityIndicator, Text} from 'react-native';
-import FancyHeader from '../../../components/organisms/FancyHeader/FancyHeader';
-import Container from '../../../components/organisms/Container/Container';
 import DmzText from '../../../components/atoms/DmzText/DmzText';
 import AnimInput from '../../../components/molecules/AnimInput/AnimInput';
 import DmzButton from '../../../components/atoms/SwitchButton/SwitchButton';
@@ -18,8 +16,6 @@ import ExpandableList from '../../../components/molecules/ExpandableList/Expanda
 import Overlay from '../../../components/atoms/Overlay/Overlay';
 import BasicCard from '../../../components/atoms/BasicCard/BasicCard';
 import ViewPager from '@react-native-community/viewpager';
-import Categories from './Categories';
-import AddCategory from './AddCategory';
 
 function AddQuestionnaire() {
   const pagerRef = useRef();
@@ -166,22 +162,8 @@ function AddQuestionnaire() {
         style={{flex: 1}}
         initialPage={1}
         scrollEnabled={false}>
-        <View key="0">
-          <Categories />
-        </View>
-        <View key="1">
-          <AddCategory
-            nextpage={nextpage}
-            handles={{
-              handleTitleInput,
-              handleCategoryInput,
-              handleSpecialityInput,
-              onPressReset,
-            }}
-            optionProp={{options, setOptions, removeOption, addOption}}
-            onSubmit={onSubmit}
-          />
-        </View>
+        <View key="0"></View>
+        <View key="1"></View>
       </ViewPager>
       {/* <ScrollView
         contentContainerStyle={{paddingVertical: 40}}

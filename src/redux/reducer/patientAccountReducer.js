@@ -26,6 +26,9 @@ const initialState = {
   gettingRecentDoctors: false,
   recentDoctors: [],
   errorGettingRecentDoctors: '',
+  gettingRecords: false,
+  records: [],
+  errorGettingRecords: '',
 };
 
 const PatientAccountReducer = (state = initialState, action) => {
@@ -202,6 +205,25 @@ const PatientAccountReducer = (state = initialState, action) => {
         gettingRecentDoctors: false,
         recentDoctors: '',
         errorGettingRecentDoctors: action.payload,
+      };
+    case 'GETTING_RECORDS':
+      return {
+        ...state,
+        gettingRecords: true,
+      };
+    case 'GOT_RECORDS':
+      return {
+        ...state,
+        gettingRecords: false,
+        records: action.payload,
+        errorGettingRecords: '',
+      };
+    case 'ERROR_GETTING_RECORDS':
+      return {
+        ...state,
+        gettingRecords: false,
+        records: '',
+        errorGettingRecords: action.payload,
       };
     default:
       return state;

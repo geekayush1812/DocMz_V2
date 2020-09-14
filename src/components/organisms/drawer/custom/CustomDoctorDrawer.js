@@ -26,46 +26,48 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ToggleButton from '../../../molecules/ToggleButton/ToggleButton';
 import TopNavBar from '../../../molecules/TopNavBar/TopNavBar';
 import {UpdateDoctor, BlockDoctor} from '../../../../redux/action/auth';
+import {Host} from '../../../../utils/connection';
 const Navigation = [
-  {
-    active: true,
-    name: 'Payments',
-    icon: 'cart-outline',
-    navigateTo: 'Payments',
-  },
-  {
-    active: true,
-    name: 'Questionnaire',
-    icon: 'headset',
-    navigateTo: 'Questionnaire',
-  },
-  {
-    active: true,
-    name: 'Appointment History',
-    icon: 'share-variant',
-    navigateTo: 'AppointmentsHistory',
-  },
+  // {
+  //   active: true,
+  //   name: 'Payments',
+  //   icon: 'cart-outline',
+  //   navigateTo: 'Payments',
+  // },
+  // {
+  //   active: true,
+  //   name: 'Questionnaire',
+  //   icon: 'headset',
+  //   navigateTo: 'Questionnaire',
+  // },
+  // {
+  //   active: true,
+  //   name: 'Appointment History',
+  //   icon: 'share-variant',
+  //   navigateTo: 'AppointmentsHistory',
+  // },
   {
     active: true,
     name: 'My Appointments',
     icon: 'share-variant',
     navigateTo: 'Appointments',
   },
-  {
-    active: true,
-    name: 'Referrals',
-    icon: 'share-variant',
-    navigateTo: 'Referrals',
-  },
-  {
-    active: true,
-    name: 'Settings',
-    icon: 'share-variant',
-    navigateTo: 'Settings',
-  },
+  // {
+  //   active: true,
+  //   name: 'Referrals',
+  //   icon: 'share-variant',
+  //   navigateTo: 'Referrals',
+  // },
+  // {
+  //   active: true,
+  //   name: 'Settings',
+  //   icon: 'share-variant',
+  //   navigateTo: 'Settings',
+  // },
 ];
 
-const Custom = ({navigation, activeItemKey}) => {
+const Custom = (props) => {
+  const {navigation} = props;
   String.prototype.toTitleCase = function () {
     const splited = this.split(' ')
       .map((item) => {
@@ -75,7 +77,13 @@ const Custom = ({navigation, activeItemKey}) => {
     return splited;
   };
   const state = useSelector((state) => state.AuthReducer);
-  const {data, blockingDoctor, blockingDoctorError} = state;
+  const {
+    data,
+    blockingDoctor,
+    blockingDoctorError,
+    isDoctor,
+    isLogedin,
+  } = state;
   const dispatch = useDispatch();
   const onUpdateDoctor = () => {
     dispatch(
@@ -89,188 +97,207 @@ const Custom = ({navigation, activeItemKey}) => {
   const onBlock = () => {
     dispatch(BlockDoctor(data._id));
   };
-  useEffect(() => {
-    console.log(blockingDoctor);
-  }, [blockingDoctor]);
+  let imageSource = require('../../../../assets/images/dummy_profile.png');
+  if (data && isLogedin && !isDoctor && data.picture) {
+    imageSource = {
+      uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
+    };
+  } else if (data && isLogedin && isDoctor && data.picture.length > 0) {
+    imageSource = {
+      uri: `${Host}${data.picture[0]
+        .replace('public', '')
+        .replace('\\\\', '/')}`,
+    };
+  } else {
+    imageSource = require('../../../../assets/images/dummy_profile.png');
+  }
+  const onLogout = () => {
+    dispatch(
+      resetStore(() => {
+        console.log(navigation);
+      }),
+    );
+  };
   return (
-    <>
-      <View style={styles.container}>
-        <View
-          style={{
-            height: '33%',
-          }}>
-          <TopNavBar
-            onLeftButtonPress={() => {
-              navigation.navigate('Home');
-              navigation.toggleDrawer();
-            }}
-            hideRightComp
-            LeftComp={
-              <MaterialCommunityIcons
-                name={'chevron-left'}
-                size={32}
-                color="#F8F7FF"
-              />
-            }
-            style={{Container: {marginTop: 5}}}
-          />
-          <View style={styles.profile}>
-            <TouchableOpacity
-              // onPress={onProfileClick}
-              style={{flexDirection: 'row'}}>
-              <Avater type={7} style={{borderRadius: 10, borderWidth: 4}} />
-              <View style={{marginLeft: 30}}>
-                <DmzText
-                  text={
-                    !data || data.length == 0
-                      ? ''
-                      : `Dr. ${data.firstName.toTitleCase()} ${data.lastName}`
-                  }
-                  style={{fontSize: 22, color: '#fff'}}
-                />
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <DmzText
-                    text={'4.92'}
-                    style={{
-                      fontSize: 14,
-                      color: '#fff',
-                      fontWeight: 'normal',
-                    }}
-                  />
-                  <MaterialCommunityIcons
-                    style={{marginLeft: 5}}
-                    name="star"
-                    color={'#fff'}
-                    size={18}
-                  />
-                </View>
-                <DmzText
-                  text={'Edit your profile'}
+    <View style={styles.container}>
+      <View
+        style={{
+          flex: 1,
+        }}>
+        <TopNavBar
+          hideRightComp
+          onLeftButtonPress={() => {
+            navigation.toggleDrawer();
+          }}
+          headerText="Profile"
+          {...{navigation}}
+          style={{Container: {marginTop: 5, marginBottom: 10}}}
+        />
+        <View style={styles.profile}>
+          <TouchableOpacity
+            // onPress={onProfileClick}
+            style={{flexDirection: 'row'}}>
+            <Avater
+              src={imageSource}
+              type={7}
+              style={{borderRadius: 10, borderWidth: 4}}
+            />
+            <View
+              style={{
+                paddingHorizontal: '3%',
+                justifyContent: 'space-around',
+              }}>
+              <Text style={{fontSize: 22, color: '#000'}}>
+                {!data || data.length == 0
+                  ? ''
+                  : `Dr. ${data.firstName.toTitleCase()} ${data.lastName}`}
+              </Text>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text
                   style={{
                     fontSize: 14,
-                    color: '#fff',
+                    color: '#000',
                     fontWeight: 'normal',
-                  }}
+                  }}>
+                  4.92
+                </Text>
+                <MaterialCommunityIcons
+                  style={{marginLeft: 5}}
+                  name="star"
+                  color={'#047b7b'}
+                  size={18}
                 />
               </View>
-            </TouchableOpacity>
-            <StepsTracker
-              text="Complete Your Profile (30%)"
-              textStyle={{
-                fontSize: 14,
-                color: '#F8F7FF',
-                lineHeight: 30,
-                textAlign: 'center',
-              }}
-              style={{
-                width: '80%',
-                flexDirection: 'column-reverse',
-                marginTop: 5,
-              }}
-              completed={33}
-              completedColor={'#EA508F'}
-              incompletedColor={'#FFFFFF'}
-            />
-          </View>
-        </View>
-        <View
-          style={{
-            flex: 1,
-            borderTopLeftRadius: 30,
-            borderTopRightRadius: 30,
-            overflow: 'hidden',
-            width: '100%',
-            backgroundColor: '#E9E5FF',
-            // paddingTop: 25,
-          }}>
-          <ScrollView
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#000',
+                  fontWeight: 'normal',
+                }}>
+                Edit your profile
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <StepsTracker
+            text="Complete Your Profile (30%)"
+            textStyle={{
+              fontSize: 14,
+              color: '#F8F7FF',
+              lineHeight: 30,
+              textAlign: 'center',
+            }}
             style={{
-              flex: 1,
-              paddingHorizontal: 70,
-            }}>
-            <Section style={{paddingVertical: 30, paddingBottom: 40}}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}>
-                <Text
-                  style={{color: '#9C77BC', fontWeight: 'bold', fontSize: 15}}>
-                  Doctor on demand
-                </Text>
-                <ToggleButton
-                  toggle={data.is_superDoc}
-                  onToggle={onUpdateDoctor}
-                  style={{borderRadius: 10, width: 120}}
-                  dotStyle={{
-                    backgroundColor: '#9C77BC',
-                    width: 50,
-                    height: 25,
-                    borderRadius: 8,
-                  }}
-                  textStyle={{fontSize: 14, color: '#EA508F'}}
-                  text0="ON"
-                  text1="OFF"
-                />
-              </View>
-
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginTop: 25,
-                }}>
-                <Text
-                  style={{color: '#9C77BC', fontWeight: 'bold', fontSize: 15}}>
-                  Block
-                </Text>
-                <ToggleButton
-                  toggle={data.block}
-                  onToggle={onBlock}
-                  style={{borderRadius: 10, width: 120}}
-                  dotStyle={{
-                    backgroundColor: '#9C77BC',
-                    width: 50,
-                    height: 25,
-                    borderRadius: 8,
-                  }}
-                  textStyle={{fontSize: 14, color: '#EA508F'}}
-                  text0="ON"
-                  text1="OFF"
-                />
-              </View>
-            </Section>
-            {Navigation.map((item, index) => {
-              return (
-                <Section>
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate(item.navigateTo);
-                    }}
-                    style={{paddingVertical: 10}}>
-                    <Text
-                      style={{
-                        color: '#6859A2',
-                        fontSize: 15,
-                      }}>
-                      {item.name}
-                    </Text>
-                  </TouchableOpacity>
-                </Section>
-              );
-            })}
-          </ScrollView>
+              width: '80%',
+              flexDirection: 'column-reverse',
+              marginTop: '10%',
+            }}
+            completed={33}
+            completedColor={'#EA508F'}
+            incompletedColor={'#FFFFFF'}
+          />
         </View>
       </View>
-    </>
+      <View
+        style={{
+          flex: 2,
+          width: '100%',
+        }}>
+        <ScrollView
+          style={{
+            flex: 1,
+            paddingHorizontal: '10%',
+          }}>
+          <Section style={{paddingVertical: '10%', paddingBottom: '5%'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text style={{color: '#000', fontWeight: 'bold', fontSize: 15}}>
+                Doctor on demand
+              </Text>
+              <ToggleButton
+                toggle={data.is_superDoc}
+                onToggle={onUpdateDoctor}
+                style={{borderRadius: 10, width: 120}}
+                dotStyle={{
+                  backgroundColor: '#047b7b',
+                  width: '50%',
+                  height: 25,
+                  borderRadius: 8,
+                }}
+                textStyle={{fontSize: 14, color: '#37acac'}}
+                text0="ON"
+                text1="OFF"
+              />
+            </View>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: 25,
+              }}>
+              <Text style={{color: '#000', fontWeight: 'bold', fontSize: 15}}>
+                Block
+              </Text>
+              <ToggleButton
+                toggle={data.block}
+                onToggle={onBlock}
+                style={{borderRadius: 10, width: 120}}
+                dotStyle={{
+                  backgroundColor: '#047b7b',
+                  width: '50%',
+                  height: 25,
+                  borderRadius: 8,
+                }}
+                textStyle={{fontSize: 14, color: '#37acac'}}
+                text0="ON"
+                text1="OFF"
+              />
+            </View>
+          </Section>
+          {Navigation.map((item, index) => {
+            return (
+              <Section>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate(item.navigateTo);
+                  }}
+                  style={{paddingVertical: 10}}>
+                  <Text
+                    style={{
+                      color: '#000',
+                      fontSize: 15,
+                    }}>
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              </Section>
+            );
+          })}
+          {/* <Section>
+            <TouchableOpacity onPress={onLogout}>
+              <Text
+                style={{
+                  color: '#000',
+                  fontSize: 15,
+                }}>
+                {'Logout'}
+              </Text>
+            </TouchableOpacity>
+          </Section> */}
+        </ScrollView>
+      </View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#9C77BC',
+    backgroundColor: '#fff',
     flex: 1,
     zIndex: 99,
   },
@@ -281,8 +308,7 @@ const styles = StyleSheet.create({
   sectionTop: {marginBottom: 50, position: 'relative'},
   profile: {
     display: 'flex',
-    // alignItems: 'center',
-    paddingHorizontal: 50,
+    paddingHorizontal: '10%',
     justifyContent: 'center',
     marginBottom: 20,
   },
@@ -343,9 +369,7 @@ const Section = ({children, style = {}}) => {
     <View
       style={[
         {
-          borderBottomWidth: 0.8,
-          borderBottomColor: '#fff',
-          paddingVertical: 20,
+          paddingVertical: '5%',
         },
         style,
       ]}>

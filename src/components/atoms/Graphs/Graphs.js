@@ -4,13 +4,14 @@ import {View} from 'react-native';
 import {TERTIARY_TEXT, PRIMARY_COLOR} from '../../../styles/colors';
 
 export default function Graph({data, hasAxis = true}) {
-  const dataval = [50, 10, 40, 95, -4, -24, 35, 53, -53, 24, 50, -20, -80];
+  console.log('data');
+  console.log(data);
   const contentInset = {top: 10, bottom: 10};
   return (
     <View style={{height: 120, flexDirection: 'row', width: '100%'}}>
       {hasAxis ? (
         <YAxis
-          data={data[0].data != undefined ? [50, 200] : data}
+          data={data[0].value != undefined ? [50, 200] : data}
           contentInset={contentInset}
           style={{marginLeft: 10}}
           svg={{
@@ -31,7 +32,7 @@ export default function Graph({data, hasAxis = true}) {
           width: 150,
           marginLeft: hasAxis ? 0 : 15,
         }}
-        data={data ? data : dataval}
+        data={data}
         svg={{stroke: '#efa860', strokeWidth: 3}}
         contentInset={contentInset}>
         {/* <CustomGrid belowChart={true} /> */}

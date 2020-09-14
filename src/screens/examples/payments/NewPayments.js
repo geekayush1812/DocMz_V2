@@ -8,8 +8,36 @@ import {
 } from '../../../styles/colors';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
-
+import RazorpayCheckout from 'react-native-razorpay';
+import {useSelector} from 'react-redux';
 const NewPayment = ({params, navigation}) => {
+  const {data} = useSelector((state) => state.AuthReducer);
+  const OnClickPay = () => {
+    var options = {
+      key: 'rzp_test_5Jr1E6yhOrEsCI',
+      amount: 5000,
+      currency: 'INR',
+      name: 'DocEz', // company or merchant name
+      description: 'Consultation fees',
+      image: 'https://i.imgur.com/3g7nmJC.png',
+      // order_id: 'order_DslnoIgkIDL8Zt',
+      prefill: {
+        email: data.email,
+        contact: data.phone,
+        name: `${data.firstName} ${data.lastName}`,
+      },
+      theme: {color: '#047b7b'},
+    };
+    RazorpayCheckout.open(options)
+      .then((data) => {
+        // handle success
+        console.log('success', data);
+      })
+      .catch((error) => {
+        // handle failure
+        console.log('error:', error);
+      });
+  };
   return (
     <View style={styles.Container}>
       <TopNavBar
@@ -22,7 +50,7 @@ const NewPayment = ({params, navigation}) => {
           },
         }}
       />
-      <ScrollView style={styles.ScrollView}>
+      {/* <ScrollView style={styles.ScrollView}>
         <View style={[styles.rootGroup, {marginTop: 40}]}>
           <Text style={styles.rootHeading}>Credit/ Debit Cards</Text>
           <View style={styles.inputGroup}>
@@ -134,12 +162,11 @@ const NewPayment = ({params, navigation}) => {
               <Text style={styles.text}>Cash Payment</Text>
             </View>
           </View>
-        </View>
+        </View> */}
 
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <DmzButton
-          onPress={() => {
-            navigation.navigate('aa');
-          }}
+          onPress={OnClickPay}
           style={{
             Text: {
               width: '100%',
@@ -160,7 +187,9 @@ const NewPayment = ({params, navigation}) => {
           }}
           text="PAY"
         />
-      </ScrollView>
+      </View>
+
+      {/* </ScrollView> */}
     </View>
   );
 };

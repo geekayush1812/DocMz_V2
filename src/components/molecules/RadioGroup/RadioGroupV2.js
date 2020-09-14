@@ -9,6 +9,7 @@ function RadioGroupV2({Item = [], horizontal, activeKey, setActiveKey}) {
         flexDirection: horizontal && 'row',
         flexWrap: horizontal && 'wrap',
         justifyContent: 'space-between',
+        flex: 1,
       }}>
       {Item.map((item) =>
         item ? (

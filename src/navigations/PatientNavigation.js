@@ -32,18 +32,13 @@ import EmailIdOtp from '../components/molecules/EditEmailId/EmailIdOtp';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {PRIMARY_COLOR} from '../styles/colors';
-import Custom from '../components/organisms/drawer/custom/Custom';
-import NewPatientDashboard from '../screens/examples/PatientDashboard/NewPatientDashboard';
-import NewPayment from '../screens/examples/payments/NewPayments';
-import Pay from '../screens/examples/payments/Pay';
-import BookingConfirmed from '../screens/examples/payments/BookingConfirmed';
-import NewCard from '../screens/examples/payments/NewCard';
 import NewWaitingRoom from '../screens/patient/waitingRoom/NewWaitingRoom';
 import VoiceCall from '../screens/patient/Calls/Voicecall';
 import MedicalHistory from '../screens/examples/MedicalHistory/MedicalHistory';
 import HealthCare from '../screens/patient/HealthCare/HealthCare';
-import PatientDetails from '../screens/doctor/PatientDetails/PatientDetails';
-import PatientList from '../screens/doctor/Patients/Patients';
+import AddCategoryQuestions from '../screens/doctor/AddQuestionnaire/AddCategoryQuestions';
+import NewPayment from '../screens/examples/payments/NewPayments';
+import Pay from '../screens/examples/payments/Pay';
 
 const screenWidth = Dimensions.get('screen').width;
 const ProfileStack = createStackNavigator(
@@ -66,7 +61,6 @@ const AddressStack = createStackNavigator(
 );
 
 const PatientNavigationHome = createBottomTabNavigator(
-  // const PatientNavigation = createBottomTabNavigator(
   {
     patientHomeScreen: {
       screen: LandingPageScreen,
@@ -77,7 +71,7 @@ const PatientNavigationHome = createBottomTabNavigator(
             <Icon
               name="home"
               size={25}
-              color={focused ? PRIMARY_COLOR : '#E9E5FF'}
+              color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
             />
           );
         },
@@ -91,30 +85,35 @@ const PatientNavigationHome = createBottomTabNavigator(
             <Icon
               name="account"
               size={25}
-              color={focused ? PRIMARY_COLOR : '#E9E5FF'}
+              color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
             />
           );
         },
       },
     },
-    test: {
-      screen: NewWaitingRoom,
-      navigationOptions: {
-        tabBarIcon: ({focused, horizontal, tintColor}) => {
-          return (
-            <Icon
-              name="test"
-              size={25}
-              color={focused ? PRIMARY_COLOR : '#E9E5FF'}
-            />
-          );
-        },
-      },
-    },
+    // test: {
+    //   screen: NewPayment,
+    //   navigationOptions: {
+    //     tabBarIcon: ({focused, horizontal, tintColor}) => {
+    //       return (
+    //         <Icon
+    //           name="setting"
+    //           size={25}
+    //           color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+    //         />
+    //       );
+    //     },
+    //   },
+    // },
   },
   {
     tabBarOptions: {
       showLabel: false,
+      style: {
+        backgroundColor: '#047b7b',
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+      },
     },
     initialRouteName: 'patientHomeScreen',
   },

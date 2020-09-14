@@ -19,12 +19,9 @@ const NewFamily = ({navigation}) => {
   );
   const dispatch = useDispatch();
   useEffect(() => {
-    !isPatientAccountReducerLoading && dispatch(GetFamilyMember(patient.meta));
+    !isPatientAccountReducerLoading &&
+      dispatch(GetFamilyMember(patient.meta._id));
   }, []);
-
-  useEffect(() => {
-    console.log(familyMember);
-  }, [familyMember]);
 
   const onSubmit = (data) => {
     const reg = new RegExp(
@@ -72,9 +69,11 @@ const NewFamily = ({navigation}) => {
             gender,
             birthdate,
             relationship,
-            metaId: patient.meta,
+            metaId: patient.meta._id,
           },
-          () => {},
+          () => {
+            dispatch(GetFamilyMember(patient.meta._id));
+          },
         ),
       );
     } else {

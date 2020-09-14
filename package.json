@@ -51,6 +51,7 @@
     "react-native-masked-text": "^1.13.0",
     "react-native-optimized-flatlist": "^1.0.4",
     "react-native-radial-gradient": "^1.0.7",
+    "react-native-razorpay": "^2.2.0",
     "react-native-reanimated": "^1.9.0",
     "react-native-root-toast": "^3.2.1",
     "react-native-safe-area-context": "^3.0.3",

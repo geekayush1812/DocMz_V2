@@ -17,6 +17,7 @@ import {
   getSpecialty,
   UpdateDoctorProfile,
 } from '../../../redux/action/doctor/myDoctorAction';
+import {Host} from '../../../utils/connection';
 
 function Onboarding({navigation}) {
   const [activeGender, setActiveGender] = useState('');
@@ -36,10 +37,16 @@ function Onboarding({navigation}) {
   const {specialtyLoading, specialty} = useSelector(
     (state) => state.MyDoctorReducer,
   );
-
+  if (data.Onboarding) {
+    navigation.navigate('Dashboard');
+  }
   useEffect(() => {
     !specialtyLoading && dispatch(getSpecialty());
   }, []);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   let imageSource = '';
   if (data && isLogedin && !isDoctor) {
@@ -53,7 +60,7 @@ function Onboarding({navigation}) {
         .replace('\\\\', '/')}`,
     };
   } else {
-    imageSource = require('../../../assets/jpg/person3.jpg');
+    imageSource = require('../../../assets/images/dummy_profile.png');
   }
 
   const handleSubmit = () => {

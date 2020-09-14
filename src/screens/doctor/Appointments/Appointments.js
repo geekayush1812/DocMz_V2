@@ -14,6 +14,8 @@ import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector, useDispatch} from 'react-redux';
 import {GetAppointments} from '../../../redux/action/doctor/myDoctorAction';
 import {RemoveAppointment} from '../../../redux/action/patientAccountAction';
+import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
+
 export default function Appointments({navigation}) {
   const [months, setMonths] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -38,9 +40,6 @@ export default function Appointments({navigation}) {
   useEffect(() => {
     !gettingAppointment && dispatch(GetAppointments(data._id));
   }, []);
-  useEffect(() => {
-    console.log(appointments);
-  }, [appointments]);
 
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
@@ -160,16 +159,20 @@ export default function Appointments({navigation}) {
             }}>
             10:00 am - 12:00 pm
           </Text>
-          {appointments.map((item) => {
-            return (
-              <Card
-                key={item._id}
-                item={item}
-                doctorId={data._id}
-                navigation={navigation}
-              />
-            );
-          })}
+          {gettingAppointment ? (
+            <ListingWithThumbnailLoader />
+          ) : appointments.length === 0 ? null : (
+            appointments?.map((item) => {
+              return (
+                <Card
+                  key={item._id}
+                  item={item}
+                  doctorId={data._id}
+                  navigation={navigation}
+                />
+              );
+            })
+          )}
         </View>
       </ScrollView>
     </View>

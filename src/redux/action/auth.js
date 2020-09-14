@@ -96,12 +96,12 @@ const removeAppointment = (id) => {
   };
 };
 
-export const resetStore = () => {
+export const resetStore = (callback) => {
   return async (dispatch) => {
     await dispatch(removeUser());
-    // await dispatch(resetDoctor())
     await dispatch(resetDataStore());
     await dispatch(resetQuestion());
+    callback();
   };
 };
 

@@ -31,43 +31,7 @@ const Vitals = () => {
   const [sugarModal, setSugarModal] = useState(false);
   const [tempModal, setTempModal] = useState(false);
   const [bpModal, setBpModal] = useState(false);
-  const [graphData, setGraphData] = useState([
-    0,
-    0,
-    0,
-    0,
-    2,
-    -5,
-    10,
-    -5,
-    40,
-    -30,
-    -5,
-    -5,
-    10,
-    -8,
-    -5,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    2,
-    -5,
-    10,
-    -5,
-    40,
-    -30,
-    -5,
-    -5,
-    10,
-    -8,
-    -5,
-    0,
-    0,
-  ]);
+  const [graphData, setGraphData] = useState([]);
 
   const {patient} = useSelector((state) => state.PatientAccountReducer);
   const dispatch = useDispatch();
@@ -76,8 +40,8 @@ const Vitals = () => {
     weight: '',
     temperature: '',
     oxygen: '',
-    heartRate: '',
-    bloodPressure: '',
+    heartRate: [],
+    bloodPressure: [],
     respiration: '',
   });
 
@@ -92,17 +56,21 @@ const Vitals = () => {
     return res;
   };
   useEffect(() => {
-    console.log(patient);
     setVitalsInfo({
       height: patient?.height?.value ? patient.height : '',
       weight: patient?.weight?.value ? patient.weight : '',
       temperature: patient?.temperature?.value ? patient.temperature : '',
       oxygen: patient?.oxygen?.value ? patient.oxygen : '',
-      heartRate: patient?.heartRate.length ? patient.heartRate : [],
-      bloodPressure: patient?.bloodPressure.length ? patient.bloodPressure : [],
+      heartRate: patient?.meta.heartRate,
+      bloodPressure: patient?.meta.bloodPressure,
       respiration: patient?.respiration?.value ? patient.respiration : '',
     });
+    setGraphData(patient?.meta.heartRate.map((item) => Number(item.value)));
   }, [patient]);
+  useEffect(() => {
+    console.log(vitalsInfo.heartRate);
+    console.log(vitalsInfo.bloodPressure);
+  }, [vitalsInfo]);
 
   const updateVitals = (res, callback = () => {}) => {
     dispatch(UpdateVitals(res, patient._id, patient.meta));
@@ -137,7 +105,19 @@ const Vitals = () => {
         headingText="Add Heart Rate"
         labelText=""
         unit="bpm"
-        onUpdate={(temp) => {}}
+        onUpdate={(temp) => {
+          updateVitals(
+            {
+              field: 'heartRate',
+              data: {
+                value: temp,
+                modifiedBy: 'patient',
+                date: new Date().toISOString(),
+              },
+            },
+            () => setHeartModal(false),
+          );
+        }}
       />
       <ThreeField
         visible={weightModal}
@@ -182,7 +162,19 @@ const Vitals = () => {
         onCancel={() => setBpModal(false)}
         headingText="Add Blood Pressure"
         labelText={['Systolic', 'Diastolic']}
-        onUpdate={() => {}}
+        onUpdate={(temp) => {
+          updateVitals(
+            {
+              field: 'bloodPressure',
+              data: {
+                value: temp,
+                modifiedBy: 'patient',
+                date: new Date().toISOString(),
+              },
+            },
+            () => setBpModal(false),
+          );
+        }}
       />
       <ThreeField
         visible={sugarModal}
@@ -205,7 +197,7 @@ const Vitals = () => {
               <View>
                 <Text style={styles.text3}>
                   Updated on :{' '}
-                  {moment(vitalsInfo.weight.date).format("MM MMM 'YY")}
+                  {moment(vitalsInfo.weight.date).format("DD MMM 'YY")}
                 </Text>
                 <Text style={styles.text2}>BMI 26.0</Text>
               </View>
@@ -235,7 +227,7 @@ const Vitals = () => {
                 <Text style={styles.text2}>({vitalsInfo.height.value} cm)</Text>
                 <Text style={styles.text3}>
                   Recorded on :{' '}
-                  {moment(vitalsInfo.height.date).format("MM MMM 'YY")}
+                  {moment(vitalsInfo.height.date).format("DD MMM 'YY")}
                 </Text>
               </View>
               <TouchableOpacity onPress={() => setHeightModal(true)}>
@@ -263,7 +255,9 @@ const Vitals = () => {
                 data={{
                   datasets: [
                     {
-                      data: [20, 45, 28, 80, 99, 43],
+                      data: vitalsInfo.bloodPressure.map((item) =>
+                        Number(item.value),
+                      ),
                       color: (opacity = 1) => `#efa860`,
                       strokeWidth: 3,
                       withDots: false,
@@ -291,7 +285,7 @@ const Vitals = () => {
               />
               <Text style={styles.text3}>
                 Updated on :
-                {moment(vitalsInfo.bloodPressure.date).format("MM MMM 'YY")}
+                {moment(vitalsInfo.bloodPressure.date).format("DD MMM 'YY")}
               </Text>
             </View>
 
@@ -362,7 +356,10 @@ const Vitals = () => {
                 style={{alignSelf: 'center'}}
               />
 
-              <Text style={styles.text3}>Updated on : 22 May ‘20</Text>
+              <Text style={styles.text3}>
+                Updated on :{' '}
+                {moment(vitalsInfo.heartRate.date).format("DD MMM 'YY")}
+              </Text>
             </View>
 
             <View style={{flex: 1}}>
