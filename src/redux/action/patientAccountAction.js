@@ -327,7 +327,6 @@ export const UpdateVitals = (response, userID, metaId) => {
       .then((result) => {
         if (result.data.status) {
           dispatch(GetPatientInfo(userID));
-          alert('Successfully Updated Profile.');
         }
       })
       .catch((err) => {
@@ -565,7 +564,7 @@ export const GetAppointmentSlot = (dates, id) => {
   };
 };
 
-export const bookAppointment = (data) => {
+export const bookAppointment = (data, success = () => {}) => {
   return async (dispatch) => {
     dispatch(bookingAppointment());
     const config = {
@@ -577,6 +576,7 @@ export const bookAppointment = (data) => {
       .then((result) => {
         if (result.status) {
           dispatch(bookedAppointment(result.message));
+          success();
         } else {
           dispatch(errorBookingAppointment(''));
         }

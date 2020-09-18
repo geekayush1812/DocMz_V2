@@ -129,6 +129,7 @@ export const fetchDoctorLite = (search = {}, _page, mode) => {
       }),
       pageNo: _page.toString(),
       size: '5',
+      // name: 'sanj',
       // name: search.toString().split(' ')[0],
     };
     const config = {

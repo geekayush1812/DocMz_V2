@@ -9,9 +9,12 @@ import {
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
 import RazorpayCheckout from 'react-native-razorpay';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {bookAppointment} from '../../../redux/action/patientAccountAction';
 const NewPayment = ({params, navigation}) => {
+  const dispatch = useDispatch();
   const {data} = useSelector((state) => state.AuthReducer);
+  const {appointmentBookingData} = navigation.state.params;
   const OnClickPay = () => {
     var options = {
       key: 'rzp_test_5Jr1E6yhOrEsCI',
@@ -31,7 +34,11 @@ const NewPayment = ({params, navigation}) => {
     RazorpayCheckout.open(options)
       .then((data) => {
         // handle success
-        console.log('success', data);
+        dispatch(
+          bookAppointment(appointmentBookingData, () => {
+            navigation.navigate('Appointments');
+          }),
+        );
       })
       .catch((error) => {
         // handle failure

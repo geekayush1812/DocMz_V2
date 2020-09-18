@@ -11,6 +11,8 @@ import RadialGradient from 'react-native-radial-gradient';
 import StepsTracker from '../../../components/atoms/StepsTracker/StepsTracker';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useRef} from 'react';
+import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
+import ConfirmAppointmentModel from '../../../components/molecules/Modal/ConfirmAppointmentModel';
 function QuestionnairePP({navigation}) {
   const {
     gettingQuestionnaire,
@@ -18,78 +20,91 @@ function QuestionnairePP({navigation}) {
     errorGettingQuestionnaire,
   } = useSelector((state) => state.questionnaireReducer);
 
-  const {
-    data: {_id},
-  } = navigation.state.params;
+  const {doctorData, appointmentBookingData} = navigation.state.params;
+  const {_id} = doctorData;
   const dispatch = useDispatch();
   const [localQuestion, setLocalQuestion] = useState([]);
   const [questionCurrentId, setQuestionCurrentId] = useState('');
+  const [showConfirmModel, setShowConfirmModel] = useState(false);
   useEffect(() => {
     !gettingQuestionnaire && dispatch(GetQuestion(_id));
-    // !gettingQuestionnaire && setLocalQuestion(questions);
   }, []);
+  const onFinish = () => {
+    setShowConfirmModel(true);
+  };
+  const onYesConfirmModel = () => {
+    setShowConfirmModel(false);
+    navigation.navigate('NewPayment', {appointmentBookingData});
+  };
 
   return (
-    <RadialGradient
-      style={{flex: 1}}
-      stops={[0.1, 0.9]}
-      center={[200, 150]}
-      radius={300}
-      colors={['#F8F7FF', '#E9E5FF']}>
+    <>
+      <ConfirmAppointmentModel
+        visible={showConfirmModel}
+        onNo={() => {
+          setShowConfirmModel(false);
+        }}
+        onYes={onYesConfirmModel}
+      />
+      <TopNavBar navigation={navigation} headerText={'Questionnaire'} />
       <View
         style={{
           height: 150,
           width: '100%',
           flexDirection: 'row',
-          paddingRight: 25,
+          paddingRight: '10%',
           justifyContent: 'space-between',
           paddingTop: 25,
         }}>
         <View style={{width: '45%'}}>
           <DmzButton
+            onPress={() => {
+              navigation.navigate('NewPayment', {appointmentBookingData});
+            }}
             style={{
               Container: {
                 marginTop: 25,
                 elevation: 0,
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
                 borderTopRightRadius: 15,
                 borderBottomRightRadius: 15,
-                backgroundColor: '#E7E3FE',
-                paddingHorizontal: 20,
+                backgroundColor: '#d6d6d6',
+                paddingHorizontal: '12%',
                 width: '90%',
               },
               Text: {
-                color: 'rgba(255,255,255,0.79)',
+                color: '#4f4f4f',
               },
             }}
             text={'SKIP QUESTIONS'}
           />
         </View>
-
-        <View style={{width: '45%'}}>
-          <Image source={require('../../../assets/png/questionnaire1.png')} />
-        </View>
       </View>
       {gettingQuestionnaire && (
-        <ActivityIndicator size={40} color={'#9C77BC'} />
+        <ActivityIndicator size={40} color={'#047b7b'} />
       )}
-      {questions.length !== 0 && <QuestionController questions={questions} />}
-    </RadialGradient>
+      {questions.length !== 0 && (
+        <QuestionController questions={questions} onFinish={onFinish} />
+      )}
+    </>
   );
 }
 
 export default QuestionnairePP;
 
-const QuestionController = ({questions, nested, nextQuestionParent}) => {
-  console.log('called');
+const QuestionController = ({
+  questions,
+  nested,
+  nextQuestionParent,
+  onFinish,
+}) => {
   const [count, setCount] = useState(0);
   const [root, setRoot] = useState(true);
   const ScrollRef = useRef(null);
   useEffect(() => {
-    console.log('mounted');
-    console.log('nested', nested);
     const root = questions.every((item) => item.root);
     setRoot(root);
-    console.log('root', root);
   }, [questions, count]);
   const nextQuestion = () => {
     if (count < questions.length - 1) {
@@ -101,7 +116,7 @@ const QuestionController = ({questions, nested, nextQuestionParent}) => {
       setCount(count + 1);
     }
     if (count === questions.length - 1 && !nested) {
-      alert('answers submited');
+      onFinish();
     }
   };
   // const onContinue = () => {
@@ -125,18 +140,18 @@ const QuestionController = ({questions, nested, nextQuestionParent}) => {
           nextQuestion={nextQuestion}
         />
       </ScrollView>
-      <View style={{marginBottom: 30}}>
+      <View style={{marginBottom: '8%'}}>
         {root && (
           <TouchableOpacity
             style={{
-              backgroundColor: '#AAA4C5',
-              elevation: 4,
+              backgroundColor: '#919191',
+              elevation: 0,
               alignSelf: 'center',
-              borderRadius: 45,
+              borderRadius: 15,
               alignSelf: 'flex-end',
-              marginRight: 40,
-              paddingVertical: 10,
-              paddingHorizontal: 20,
+              marginRight: '10%',
+              paddingVertical: '3%',
+              paddingHorizontal: '6%',
             }}
             onPress={nextQuestion}>
             <Text
@@ -155,6 +170,7 @@ const QuestionController = ({questions, nested, nextQuestionParent}) => {
             text={`Question ${count + 1} of ${questions.length}`}
             completed={((count + 1) / questions.length) * 100}
             textStyle={{fontSize: 20, fontWeight: 'bold', color: '#9C77BC'}}
+            mode={[20, 40, 60, 80, 100]}
           />
         )}
       </View>
@@ -195,7 +211,7 @@ const QuestionViewer = ({question, nextQuestion}) => {
       fontSize: question && question.root ? 38 : 20,
       lineHeight: question && question.root ? 40 : 22,
       fontWeight: 'bold',
-      color: '#6859A1',
+      color: '#047b7b',
       marginTop: question && question.root ? 0 : 10,
     },
   ];

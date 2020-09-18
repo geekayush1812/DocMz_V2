@@ -52,6 +52,12 @@ const Navigation = [
     icon: 'share-variant',
     navigateTo: 'Appointments',
   },
+  {
+    active: true,
+    name: 'Questionnaire',
+    icon: 'question',
+    navigateTo: 'AddQuestionnaire',
+  },
   // {
   //   active: true,
   //   name: 'Referrals',

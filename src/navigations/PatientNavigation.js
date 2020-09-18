@@ -39,6 +39,7 @@ import HealthCare from '../screens/patient/HealthCare/HealthCare';
 import AddCategoryQuestions from '../screens/doctor/AddQuestionnaire/AddCategoryQuestions';
 import NewPayment from '../screens/examples/payments/NewPayments';
 import Pay from '../screens/examples/payments/Pay';
+import QuestionnairePP from '../screens/patient/questionnaire/QuestionnairePP';
 
 const screenWidth = Dimensions.get('screen').width;
 const ProfileStack = createStackNavigator(
@@ -134,13 +135,14 @@ const PatientNavigation = createDrawerNavigator(
     Consultations,
     MyDoctors,
     MedicalRecords,
-    Payments,
+    NewPayment,
     Help,
     AppSettings,
     NotFound,
     FamilyMember,
     PatientSubscription,
     RedeemVoucher,
+    Questionnaire: QuestionnairePP,
     Profile: {screen: ProfileStack},
     Address: {screen: AddressStack},
     VoiceCall: {screen: VoiceCall},

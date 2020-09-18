@@ -104,7 +104,11 @@ const ConfirmAppointment = ({navigation}) => {
       forWhom: member.relationship,
       patientInfo: JSON.stringify(member),
     };
-    dispatch(bookAppointment(data));
+    navigation.navigate('Questionnaire', {
+      doctorData,
+      appointmentBookingData: data,
+    });
+    // dispatch(bookAppointment(data));
   };
 
   const onPress = (id) => {

@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
-import {View, ActivityIndicator, Text} from 'react-native';
+import {View, ActivityIndicator, Text, StatusBar} from 'react-native';
 import DmzText from '../../../components/atoms/DmzText/DmzText';
 import AnimInput from '../../../components/molecules/AnimInput/AnimInput';
 import DmzButton from '../../../components/atoms/SwitchButton/SwitchButton';
@@ -12,12 +12,14 @@ import {
   DeleteRootQuestion,
 } from '../../../redux/action/doctor/questionnaireAction';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
-import ExpandableList from '../../../components/molecules/ExpandableList/ExpandableList';
+import ExpandableListOld from '../../../components/molecules/ExpandableList/ExpandableListOld';
 import Overlay from '../../../components/atoms/Overlay/Overlay';
 import BasicCard from '../../../components/atoms/BasicCard/BasicCard';
 import ViewPager from '@react-native-community/viewpager';
+import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function AddQuestionnaire() {
+function AddQuestionnaire({navigation}) {
   const pagerRef = useRef();
   const nextpage = (page) => {
     pagerRef.current.setPage(page);
@@ -34,6 +36,7 @@ function AddQuestionnaire() {
   });
   const [showAddLinkedPopup, setShowAddLinkedPopup] = useState(false);
   const [parentId, setParentId] = useState('');
+  const [optionId, setOptionId] = useState('');
   const dispatch = useDispatch();
   const {data} = useSelector((state) => state.AuthReducer);
   const {
@@ -43,10 +46,9 @@ function AddQuestionnaire() {
     questionDetails,
   } = useSelector((state) => state.questionnaireReducer);
 
-  // useEffect(() => {
-  //   console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
-  //   !gettingQuestionnaire && dispatch(GetQuestion(data.id));
-  // }, []);
+  useEffect(() => {
+    !gettingQuestionnaire && dispatch(GetQuestion(data.id));
+  }, []);
 
   //could be used when API return data of added question till then dispatch an action when submit
   // useEffect(() => {
@@ -96,7 +98,7 @@ function AddQuestionnaire() {
       id: data.id,
     };
     dispatch(AddQuestion(Fques));
-    // dispatch(GetQuestion(data.id));
+    dispatch(GetQuestion(data.id));
     // console.log(Fques);
   };
   const onUpdateQuestion = () => {
@@ -156,109 +158,124 @@ function AddQuestionnaire() {
     setShowAddLinkedPopup(false);
   };
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <ViewPager
+    <>
+      <StatusBar
+        animated
+        barStyle={'dark-content'}
+        backgroundColor={'rgba(255,255,255,0.4)'}
+      />
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <TopNavBar navigation={navigation} headerText={'Questionnaire'} />
+        {/* <ViewPager
         ref={pagerRef}
         style={{flex: 1}}
         initialPage={1}
         scrollEnabled={false}>
         <View key="0"></View>
         <View key="1"></View>
-      </ViewPager>
-      {/* <ScrollView
-        contentContainerStyle={{paddingVertical: 40}}
-        style={{marginTop: 10, paddingHorizontal: 25}}>
-        <View>
-          {gettingQuestionnaire ? (
-            <ActivityIndicator />
-          ) : questions.length ? (
-            questions.map((item) => {
-              const linked = item.option.reduce((acc, curr) => {
-                acc.push(...curr.linkedQuestion);
-                return acc;
-              }, []);
-              return (
-                <ExpandableList
-                  key={item._id}
-                  name={item.title.slice(0, 20).concat('...')}
-                  nestedList={linked}
-                  onPressList={() => {
-                    onClickQuestion(item);
-                  }}
-                  onClickQuestion={onClickQuestion}
-                  option={item.option}
-                />
-              );
-            })
-          ) : (
-            <Text>empty questions</Text>
+      </ViewPager> */}
+        <ScrollView
+          contentContainerStyle={{paddingVertical: 40}}
+          style={{marginTop: 10, paddingHorizontal: 25}}>
+          <View>
+            {gettingQuestionnaire ? (
+              <ActivityIndicator />
+            ) : questions.length ? (
+              questions.map((item) => {
+                const linked = item.option.reduce((acc, curr) => {
+                  acc.push(...curr.linkedQuestion);
+                  return acc;
+                }, []);
+                return (
+                  <ExpandableListOld
+                    key={item._id}
+                    name={item.title.slice(0, 20).concat('...')}
+                    nestedList={linked}
+                    onPressList={() => {
+                      onClickQuestion(item);
+                    }}
+                    onClickQuestion={onClickQuestion}
+                    option={item.option}
+                  />
+                );
+              })
+            ) : (
+              <Text>empty questions</Text>
+            )}
+          </View>
+          <AddQuestionTemplate
+            Question={Question}
+            handles={{
+              handleTitleInput,
+              handleCategoryInput,
+              handleSpecialityInput,
+              onPressReset,
+            }}
+            optionProp={{options, setOptions, removeOption, addOption}}
+            onSubmit={onSubmit}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'space-around',
+              paddingHorizontal: '2%',
+            }}>
+            <DmzButton
+              text="Update"
+              onPress={onUpdateQuestion}
+              style={{
+                Container: {
+                  marginTop: 10,
+                  // borderRadius: 5,
+                  // backgroundColor: '#efa860',
+                  // alignSelf: 'center',
+                  borderColor: '#efa860',
+                  borderWidth: 0.7,
+                  borderRadius: 5,
+                },
+                Text: {
+                  color: '#efa860',
+                },
+              }}
+            />
+            <DmzButton
+              text="Delete"
+              onPress={onDeleteQuestion}
+              style={{
+                Container: {
+                  marginTop: 10,
+                  // borderRadius: 5,
+                  // backgroundColor: '#b50039',
+                  // alignSelf: 'center',
+                  borderColor: '#b50039',
+                  borderWidth: 0.7,
+                  borderRadius: 5,
+                },
+                Text: {
+                  color: '#b50039',
+                },
+              }}
+            />
+          </View>
+          {Question.option.length !== 0 && (
+            <AddLinkedOption
+              options={Question.option}
+              onPressLinkedOption={onPressLinkedOption}
+              openLinkedPopup={openLinkedPopup}
+            />
           )}
-        </View>
-        <AddQuestionTemplate
-          Question={Question}
-          handles={{
-            handleTitleInput,
-            handleCategoryInput,
-            handleSpecialityInput,
-            onPressReset,
-          }}
-          optionProp={{options, setOptions, removeOption, addOption}}
-          onSubmit={onSubmit}
-        />
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '100%',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-          }}>
-          <DmzButton
-            text="Update"
-            onPress={onUpdateQuestion}
-            style={{
-              Container: {
-                marginTop: 10,
-                borderRadius: 20,
-                backgroundColor: 'rgba(20,50,80,1)',
-                alignSelf: 'center',
-              },
-              Text: {
-                color: '#fff',
-              },
-            }}
-          />
-          <DmzButton
-            text="Delete"
-            onPress={onDeleteQuestion}
-            style={{
-              Container: {
-                marginTop: 10,
-                borderRadius: 20,
-                backgroundColor: 'rgba(230,50,80,1)',
-                alignSelf: 'center',
-              },
-              Text: {
-                color: '#fff',
-              },
-            }}
-          />
-        </View>
-        {Question.option.length !== 0 && (
-          <AddLinkedOption
-            options={Question.option}
-            onPressLinkedOption={onPressLinkedOption}
-            openLinkedPopup={openLinkedPopup}
+        </ScrollView>
+        {showAddLinkedPopup && (
+          <LinkedController
+            parentId={parentId}
+            optionId={optionId}
+            closeLinkedPopup={closeLinkedPopup}
           />
         )}
-      </ScrollView>
-      {showAddLinkedPopup && (
-        <LinkedController
-          parentId={parentId}
-          optionId={optionId}
-          closeLinkedPopup={closeLinkedPopup}
-        />
-      )} */}
-    </View>
+      </View>
+    </>
   );
 }
 
@@ -317,18 +334,21 @@ const AddQuestionTemplate = ({
         />
       ))}
 
-      <View style={{marginTop: 20}}>
-        <DmzButton
+      <View
+        style={{
+          marginTop: 20,
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+        }}>
+        <TouchableOpacity
           onPress={addOption}
-          text="Add Option"
           style={{
-            Container: {
-              borderColor: '#999',
-              borderWidth: 0.7,
-              borderRadius: 20,
-            },
-          }}
-        />
+            borderBottomColor: '#ddd',
+            borderBottomWidth: 1.5,
+            paddingHorizontal: '1%',
+          }}>
+          <Text style={{color: '#a09e9e'}}>Add Option</Text>
+        </TouchableOpacity>
       </View>
       <View
         style={{
@@ -342,7 +362,7 @@ const AddQuestionTemplate = ({
           onPress={onSubmit}
           text="Add"
           style={{
-            Container: {backgroundColor: '#76b434', borderRadius: 20},
+            Container: {backgroundColor: '#047b7b', borderRadius: 5},
             Text: {
               color: '#fff',
             },
@@ -355,7 +375,7 @@ const AddQuestionTemplate = ({
             Container: {
               borderColor: '#999',
               borderWidth: 0.7,
-              borderRadius: 20,
+              borderRadius: 5,
             },
           }}
         />
@@ -400,10 +420,7 @@ const Option = ({item, onPressRemove, options, setOptions}) => {
   return (
     <View
       style={{
-        borderWidth: 1,
-        borderColor: '#ccc',
         marginTop: 15,
-        borderRadius: 15,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -427,18 +444,19 @@ const Option = ({item, onPressRemove, options, setOptions}) => {
           Container: {borderBottomWidth: 0, width: '40%'},
         }}
       />
-      <DmzButton
+
+      <TouchableOpacity
         onPress={onPressRemoveButton}
-        text="X"
         style={{
-          Container: {
-            backgroundColor: 'rgb(210,10,20)',
-            width: '15%',
-            height: '100%',
-          },
-          Text: {color: '#fff'},
-        }}
-      />
+          backgroundColor: '#dbdbdb',
+          paddingHorizontal: '4%',
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: 10,
+        }}>
+        <MaterialIcon name={'delete'} size={24} color={'#494a49'} />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -534,12 +552,12 @@ const LinkedController = ({parentId, optionId, closeLinkedPopup}) => {
         <DmzButton
           style={{
             Container: {
-              elevation: 8,
-              backgroundColor: '#ff0f05',
               marginTop: 5,
-              borderRadius: 10,
+              borderColor: '#b50039',
+              borderWidth: 0.7,
+              borderRadius: 5,
             },
-            Text: {color: '#fff'},
+            Text: {color: '#b50039'},
           }}
           text="close"
           onPress={closeLinkedPopup}
@@ -554,20 +572,20 @@ const AddLinkedOption = ({
   onPressLinkedOption = () => {},
   openLinkedPopup,
 }) => {
-  const [selectedOption, setSelectedOption] = useState(options[0] || '');
+  const [selectedOption, setSelectedOption] = useState('');
   const onPressLinkedOptionLocal = (itemValue, itemIndex) => {
-    const option = options.find((item) => item.text === itemValue);
-    console.log(option);
-    onPressLinkedOption(option._id);
-    setSelectedOption(itemValue);
+    if (itemValue == '') {
+      setSelectedOption(itemValue);
+    } else {
+      const option = options.find((item) => item.text === itemValue);
+      onPressLinkedOption(option._id);
+      setSelectedOption(itemValue);
+    }
   };
   return (
     <View
       style={{
-        borderWidth: 1,
-        borderColor: '#ccc',
         marginTop: 15,
-        borderRadius: 15,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-around',
@@ -579,6 +597,7 @@ const AddLinkedOption = ({
         style={{flex: 1, height: 25}}
         selectedValue={selectedOption}
         onValueChange={onPressLinkedOptionLocal}>
+        <Picker.Item color={'#ddd'} label={'Option'} value={''} />
         {options.length !== 0 &&
           options.map((item) => {
             return (
@@ -587,11 +606,13 @@ const AddLinkedOption = ({
           })}
       </Picker>
       <DmzButton
+        disabled={selectedOption == '' ? true : false}
         onPress={openLinkedPopup}
-        text="Add linked Question"
+        text="Add Sub Question"
         style={{
           Container: {
-            backgroundColor: 'rgb(210,10,20)',
+            borderRadius: 10,
+            backgroundColor: selectedOption == '' ? '#494a49' : '#efa860',
             flex: 1,
             height: '100%',
             marginLeft: 5,

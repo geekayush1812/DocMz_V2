@@ -116,6 +116,7 @@ const DoctorDrawer = createDrawerNavigator(
     Dashboard: Dashboard,
     Onboarding: Onboarding,
     PatientsList: Patients,
+    AddQuestionnaire,
   },
   {
     initialRouteName: 'Onboarding',

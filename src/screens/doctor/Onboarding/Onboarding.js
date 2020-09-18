@@ -44,10 +44,6 @@ function Onboarding({navigation}) {
     !specialtyLoading && dispatch(getSpecialty());
   }, []);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
-
   let imageSource = '';
   if (data && isLogedin && !isDoctor) {
     imageSource = {

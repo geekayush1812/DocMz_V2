@@ -10,13 +10,13 @@ function RadioBtn({active, keyName, value = 'null', setKeyName = () => {}}) {
   const customTouchableStyle = [
     Styles.Touchable,
     {
-      backgroundColor: active ? '#9C77BC' : '#ffffff',
+      backgroundColor: active ? '#047b7b' : '#ffffff',
     },
   ];
   const customTextStyle = [
     Styles.Text,
     {
-      color: active ? '#fff' : '#6859A1',
+      color: active ? '#fff' : '#047b7b',
       fontWeight: active ? 'bold' : 'normal',
     },
   ];
