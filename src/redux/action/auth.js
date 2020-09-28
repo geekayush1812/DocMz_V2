@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {Host} from '../../utils/connection';
-
+import {GetPatientInfo} from '../action/patientAccountAction';
 import {resetDataStore} from './dataStore';
 import {resetDoctor} from './doctoreAction';
 import {resetQuestion} from './questionAction';
@@ -156,25 +156,16 @@ export const UpdateDoctor = (data, success, failed) => {
 
 export const LoginPatient = (data, success, failed) => {
   return (dispatch) => {
-    // setup loading screen
     dispatch(startLoading());
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-
-    // setting header
     const config = {
       'Content-Type': 'application/x-www-form-urlencoded',
       Accept: '*/*',
     };
-
-    console.log(data);
-
     axios
       .post(`${Host}/patient/authenticate`, data, config)
       .then((result) => {
-        console.log(result.data);
         if (result.data.status) {
           const data = result.data.user;
-
           const _data = {
             id: data._id,
             email: data.email,
@@ -184,6 +175,7 @@ export const LoginPatient = (data, success, failed) => {
           };
 
           dispatch(saveNewUser(_data, 'patient'));
+          dispatch(GetPatientInfo(_data.id));
           success({
             status: true,
             id: data._id,
@@ -192,12 +184,9 @@ export const LoginPatient = (data, success, failed) => {
         } else {
           failed({
             status: false,
-            // message: 'something went wrong!! try again',
             message: result.data.error.slice(0, 20),
           });
           console.log('error 2');
-
-          // dispatch(haveingError({error: 'something went wrong'}));
           dispatch(haveingError(result.data.error.slice(0, 20)));
         }
       })
@@ -205,9 +194,7 @@ export const LoginPatient = (data, success, failed) => {
         failed({
           status: false,
           message: 'something went wrong!! try again',
-          // message: err.slice(0, 20),
         });
-        console.log('error 1', err);
         dispatch(haveingError(err));
       });
   };
@@ -327,7 +314,6 @@ export const signupDoctor = (data, successCallback, errorCallback) => {
 };
 
 export const signupPatient = (data, successCallback, errorCallback) => {
-  console.log('signingin');
   return (dispatch) => {
     const config = {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -348,10 +334,9 @@ export const signupPatient = (data, successCallback, errorCallback) => {
           };
           AsyncStorage.setItem('userData', JSON.stringify(__data)).then(() => {
             dispatch(saveNewUser(__data, 'patient'));
+            dispatch(GetPatientInfo(__data.id));
             successCallback();
           });
-
-          console.log('@@@@@@@@@@@@@@@@@', result.data);
         } else {
           dispatch(haveingError('Something Went Wrong'));
           errorCallback('Something Went Wrong');

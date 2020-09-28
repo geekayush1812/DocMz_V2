@@ -10,18 +10,13 @@ import {
   BackHandler,
   Image,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import Toast from 'react-native-root-toast';
 import DmzText from '../../../components/atoms/DmzText/DmzText';
 import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
 import TextInputIcon from '../../../components/atoms/TextInputCustom/TextInputIcon';
-import LoginAsPatient from '../../../assets/svg/LoginAsPatient.svg';
-import LoginAsDoctor from '../../../assets/svg/LoginAsDoctor.svg';
-import Check from '../../../assets/svg/check.svg';
 import {useDispatch} from 'react-redux/lib/hooks/useDispatch';
 import {LoginDoctor, LoginPatient} from '../../../redux/action/auth';
 import {GetPatientInfo} from '../../../redux/action/patientAccountAction';
-import {call} from 'react-native-reanimated';
 import {useSelector} from 'react-redux/lib/hooks/useSelector';
 import {
   HEADER_TEXT,
@@ -36,7 +31,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import ViewPager from '@react-native-community/viewpager';
 import SignupSplash from '../DmzSignup/SignupSplash';
-import AlertModal from '../../../components/molecules/Modal/AlertModal';
 import UserProfile from '../../../assets/svg/male_profile.svg';
 import GenericError from '../../../components/molecules/Modal/GenericError';
 export default function DmzLoginV2(props) {
@@ -55,7 +49,6 @@ export default function DmzLoginV2(props) {
 
   const handlePatientLogin = () => {
     dispatch(LoginPatient(credential, successCallback, errorCallback));
-    console.log('++++++++++++++', data);
   };
   const handleDoctorLogin = () => {
     dispatch(LoginDoctor(credential, successCallback, errorCallback));

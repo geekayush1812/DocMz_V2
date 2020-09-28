@@ -1,32 +1,36 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
   Text,
   KeyboardAvoidingView,
   ActivityIndicator,
+  Animated,
+  Easing,
+  PermissionsAndroid,
+  TextInput,
 } from 'react-native';
 import Avater from '../../../atoms/Avater/Avater';
-import DmzText from '../../../atoms/DmzText/DmzText';
-import Option from '../../../molecules/Option/Option';
-import {Colors} from '../../../../styles/index';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector, useDispatch} from 'react-redux';
 import {resetStore} from '../../../../redux/action/auth';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import ExpandableOption from '../../../molecules/ExpandableOption/ExpandableOption';
-import FancyHeaderLite from '../../../organisms/FancyHeaderLite/FancyHeaderLite';
 import {HEADER_TEXT, TERTIARY_TEXT} from '../../../../styles/colors';
 import StepsTracker from '../../../atoms/StepsTracker/StepsTracker';
-import SlidingUpPanel from 'rn-sliding-up-panel';
-import PatientLocation from '../../../../screens/examples/PatientLocation/PatientLocation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import ToggleButton from '../../../molecules/ToggleButton/ToggleButton';
 import TopNavBar from '../../../molecules/TopNavBar/TopNavBar';
 import {UpdateDoctor, BlockDoctor} from '../../../../redux/action/auth';
+import {UploadProfilePic} from '../../../../redux/action/doctoreAction';
+import {
+  GettingDocterLatestInfo,
+  UpdateDoctorProfile,
+} from '../../../../redux/action/doctor/myDoctorAction';
 import {Host} from '../../../../utils/connection';
+import ImagePicker from 'react-native-image-picker';
+
 const Navigation = [
   // {
   //   active: true,
@@ -90,6 +94,23 @@ const Custom = (props) => {
     isDoctor,
     isLogedin,
   } = state;
+  const {doctorProfile} = useSelector((state) => state.MyDoctorReducer);
+
+  const [credential, setCredential] = useState({
+    name: '',
+    age: '',
+    gender: '',
+  });
+  const [popupHeight, setPopupHeight] = useState(400);
+  const animateHeightOfPopup = useRef(new Animated.Value(0)).current;
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [aboutPopupHeight, setAboutPopupHeight] = useState(400);
+  const animateHeightOfAboutPopup = useRef(new Animated.Value(0)).current;
+  const [aboutPopupVisible, setAboutPopupVisible] = useState(false);
+  const [imageSource, setImageSource] = useState(
+    require('../../../../assets/images/dummy_profile.png'),
+  );
+
   const dispatch = useDispatch();
   const onUpdateDoctor = () => {
     dispatch(
@@ -103,20 +124,37 @@ const Custom = (props) => {
   const onBlock = () => {
     dispatch(BlockDoctor(data._id));
   };
-  let imageSource = require('../../../../assets/images/dummy_profile.png');
-  if (data && isLogedin && !isDoctor && data.picture) {
-    imageSource = {
-      uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
-    };
-  } else if (data && isLogedin && isDoctor && data.picture.length > 0) {
-    imageSource = {
-      uri: `${Host}${data.picture[0]
-        .replace('public', '')
-        .replace('\\\\', '/')}`,
-    };
-  } else {
-    imageSource = require('../../../../assets/images/dummy_profile.png');
-  }
+
+  // if (data && isLogedin && !isDoctor && data.picture) {
+  //   imageSource = {
+  //     uri: `${Host}${data.picture.replace('public', '').replace('\\\\', '/')}`,
+  //   };
+  // } else if (data && isLogedin && isDoctor && data.picture.length > 0) {
+  //   imageSource = {
+  //     uri: `${Host}${data.picture[0]
+  //       .replace('public', '')
+  //       .replace('\\\\', '/')}`,
+  //   };
+  // } else {
+  //   imageSource = require('../../../../assets/images/dummy_profile.png');
+  // }
+
+  useEffect(() => {
+    dispatch(GettingDocterLatestInfo(data._id));
+  }, []);
+
+  useEffect(() => {
+    if (doctorProfile.picture?.length) {
+      setImageSource({
+        uri: `${Host}${doctorProfile.picture[0]
+          .replace('public', '')
+          .replace('\\\\', '/')}`,
+      });
+    } else {
+      setImageSource(require('../../../../assets/images/dummy_profile.png'));
+    }
+  }, [doctorProfile]);
+
   const onLogout = () => {
     dispatch(
       resetStore(() => {
@@ -124,6 +162,151 @@ const Custom = (props) => {
       }),
     );
   };
+  const onPressAvatar = () => {
+    animateHeightOfAboutPopup.setValue(0);
+    setAboutPopupVisible(false);
+    Animated.timing(animateHeightOfPopup, {
+      useNativeDriver: true,
+      toValue: popupVisible ? 0 : 1,
+      easing: Easing.elastic(),
+      duration: 500,
+    }).start(() => {
+      setPopupVisible(!popupVisible);
+    });
+  };
+  const onPressDetails = () => {
+    animateHeightOfPopup.setValue(0);
+    setPopupVisible(false);
+    Animated.timing(animateHeightOfAboutPopup, {
+      useNativeDriver: true,
+      toValue: aboutPopupVisible ? 0 : 1,
+      easing: Easing.elastic(),
+      duration: 500,
+    }).start(() => {
+      setAboutPopupVisible(!aboutPopupVisible);
+    });
+  };
+  const onPopupLayoutChange = (event) => {
+    setPopupHeight(event.nativeEvent.layout.height);
+  };
+  const onAboutPopupLayoutChange = (event) => {
+    setAboutPopupHeight(event.nativeEvent.layout.height);
+  };
+
+  const onChooseCamera = async () => {
+    const granted = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+    );
+    if (granted) {
+      PickCamera();
+    } else {
+      askPermission(PickCamera);
+    }
+  };
+  const onChooseGallery = async () => {
+    const granted = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+    );
+    if (granted) {
+      PickGallery();
+    } else {
+      askPermission(PickGallery);
+    }
+  };
+  const askPermission = async (launch) => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Camera Permission',
+          message: 'DocMz needs access to your camera ',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        launch();
+      } else {
+        console.log('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  const PickCamera = () => {
+    const options = {
+      title: 'Select Avatar',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    ImagePicker.launchCamera(options, (response) => {
+      // console.log('Response = ', response);
+      if (response.didCancel) {
+        console.log('User cancelled camera picker');
+      } else if (response.error) {
+        console.log('CameraPicker Error: ', response.error);
+      } else {
+        // const source = {uri: response.uri};
+        // console.log(source);
+        // const path = response.uri;
+        // setData({...data, imagePath: path});
+        // console.log(path);
+        if (data._id) {
+          dispatch(
+            UploadProfilePic(data._id, response, () => {
+              setPopupVisible(!popupVisible);
+              animateHeightOfPopup.setValue(0);
+              dispatch(GettingDocterLatestInfo(data._id));
+            }),
+          );
+        } else {
+          alert('You need to login first');
+        }
+      }
+    });
+  };
+  const PickGallery = () => {
+    const options = {
+      title: 'Select Avatar',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+    ImagePicker.launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled gallery picker');
+      } else if (response.error) {
+        console.log('Gallery picker Error: ', response.error);
+      } else {
+        if (data._id) {
+          dispatch(
+            UploadProfilePic(data._id, response, () => {
+              setPopupVisible(!popupVisible);
+              animateHeightOfPopup.setValue(0);
+              dispatch(GettingDocterLatestInfo(data._id));
+            }),
+          );
+        } else {
+          alert('You need to login first');
+        }
+      }
+    });
+  };
+
+  const onUpdateDetails = () => {
+    const profileData = {
+      name: credential.name,
+      age: credential.age,
+      gender: credential.gender,
+      id: data._id,
+    };
+    dispatch(UpdateDoctorProfile(profileData));
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -140,50 +323,54 @@ const Custom = (props) => {
           style={{Container: {marginTop: 5, marginBottom: 10}}}
         />
         <View style={styles.profile}>
-          <TouchableOpacity
+          <View
             // onPress={onProfileClick}
             style={{flexDirection: 'row'}}>
-            <Avater
-              src={imageSource}
-              type={7}
-              style={{borderRadius: 10, borderWidth: 4}}
-            />
-            <View
-              style={{
-                paddingHorizontal: '3%',
-                justifyContent: 'space-around',
-              }}>
-              <Text style={{fontSize: 22, color: '#000'}}>
-                {!data || data.length == 0
-                  ? ''
-                  : `Dr. ${data.firstName.toTitleCase()} ${data.lastName}`}
-              </Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity onPress={onPressAvatar}>
+              <Avater
+                src={imageSource}
+                type={7}
+                style={{borderRadius: 10, borderWidth: 4}}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onPressDetails}>
+              <View
+                style={{
+                  paddingHorizontal: '3%',
+                  justifyContent: 'space-around',
+                }}>
+                <Text style={{fontSize: 22, color: '#000'}}>
+                  {!data || data.length == 0
+                    ? ''
+                    : `Dr. ${data.firstName.toTitleCase()} ${data.lastName}`}
+                </Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: '#000',
+                      fontWeight: 'normal',
+                    }}>
+                    4.92
+                  </Text>
+                  <MaterialCommunityIcons
+                    style={{marginLeft: 5}}
+                    name="star"
+                    color={'#047b7b'}
+                    size={18}
+                  />
+                </View>
                 <Text
                   style={{
                     fontSize: 14,
                     color: '#000',
                     fontWeight: 'normal',
                   }}>
-                  4.92
+                  Edit your profile
                 </Text>
-                <MaterialCommunityIcons
-                  style={{marginLeft: 5}}
-                  name="star"
-                  color={'#047b7b'}
-                  size={18}
-                />
               </View>
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: '#000',
-                  fontWeight: 'normal',
-                }}>
-                Edit your profile
-              </Text>
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
           <StepsTracker
             text="Complete Your Profile (30%)"
             textStyle={{
@@ -297,6 +484,159 @@ const Custom = (props) => {
           </Section> */}
         </ScrollView>
       </View>
+      <Animated.View
+        onLayout={onPopupLayoutChange}
+        style={{
+          width: '100%',
+          height: '30%',
+          backgroundColor: '#e6f7f5',
+          position: 'absolute',
+          bottom: 0,
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+          paddingVertical: '10%',
+          paddingHorizontal: '10%',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          transform: [
+            {
+              translateY: animateHeightOfPopup.interpolate({
+                inputRange: [0, 1],
+                outputRange: [popupHeight, 0],
+              }),
+            },
+          ],
+        }}>
+        <Text style={{fontSize: 22, fontWeight: 'bold'}}>
+          Update Profile Picture
+        </Text>
+        <View
+          style={{
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}>
+          <View style={{alignItems: 'center', flex: 1}}>
+            <TouchableOpacity
+              onPress={onChooseGallery}
+              style={{
+                backgroundColor: '#37acac',
+                padding: '15%',
+                borderRadius: 100,
+              }}>
+              <FontAwesomeIcon name={'photo'} size={32} color={'#fff'} />
+            </TouchableOpacity>
+            <Text style={{marginTop: '2%'}}>Gallery</Text>
+          </View>
+
+          <View style={{alignItems: 'center', flex: 1}}>
+            <TouchableOpacity
+              onPress={onChooseCamera}
+              style={{
+                backgroundColor: '#37acac',
+                padding: '15%',
+                borderRadius: 100,
+              }}>
+              <FontAwesomeIcon name={'camera'} size={32} color={'#fff'} />
+            </TouchableOpacity>
+            <Text style={{marginTop: '2%'}}>Camera</Text>
+          </View>
+
+          <View style={{alignItems: 'center', flex: 1}}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#37acac',
+                padding: '15%',
+                borderRadius: 100,
+              }}>
+              <MaterialCommunityIcons
+                name={'delete'}
+                size={32}
+                color={'#fff'}
+              />
+            </TouchableOpacity>
+            <Text style={{marginTop: '2%'}}>Remove Photo</Text>
+          </View>
+        </View>
+      </Animated.View>
+      <Animated.View
+        onLayout={onAboutPopupLayoutChange}
+        style={{
+          width: '100%',
+          height: '30%',
+          backgroundColor: '#e6f7f5',
+          position: 'absolute',
+          bottom: 0,
+          borderTopLeftRadius: 25,
+          borderTopRightRadius: 25,
+          paddingVertical: '5%',
+          paddingHorizontal: '10%',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          transform: [
+            {
+              translateY: animateHeightOfAboutPopup.interpolate({
+                inputRange: [0, 1],
+                outputRange: [aboutPopupHeight, 0],
+              }),
+            },
+          ],
+        }}>
+        <Text style={{fontSize: 22, fontWeight: 'bold'}}>
+          Update Profile Details
+        </Text>
+        <View style={{width: '75%'}}>
+          <TextInput
+            onChangeText={(name) => setCredential({...credential, name})}
+            placeholder={'Name'}
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: '#047b7b',
+              paddingVertical: '2%',
+              marginBottom: '2%',
+            }}
+          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <TextInput
+              placeholder={'Age'}
+              onChangeText={(age) => setCredential({...credential, age})}
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: '#047b7b',
+                paddingVertical: '2%',
+                paddingRight: '9%',
+              }}
+            />
+            <TextInput
+              placeholder={'Gender'}
+              onChangeText={(gender) => setCredential({...credential, gender})}
+              style={{
+                borderBottomWidth: 1,
+                borderBottomColor: '#047b7b',
+                paddingVertical: '2%',
+                paddingRight: '9%',
+              }}
+            />
+          </View>
+        </View>
+        <TouchableOpacity
+          onPress={onUpdateDetails}
+          style={{
+            backgroundColor: '#047b7b',
+            paddingVertical: '3%',
+            paddingHorizontal: '5%',
+            borderRadius: 10,
+            marginTop: '5%',
+          }}>
+          <Text style={{fontSize: 16, color: '#fff'}}>SUBMIT</Text>
+        </TouchableOpacity>
+      </Animated.View>
     </View>
   );
 };

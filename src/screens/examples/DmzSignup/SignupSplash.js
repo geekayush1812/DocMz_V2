@@ -1,11 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
-import LoginAsPatient from '../../../assets/svg/LoginAsPatient.svg';
-import LoginAsDoctor from '../../../assets/svg/LoginAsDoctor.svg';
-import Check from '../../../assets/svg/check.svg';
 import DmzText from '../../../components/atoms/DmzText/DmzText';
-import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
 import {
   PRIMARY_COLOR,
   TERTIARY_TEXT,

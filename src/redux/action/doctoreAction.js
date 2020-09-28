@@ -103,22 +103,6 @@ export const resetDoctor = () => {
   };
 };
 
-// export const fetchDoctors = () => {
-//   return async dispatch => {
-//     await dispatch(startDoctorLoading());
-//     await axios
-//       .get('https://jsonplaceholder.typicode.com/comments')
-//       .then(response => {
-//         console.log(response);
-//         dispatch(setDoctors(response.data));
-//       })
-//       .catch(err => {
-//         dispatch(haveingError(err));
-//       });
-//   };
-// };
-
-//ex: search: '', page: 1, mode: false
 export const fetchDoctorLite = (search = {}, _page, mode) => {
   console.log(`Search: ${search} and page: ${_page} and mode: ${mode}`);
   return (dispatch) => {
@@ -258,7 +242,7 @@ export const fetchSuperDoc = (page, size) => {
   };
 };
 
-export const UploadProfilePic = (id, ImageData) => {
+export const UploadProfilePic = (id, ImageData, success = () => {}) => {
   return (dispatch) => {
     dispatch(startUploadingImage());
     const Image = {
@@ -269,36 +253,18 @@ export const UploadProfilePic = (id, ImageData) => {
     const data = new FormData();
     data.append('image', Image);
     data.append('id', id);
-    // const config = {
-    //   Accept: '*/*',
-    //   'content-type': 'multipart/form-data',
-    // };
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
     };
-    console.log('ppppppppppppppppppppppppppppppppp');
-    console.log(data);
-    console.log(config);
-    console.log(`${Host}/doctors/upload/image`);
     axios
       .post(`${Host}/doctors/upload/image`, data, config)
       .then((responseStatus) => {
-        console.log('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
-        console.log(responseStatus);
-        // AsyncStorage.setItem('ProfileImage', Image)
-        //   .then((res) => {
+        success();
         dispatch(uploadedImage());
-        // })
-        // .catch(() => {
-        //   console.log('error in async storage');
-        // });
       })
       .catch((err) => {
-        console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
-        console.log(JSON.stringify(err));
         dispatch(errorUploadingImage(err));
       });
   };

@@ -25,6 +25,7 @@ import Vitals from './Vitals';
 import Meds from './Meds';
 import Reports from './Reports';
 import Surgeries from './Surgeries';
+import Allergies from './Allergies';
 
 const MedicalHistory = ({navigation}) => {
   const [tab, setTab] = useState('vitals');
@@ -36,7 +37,6 @@ const MedicalHistory = ({navigation}) => {
         style={{Container: {marginTop: 5, marginBottom: 10}}}
         navigation={navigation}
       />
-
       <View>
         <ScrollView
           horizontal
@@ -100,6 +100,18 @@ const MedicalHistory = ({navigation}) => {
               Surgeries
             </Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tabContainer, {borderLeftWidth: 1}]}
+            onPress={() => setTab('allergies')}>
+            <Text
+              style={
+                tab === 'allergies'
+                  ? styles.activeTabText
+                  : styles.inactiveTabText
+              }>
+              Allergies
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </View>
 
@@ -112,6 +124,8 @@ const MedicalHistory = ({navigation}) => {
           <Reports />
         ) : tab == 'surgeries' ? (
           <Surgeries />
+        ) : tab == 'allergies' ? (
+          <Allergies />
         ) : null}
       </View>
     </View>

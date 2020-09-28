@@ -182,18 +182,11 @@ export const GetAppointments = (patientId) => (dispatch) => {
  *  End Appointment list
  */
 
-export const GettingDocterLatestInfo = (id, limit = 3) => {
+export const GettingDocterLatestInfo = (id) => {
   return (dispatch) => {
     dispatch(startLoading());
-    const __params = {
-      limit: limit,
-      doctror: id,
-      // doctor: '5dad6ba6f4ab551864e63f00',
-      date: new Date().toISOString(),
-      // date: '2020-04-25T10:24:39.736Z',
-    };
 
-    axios.get(`${Host}/doctors/getdoc/${__params.doctor}`).then((result) => {
+    axios.get(`${Host}/doctors/getdoc/${id}`).then((result) => {
       if (result.data.status) {
         dispatch(saveDoc(result.data.data));
       } else {
@@ -327,7 +320,9 @@ export const getSpecialty = (pageNo = 0, size = 5) => {
     }
   };
 };
-export const UpdateDoctorProfile = (data, callback) => (dispatch) => {
+export const UpdateDoctorProfile = (data, callback = () => {}) => (
+  dispatch,
+) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -341,9 +336,8 @@ export const UpdateDoctorProfile = (data, callback) => (dispatch) => {
       .post(`${Host}/doctors/profile/update`, _data, config)
       .then((response) => {
         dispatch(updatedDoctorProfile());
-        console.log(response.data.data);
-        dispatch(saveDoc(response.data.data));
         callback();
+        dispatch(saveDoc(response.data.data));
       });
   } catch (e) {
     dispatch(updatingDoctorError(e));

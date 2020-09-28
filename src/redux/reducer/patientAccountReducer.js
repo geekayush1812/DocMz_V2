@@ -1,6 +1,6 @@
 const initialState = {
   isPatientAccountReducerLoading: true,
-  patient: null,
+  patient: {},
   patientVitals: null,
   errorInPatientAccountReducer: [],
   patientFavDoc: [],

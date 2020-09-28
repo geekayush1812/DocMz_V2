@@ -392,7 +392,6 @@ export const UpdateProfile = (profileData, patientId) => {
       id: patientId,
       ...profileData,
     };
-    console.log('$$$$$$$$$', profileData, patientId, _data);
 
     await axios
       .post(`${Host}/patient/update`, _data, config)
@@ -508,7 +507,12 @@ export const RemoveFamilyMember = (docId, patientId) => {
   };
 };
 
-export const UploadProfilePicPatient = (id, ImageData) => {
+export const UploadProfilePicPatient = (
+  id,
+  ImageData,
+  success = () => {},
+  failure = () => {},
+) => {
   return (dispatch) => {
     dispatch(startLoading());
     const Image = {
@@ -528,9 +532,11 @@ export const UploadProfilePicPatient = (id, ImageData) => {
       .post(`${Host}/patient/upload/image`, data, config)
       .then((responseStatus) => {
         dispatch(profilePicUploaded(Image));
+        success();
       })
       .catch((err) => {
         dispatch(havingError(err));
+        failure();
       });
   };
 };

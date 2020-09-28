@@ -1,6 +1,6 @@
 const inititalState = {
   isMyDoctorReducerLoading: false,
-  doctorProfile: null,
+  doctorProfile: [],
   haveingMyDoctorReducerError: [],
   appointmentLoading: false,
   appointments: [],

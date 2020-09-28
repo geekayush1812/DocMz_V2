@@ -40,9 +40,7 @@ export default function PatientCalendarScreen({navigation}) {
     'Father',
     'Other',
   ]);
-  // selectedIndex: 0
-  // pos: false,
-  // months: [],
+
   const data = navigation.state.params.data;
   const {_id} = data;
 
@@ -58,32 +56,6 @@ export default function PatientCalendarScreen({navigation}) {
     );
     setForWhomOption(relationship);
   }, [familyMember]);
-  // const [range, setRange] = useState([]);
-  // const time = ['09:00', '10:00', '11:00', '12:00', '01:00', '02:000'];
-  // // daysLable: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
-  // value: 0,
-  // timeValue: '09:00',
-
-  // const val = new Animated.Value(height * 0.58);
-
-  // const updateIndex = (selectedIndex) => {
-  //   this.setState({selectedIndex});
-  // };
-  // var today = moment();
-  // var day = this.today.clone().startOf('month');
-  // const customDatesStyles = [];
-
-  // // componentDidMount = () => {
-  // //   this.getMonths();
-  // //   while (this.day.add(1, 'day').isSame(this.today, 'month')) {
-  // //     this.customDatesStyles.push({
-  // //       date: this.day.clone(),
-  // //       style: {},
-  // //       textStyle: {color: '#015A6B', fontSize: 18}, // sets the font color
-  // //       containerStyle: [], // extra styling for day container
-  // //     });
-  // //   }
-  // // };
 
   const getDateView = (startDate, endDate) => {
     if (startDate != '' && endDate != '') {

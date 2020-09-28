@@ -13,6 +13,7 @@ import {
   SECONDARY_COLOR,
   SECONDARY_BACKGROUND,
 } from '../../../styles/colors';
+import RadioGroupV2 from '../../molecules/RadioGroup/RadioGroupV2';
 const moment = extendMoment(Moment);
 
 export default function Calendar({onDateChange, getDateView}) {
@@ -77,11 +78,41 @@ export default function Calendar({onDateChange, getDateView}) {
     getMonths();
   }, []);
 
+  const [activeConsultationType, setActiveConsultationType] = useState('TC');
+
   return (
-    <View>
+    <>
+      <View
+        style={{
+          height: 80,
+          paddingHorizontal: '10%',
+          justifyContent: 'space-around',
+          borderBottomWidth: 3,
+          borderBottomColor: 'rgba(237,237,237,0.9)',
+        }}>
+        <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+          Select consultation type
+        </Text>
+        <View
+          style={{flex: 1, justifyContent: 'center', paddingHorizontal: '3%'}}>
+          <RadioGroupV2
+            horizontal={true}
+            activeKey={activeConsultationType}
+            setActiveKey={setActiveConsultationType}
+            Item={[
+              {value: 'Tele-Consult', id: 'TC'},
+              {value: 'In-Person', id: 'IP'},
+            ]}></RadioGroupV2>
+        </View>
+      </View>
       <FlatList
         data={months}
         horizontal
+        style={{
+          borderBottomWidth: 3,
+          borderBottomColor: 'rgba(237,237,237,0.9)',
+          paddingVertical: '4%',
+        }}
         showsHorizontalScrollIndicator={false}
         renderItem={({item, index}) => {
           console.log(item, index);
@@ -194,6 +225,6 @@ export default function Calendar({onDateChange, getDateView}) {
           width: 0,
         }}
       />
-    </View>
+    </>
   );
 }

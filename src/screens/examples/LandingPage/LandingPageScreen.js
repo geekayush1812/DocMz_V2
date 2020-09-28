@@ -61,7 +61,6 @@ export default function LandingPageScreen({navigation}) {
   const {specialtyLoading, specialty} = useSelector(
     (state) => state.MyDoctorReducer,
   );
-  console.log(doctors);
   const [searchKey, setSearchKey] = useState('');
   const [activeId, setActiveId] = useState('');
   const [toastVisible, setToastVisible] = useState(false);

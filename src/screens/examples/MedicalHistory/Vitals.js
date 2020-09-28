@@ -67,10 +67,6 @@ const Vitals = () => {
     });
     setGraphData(patient?.meta.heartRate.map((item) => Number(item.value)));
   }, [patient]);
-  useEffect(() => {
-    console.log(vitalsInfo.heartRate);
-    console.log(vitalsInfo.bloodPressure);
-  }, [vitalsInfo]);
 
   const updateVitals = (res, callback = () => {}) => {
     dispatch(UpdateVitals(res, patient._id, patient.meta));
@@ -255,7 +251,7 @@ const Vitals = () => {
                 data={{
                   datasets: [
                     {
-                      data: vitalsInfo.bloodPressure.map((item) =>
+                      data: vitalsInfo?.bloodPressure?.map((item) =>
                         Number(item.value),
                       ),
                       color: (opacity = 1) => `#efa860`,
@@ -283,6 +279,7 @@ const Vitals = () => {
                   },
                 }}
               />
+
               <Text style={styles.text3}>
                 Updated on :
                 {moment(vitalsInfo.bloodPressure.date).format("DD MMM 'YY")}

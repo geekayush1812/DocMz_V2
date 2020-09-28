@@ -9,7 +9,6 @@ import Consultations from '../screens/patient/consultations/Consultations';
 import MyDoctors from '../screens/patient/mydoctors/MyDoctors';
 import MedicalRecords from '../screens/patient/medicalrecords/MedicalRecords';
 import Orders from '../screens/patient/orders/Orders';
-import Payments from '../screens/patient/payments/Payments';
 import AppSettings from '../screens/patient/more/settings/Settings';
 import Help from '../screens/patient/more/help/Help';
 import NotFound from '../components/organisms/NotFound/NotFound';
@@ -31,15 +30,12 @@ import EditEmailId from '../components/molecules/EditEmailId/EditEmailId';
 import EmailIdOtp from '../components/molecules/EditEmailId/EmailIdOtp';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {PRIMARY_COLOR} from '../styles/colors';
-import NewWaitingRoom from '../screens/patient/waitingRoom/NewWaitingRoom';
 import VoiceCall from '../screens/patient/Calls/Voicecall';
 import MedicalHistory from '../screens/examples/MedicalHistory/MedicalHistory';
 import HealthCare from '../screens/patient/HealthCare/HealthCare';
-import AddCategoryQuestions from '../screens/doctor/AddQuestionnaire/AddCategoryQuestions';
 import NewPayment from '../screens/examples/payments/NewPayments';
-import Pay from '../screens/examples/payments/Pay';
 import QuestionnairePP from '../screens/patient/questionnaire/QuestionnairePP';
+import TimeSlots from '../screens/doctor/TimeSlots/TimeSlots';
 
 const screenWidth = Dimensions.get('screen').width;
 const ProfileStack = createStackNavigator(
@@ -79,7 +75,8 @@ const PatientNavigationHome = createBottomTabNavigator(
       },
     },
     patientDashboardNav: {
-      screen: MedicalHistory,
+      // screen: MedicalHistory,
+      screen: TimeSlots,
       navigationOptions: {
         tabBarIcon: ({focused, horizontal, tintColor}) => {
           return (

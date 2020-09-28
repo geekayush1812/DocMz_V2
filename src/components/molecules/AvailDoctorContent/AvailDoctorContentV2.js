@@ -38,7 +38,7 @@ function AvailDoctorContentV2({
     }
   };
   useEffect(() => {
-    const res = patient?.favourites.some((item) => {
+    const res = patient?.favourites?.some((item) => {
       return item._id === data._id;
     });
     setHeartActive(res);
