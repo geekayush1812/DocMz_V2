@@ -36,7 +36,7 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
         style={{
           fontFamily: 'Montserrat-SemiBold',
           fontSize: 20,
-          marginBottom: 15,
+          marginBottom: '8%',
         }}>
         Add Member
       </Text>
@@ -45,21 +45,21 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
           flexDirection: 'row',
           alignSelf: 'stretch',
           justifyContent: 'space-between',
-          marginBottom: 5,
+          marginBottom: '3%',
         }}>
         <TextInput
           value={details.firstName}
           onChangeText={(text) => setDetails({...details, firstName: text})}
           placeholderTextColor={INPUT_PLACEHOLDER}
           placeholder="First Name"
-          style={[styles.text, {width: '45%'}]}
+          style={[styles.text, {width: '48%'}]}
         />
         <TextInput
           value={details.lastName}
           onChangeText={(text) => setDetails({...details, lastName: text})}
           placeholderTextColor={INPUT_PLACEHOLDER}
           placeholder="Last Name"
-          style={[styles.text, {width: '45%'}]}
+          style={[styles.text, {width: '48%'}]}
         />
       </View>
 
@@ -91,9 +91,9 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
           flexDirection: 'row',
           alignSelf: 'stretch',
           justifyContent: 'space-between',
-          marginBottom: 5,
+          marginBottom: '3%',
         }}>
-        <View style={[styles.text, {width: '45%'}]}>
+        <View style={[styles.text, {width: '48%'}]}>
           <DatePicker
             date={details.birthDay}
             mode="date"
@@ -112,12 +112,10 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
               placeholderText: {
                 color: '#77777795',
                 width: '100%',
-                marginLeft: 30,
               },
               dateText: {
                 color: '#000',
                 width: '100%',
-                marginLeft: 30,
               },
             }}
             style={{
@@ -132,7 +130,7 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
           onChangeText={(text) => setDetails({...details, gender: text})}
           placeholderTextColor={INPUT_PLACEHOLDER}
           placeholder="Gender"
-          style={[styles.text, {width: '45%'}]}
+          style={[styles.text, {width: '48%'}]}
         />
       </View>
       <TextInput
@@ -177,7 +175,7 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
               name={i + 1 === details.medicalHistory.length ? 'plus' : 'minus'}
               size={10}
               color={INPUT_PLACEHOLDER}
-              style={{marginHorizontal: 5}}
+              style={{marginHorizontal: '2%'}}
             />
           </TouchableOpacity>
         </View>

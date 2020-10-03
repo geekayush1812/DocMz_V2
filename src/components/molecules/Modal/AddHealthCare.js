@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, View, StyleSheet, TextInput} from 'react-native';
 import BlurModal from './BlurModal';
 import {
@@ -8,11 +8,36 @@ import {
 } from '../../../styles/colors';
 import DmzButton from '../../atoms/DmzButton/DmzButton';
 
-const AddHealthCare = ({visible, onCancel, onUpdate}) => {
+const AddHealthCare = ({visible, onCancel, onUpdate = () => {}}) => {
   const [details, setDetails] = useState({
     doctorName: '',
   });
+  const [error, setError] = useState({
+    doctorName: true,
+  });
 
+  const SetDetails = (detailName, value) => {
+    const reg = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
+    const match = reg.test(value);
+    setError({...error, [`${detailName}`]: match});
+    setDetails({...details, [`${detailName}`]: value});
+  };
+
+  const onPressUpdate = () => {
+    let flag = false;
+
+    for (let e in error) {
+      if (!error[`${e}`]) {
+        flag = true;
+        break;
+      }
+    }
+    if (flag) {
+      console.log('invalid input');
+    } else {
+      onUpdate(details);
+    }
+  };
   return (
     <BlurModal {...{visible, onCancel}}>
       <Text
@@ -25,15 +50,15 @@ const AddHealthCare = ({visible, onCancel, onUpdate}) => {
       </Text>
       <TextInput
         value={details.doctorName}
-        onChangeText={(text) => setDetails({...details, doctorName: text})}
+        onChangeText={(text) => SetDetails('doctorName', text)}
         placeholderTextColor={INPUT_PLACEHOLDER}
         placeholder="Doctor's name"
-        style={styles.text}
+        style={[styles.text, !error.doctorName && {borderBottomColor: 'red'}]}
       />
 
       <DmzButton
         onPress={() => {
-          onUpdate(details);
+          onPressUpdate();
         }}
         style={{
           Text: {
@@ -65,7 +90,7 @@ const AddHealthCare = ({visible, onCancel, onUpdate}) => {
       </View>
       <DmzButton
         onPress={() => {
-          onUpdate(details);
+          onPressUpdate();
         }}
         style={{
           Text: {

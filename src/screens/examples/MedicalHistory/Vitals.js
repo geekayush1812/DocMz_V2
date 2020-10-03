@@ -44,7 +44,7 @@ const Vitals = () => {
     bloodPressure: [],
     respiration: '',
   });
-
+  const [bloodPressure, setBloodPressure] = useState([]);
   const cmToFeet = (val) => {
     var realFeet = (parseInt(val, 10) * 0.3937) / 12;
     var feet = Math.floor(realFeet);
@@ -72,6 +72,12 @@ const Vitals = () => {
     dispatch(UpdateVitals(res, patient._id, patient.meta));
     callback();
   };
+
+  useEffect(() => {
+    const ar = vitalsInfo?.bloodPressure?.map((item) => Number(item.value));
+    console.log(ar);
+    setBloodPressure(ar);
+  }, [vitalsInfo.bloodPressure]);
 
   return (
     <>
@@ -246,39 +252,39 @@ const Vitals = () => {
 
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 3, marginRight: 20}}>
-              <LineChart
-                bezier
-                data={{
-                  datasets: [
-                    {
-                      data: vitalsInfo?.bloodPressure?.map((item) =>
-                        Number(item.value),
-                      ),
-                      color: (opacity = 1) => `#efa860`,
-                      strokeWidth: 3,
-                      withDots: false,
+              {bloodPressure.length != 0 && (
+                <LineChart
+                  bezier
+                  data={{
+                    datasets: [
+                      {
+                        data: bloodPressure,
+                        color: (opacity = 1) => `#efa860`,
+                        strokeWidth: 3,
+                        withDots: false,
+                      },
+                    ],
+                  }}
+                  fromZero
+                  withVerticalLabels={false}
+                  withInnerLines={false}
+                  withOuterLines={false}
+                  width={250}
+                  height={150}
+                  chartConfig={{
+                    backgroundGradientFrom: '#fff',
+                    backgroundGradientFromOpacity: 0,
+                    backgroundGradientTo: '#fff',
+                    backgroundGradientToOpacity: 1,
+                    color: (opacity = 1) => `#a3a3a3`,
+                    fillShadowGradientOpacity: 0,
+                    propsForBackgroundLines: {
+                      // fill: '#b2f5f5',
+                      // // stroke: 'blue',
                     },
-                  ],
-                }}
-                fromZero
-                withVerticalLabels={false}
-                withInnerLines={false}
-                withOuterLines={false}
-                width={250}
-                height={150}
-                chartConfig={{
-                  backgroundGradientFrom: '#fff',
-                  backgroundGradientFromOpacity: 0,
-                  backgroundGradientTo: '#fff',
-                  backgroundGradientToOpacity: 1,
-                  color: (opacity = 1) => `#a3a3a3`,
-                  fillShadowGradientOpacity: 0,
-                  propsForBackgroundLines: {
-                    // fill: '#b2f5f5',
-                    // // stroke: 'blue',
-                  },
-                }}
-              />
+                  }}
+                />
+              )}
 
               <Text style={styles.text3}>
                 Updated on :

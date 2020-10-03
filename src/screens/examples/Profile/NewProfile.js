@@ -216,6 +216,46 @@ const NewProfile = ({navigation}) => {
     dispatch(UpdateProfile(profileData, data._id));
   };
 
+  const [errorInCredential, setErrorInCredential] = useState({
+    name: true,
+    age: true,
+    gender: true,
+  });
+
+  const onPressUpdate = () => {
+    let flag = false;
+
+    for (let e in error) {
+      if (!error[`${e}`]) {
+        flag = true;
+        break;
+      }
+    }
+    if (flag) {
+      console.log('invalid input');
+    } else {
+      onUpdate(details);
+    }
+  };
+  const onChangeCredential = (type, value) => {
+    const string = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
+    const number = /^[0-9]+$/;
+    let match;
+    switch (type) {
+      case 'name':
+        match = string.test(value);
+        break;
+      case 'age':
+        match = number.test(value);
+        break;
+      case 'gender':
+        match = string.test(value);
+        break;
+    }
+    setErrorInCredential({...errorInCredential, [`${type}`]: match});
+    setCredential({...credential, [`${type}`]: value});
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: 'white'}}>
       <TopNavBar
@@ -502,14 +542,17 @@ const NewProfile = ({navigation}) => {
         </Text>
         <View style={{width: '75%'}}>
           <TextInput
-            onChangeText={(name) => setCredential({...credential, name})}
+            onChangeText={(name) => onChangeCredential('name', name)}
             placeholder={'Name'}
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: '#047b7b',
-              paddingVertical: '2%',
-              marginBottom: '2%',
-            }}
+            style={[
+              {
+                borderBottomWidth: 1,
+                borderBottomColor: '#047b7b',
+                paddingVertical: '2%',
+                marginBottom: '2%',
+              },
+              !errorInCredential.name && {borderBottomColor: 'red'},
+            ]}
           />
           <View
             style={{
@@ -519,23 +562,30 @@ const NewProfile = ({navigation}) => {
             }}>
             <TextInput
               placeholder={'Age'}
-              onChangeText={(age) => setCredential({...credential, age})}
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: '#047b7b',
-                paddingVertical: '2%',
-                paddingRight: '9%',
-              }}
+              onChangeText={(age) => onChangeCredential('age', age)}
+              keyboardType={'number-pad'}
+              style={[
+                {
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#047b7b',
+                  paddingVertical: '2%',
+                  paddingRight: '9%',
+                },
+                !errorInCredential.age && {borderBottomColor: 'red'},
+              ]}
             />
             <TextInput
               placeholder={'Gender'}
-              onChangeText={(gender) => setCredential({...credential, gender})}
-              style={{
-                borderBottomWidth: 1,
-                borderBottomColor: '#047b7b',
-                paddingVertical: '2%',
-                paddingRight: '9%',
-              }}
+              onChangeText={(gender) => onChangeCredential('gender', gender)}
+              style={[
+                {
+                  borderBottomWidth: 1,
+                  borderBottomColor: '#047b7b',
+                  paddingVertical: '2%',
+                  paddingRight: '9%',
+                },
+                !errorInCredential.gender && {borderBottomColor: 'red'},
+              ]}
             />
           </View>
         </View>
