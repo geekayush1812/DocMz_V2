@@ -100,7 +100,9 @@ function PatientDetails({navigation}) {
                     borderRadius: 15,
                     backgroundColor: '#efa860',
                   }}></View>
-                <Text style={{fontSize: FONT_SIZE_20}}>M</Text>
+                <Text style={{fontSize: FONT_SIZE_20}}>
+                  {patient.sex ? patient.sex : '-'}
+                </Text>
                 <View
                   style={{
                     height: 7,
@@ -109,7 +111,7 @@ function PatientDetails({navigation}) {
                     backgroundColor: '#efa860',
                   }}></View>
                 <Text style={{fontSize: FONT_SIZE_20}}>
-                  {patient.weight.value}kg
+                  {patient.weight.value ? patient.weight.value : '-'} kg
                 </Text>
               </View>
             </View>
@@ -132,7 +134,6 @@ function PatientDetails({navigation}) {
               <Chatbox />
             </View>
           </View>
-
           <ExpandableList
             style={{
               paddingVertical: '5%',

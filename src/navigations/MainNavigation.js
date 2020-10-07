@@ -14,30 +14,6 @@ import WaitingRoom from '../screens/patient/waitingRoom/WaitingRoom';
 import DoctorProfile from '../screens/examples/DoctorProfile/DoctorProfile';
 import QuestionnairePP from '../screens/patient/questionnaire/QuestionnairePP';
 import PatientCalendarScreen from '../screens/examples/PatientCalendar/PatientCalendarScreen';
-// check for login status
-// const {isDoctor, isLogedin} = useSelector(state => state.AuthReducer)
-
-// const PageNavigation = createAnimatedSwitchNavigator(
-//   {
-//     patientHomePage: PatientNavigation,
-//     doctorHomePage: DoctorNavigation,
-//   },
-//   {
-//     transition: (
-//       <Transition.Together>
-//         <Transition.Out
-//           type="slide-bottom"
-//           durationMs={400}
-//           interpolation="easeIn"
-//         />
-//         <Transition.In type="fade" durationMs={500} />
-//       </Transition.Together>
-//     ),
-//     initialRouteName: isDoctorLogin ? 'doctorHomePage' : 'patientHomePage',
-//     // initialRouteName: 'doctorHomePage',
-//     headerMode: 'none',
-//   },
-// );
 
 function GetAuth({navigation}) {
   const {isDoctor} = useSelector((state) => state.AuthReducer);
@@ -59,7 +35,6 @@ const docMainStream = createStackNavigator(
     PatientCalendarScreen,
     ConfirmAppointment,
     AppointmentForm,
-    // Questionnaire,
   },
   {
     initialRouteName: 'AppointmentsStack',
@@ -77,7 +52,6 @@ const MainNavigation = createStackNavigator(
     WaitingRoom: WaitingRoom,
   },
   {
-    // initialRouteName: 'pageNavigation',
     initialRouteName: 'pageNavigation',
     headerMode: 'none',
   },

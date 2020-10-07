@@ -32,28 +32,6 @@ import {Picker} from '@react-native-community/picker';
 import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
 import {bookAppointment} from '../../../redux/action/patientAccountAction';
-const Data = [
-  {
-    name: 'kamalesh biswas',
-    reasonForVisit: 'head pain',
-    contact: '8001981992',
-  },
-  {
-    name: 'kamalesh biswas',
-    reasonForVisit: 'head pain',
-    contact: '8001981992',
-  },
-  {
-    name: 'kamalesh biswas',
-    reasonForVisit: 'head pain',
-    contact: '8001981992',
-  },
-  {
-    name: 'samiran biswas',
-    reasonForVisit: 'cancer',
-    contact: '9001981991',
-  },
-];
 
 const ConfirmAppointment = ({navigation}) => {
   const {data: slotData, doctorData} = navigation.state.params;
@@ -65,21 +43,12 @@ const ConfirmAppointment = ({navigation}) => {
     contact: '',
     date: '',
   });
+  const [reasonForVisit, setReasonForVisit] = useState('');
   const PopupTranslateY = useRef(new Animated.Value(0)).current;
-
-  console.log('************************************');
-  console.log(slotData);
-  console.log('************************************');
-  console.log(doctorData);
 
   const {familyMember, patient} = useSelector(
     (state) => state.PatientAccountReducer,
   );
-  // const [state, setState] = useState({
-  //   name: '',
-  //   reasonForVisit: '',
-  //   contact: '',
-  // });
 
   const credentialSet = (id) => {
     const member = familyMember.find((item) => item._id === id);
@@ -90,9 +59,6 @@ const ConfirmAppointment = ({navigation}) => {
       contact: patient.phone,
     });
   };
-  // const initialChoosenState = (_state) => {
-  //   setState(_state);
-  // };
 
   const handelAppointmentSubmit = () => {
     const member = familyMember.find(
@@ -103,12 +69,12 @@ const ConfirmAppointment = ({navigation}) => {
       patient: patient._id,
       forWhom: member.relationship,
       patientInfo: JSON.stringify(member),
+      reasonForVisit: reasonForVisit,
     };
     navigation.navigate('Questionnaire', {
       doctorData,
       appointmentBookingData: data,
     });
-    // dispatch(bookAppointment(data));
   };
 
   const onPress = (id) => {
@@ -176,13 +142,15 @@ const ConfirmAppointment = ({navigation}) => {
         <View style={ConfirmAppointmentStyles.rootGroup}>
           <Text style={ConfirmAppointmentStyles.rootHeading}>Appointment</Text>
           <View style={ConfirmAppointmentStyles.inputGroup}>
-            <Text
+            <TextInput
+              placeholder={'Reason for visit'}
+              onChangeText={(text) => {
+                setReasonForVisit(text);
+              }}
               style={[
                 ConfirmAppointmentStyles.text,
                 ConfirmAppointmentStyles.upperText,
-              ]}>
-              Reason - Urinary Tract Infection (UTI)
-            </Text>
+              ]}></TextInput>
             <Text style={[ConfirmAppointmentStyles.text]}>
               {memberCredential.date}
             </Text>

@@ -62,6 +62,12 @@ const Navigation = [
     icon: 'question',
     navigateTo: 'AddQuestionnaire',
   },
+  {
+    active: true,
+    name: 'Skins',
+    icon: 'question',
+    navigateTo: 'Skins',
+  },
   // {
   //   active: true,
   //   name: 'Referrals',

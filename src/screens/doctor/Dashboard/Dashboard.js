@@ -1,5 +1,12 @@
-import React, {useEffect} from 'react';
-import {View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Animated,
+  Easing,
+} from 'react-native';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import ProfilePic from '../../../components/atoms/ProfilePic/ProfilePic';
 import Clock from '../../../assets/svg/clock.svg';
@@ -15,6 +22,10 @@ import {
 } from '../../../styles/typography';
 import {GetRecentPatient} from '../../../redux/action/doctor/myDoctorAction';
 import {Host} from '../../../utils/connection';
+import NetInfo from '@react-native-community/netinfo';
+import THEME from '../../../styles/theme';
+import Colors from '../../../styles/colorsV2';
+
 function Dashboard({navigation}) {
   const {recentPatient, recentPatientLoading} = useSelector(
     (state) => state.MyDoctorReducer,
@@ -44,8 +55,52 @@ function Dashboard({navigation}) {
     dispatch(GetRecentPatient(data._id));
   }, []);
 
+  const [isConnected, setIsConnected] = useState(true);
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      if (state.isConnected && state.isInternetReachable) {
+        setIsConnected(state.isConnected);
+      } else {
+        setIsConnected(state.isConnected);
+      }
+    });
+    return unsubscribe;
+  });
+  const animateNoNetwork = useRef(new Animated.Value(0)).current;
+
+  const onNetworkFailure = () => {
+    Animated.timing(animateNoNetwork, {
+      toValue: 1,
+      duration: 500,
+      easing: Easing.bounce,
+      useNativeDriver: false,
+    }).start();
+  };
+  const onNetworkRestore = () => {
+    Animated.timing(animateNoNetwork, {
+      toValue: 0,
+      duration: 500,
+      easing: Easing.bounce,
+      useNativeDriver: false,
+    }).start();
+  };
+  useEffect(() => {
+    if (isConnected) {
+      onNetworkRestore();
+    } else {
+      onNetworkFailure();
+    }
+  }, [isConnected]);
+
+  const [theme, setTheme] = THEME.useTheme();
+  const [themeValue, setThemeValue] = useState({});
+  useEffect(() => {
+    const THEME_VALUE = Colors(theme);
+    setThemeValue(THEME_VALUE);
+  }, [theme]);
+
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
+    <View style={{flex: 1, backgroundColor: themeValue.primary_background}}>
       <TopNavBar
         navigation={navigation}
         headerText={'My Dashboard'}
@@ -338,92 +393,110 @@ function Dashboard({navigation}) {
             </Text>
           </View>
           {recentPatient.map((item) => {
-            const {patient, _id} = item;
-            return patient ? (
-              <View
-                key={_id}
-                style={{
-                  width: '90%',
-                  // backgroundColor: 'red',
-                  alignSelf: 'center',
-                  borderBottomWidth: 1.5,
-                  borderColor: 'rgba(0,0,0,0.08)',
-                  paddingVertical: '4%',
-                }}>
+            if (item) {
+              const {patient, _id} = item;
+              return patient ? (
                 <View
+                  key={_id}
                   style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    width: '90%',
+                    // backgroundColor: 'red',
+                    alignSelf: 'center',
+                    borderBottomWidth: 1.5,
+                    borderColor: 'rgba(0,0,0,0.08)',
+                    paddingVertical: '4%',
                   }}>
-                  <View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}>
+                    <View>
                       <View
                         style={{
-                          height: 8,
-                          width: 8,
-                          borderRadius: 10,
-                          backgroundColor: '#efa860',
-                          marginRight: '2%',
-                        }}></View>
-                      <Text
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}>
+                        <View
+                          style={{
+                            height: 8,
+                            width: 8,
+                            borderRadius: 10,
+                            backgroundColor: '#efa860',
+                            marginRight: '2%',
+                          }}></View>
+                        <Text
+                          style={{
+                            fontWeight: 'bold',
+                          }}>{`${patient.firstName} ${patient.lastName}`}</Text>
+                        <Text style={{fontSize: FONT_SIZE_12}}>
+                          {' '}
+                          - General Checkup
+                        </Text>
+                      </View>
+                      <View
                         style={{
-                          fontWeight: 'bold',
-                        }}>{`${patient.firstName} ${patient.lastName}`}</Text>
-                      <Text style={{fontSize: FONT_SIZE_12}}>
-                        {' '}
-                        - General Checkup
-                      </Text>
+                          flexDirection: 'row',
+                          paddingHorizontal: '6%',
+                          alignItems: 'center',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: FONT_SIZE_12,
+                            marginRight: '4%',
+                            fontWeight: 'bold',
+                          }}>
+                          10:00 am
+                        </Text>
+                        <Text style={{fontWeight: '900', color: '#efa860'}}>
+                          |
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: FONT_SIZE_12,
+                            marginLeft: '4%',
+                            color: '#a09e9e',
+                            fontWeight: 'bold',
+                          }}>
+                          30 mins
+                        </Text>
+                      </View>
                     </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        paddingHorizontal: '6%',
-                        alignItems: 'center',
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate('PatientDetails', {patient});
                       }}>
-                      <Text
-                        style={{
-                          fontSize: FONT_SIZE_12,
-                          marginRight: '4%',
-                          fontWeight: 'bold',
-                        }}>
-                        10:00 am
-                      </Text>
-                      <Text style={{fontWeight: '900', color: '#efa860'}}>
-                        |
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: FONT_SIZE_12,
-                          marginLeft: '4%',
-                          color: '#a09e9e',
-                          fontWeight: 'bold',
-                        }}>
-                        30 mins
-                      </Text>
-                    </View>
+                      <MaterialIcon
+                        name="chevron-right"
+                        size={28}
+                        color={'#a09e9e'}
+                      />
+                    </TouchableOpacity>
                   </View>
-                  <TouchableOpacity
-                    onPress={() => {
-                      navigation.navigate('PatientDetails', {patient});
-                    }}>
-                    <MaterialIcon
-                      name="chevron-right"
-                      size={28}
-                      color={'#a09e9e'}
-                    />
-                  </TouchableOpacity>
                 </View>
-              </View>
-            ) : null;
+              ) : null;
+            }
+            return null;
           })}
         </View>
       </ScrollView>
+      {!isConnected && (
+        <Animated.View
+          style={{
+            paddingVertical: '2%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#ddd',
+            height: animateNoNetwork.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 30],
+            }),
+          }}>
+          <Text>No Internet connection</Text>
+        </Animated.View>
+      )}
     </View>
   );
 }

@@ -253,7 +253,7 @@ function DoctorProfile(props) {
               fontSize: 24,
               fontFamily: 'Montserrat-SemiBold',
             }}>
-            5 yrs
+            {data.experience ? data.experience : '-'} yrs
           </Text>
           <Text
             style={{
@@ -328,11 +328,9 @@ function DoctorProfile(props) {
                     fontFamily: 'Montserrat-Regular',
                     fontSize: 13,
                   }}>
-                  Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
-                  sedLorem ipsum dolor sit amet, consetetur sadipscing elitr,
-                  sed Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
-                  sed Lorem ipsum dolor sit amet, consetetur sadipscing elitr,
-                  sed
+                  {data.bio
+                    ? data.bio
+                    : 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr,sedLorem ipsum dolor sit amet, consetetur sadipscing elitr,sed Lorem ipsum dolor sit amet, consetetur sadipscing elitr,sed Lorem ipsum dolor sit amet, consetetur sadipscing elitr,sed'}
                 </Text>
               </View>
             </ScrollView>

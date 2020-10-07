@@ -31,7 +31,7 @@ function Onboarding({navigation}) {
   const [college, setCollege] = useState('');
   const [yearOfExperience, setYearOfExperience] = useState('');
   const [clinicAndHospital, setClinicAndHospital] = useState('');
-
+  const [bio, setBio] = useState('');
   const dispatch = useDispatch();
   const {data, isLogedin, isDoctor} = useSelector((state) => state.AuthReducer);
   const {specialtyLoading, specialty} = useSelector(
@@ -75,7 +75,10 @@ function Onboarding({navigation}) {
         regCouncil: registrationCouncil,
         regYear: registrationYear,
       },
+      specialty: specialitySelected,
       experience: yearOfExperience,
+      city: city,
+      bio: bio,
     };
     dispatch(
       UpdateDoctorProfile(obj, () => {
@@ -207,6 +210,37 @@ function Onboarding({navigation}) {
           </View>
         </View>
 
+        <View
+          style={{
+            alignSelf: 'center',
+            width: '90%',
+            marginTop: 30,
+            marginBottom: 10,
+            paddingLeft: '4%',
+          }}>
+          <Text style={{fontSize: 18, fontWeight: 'bold'}}>Bio</Text>
+        </View>
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: '#e0e0e0',
+            width: '90%',
+            alignSelf: 'center',
+            borderRadius: 10,
+            backgroundColor: '#fcfcfc',
+            paddingHorizontal: '5%',
+          }}>
+          <TextInput
+            onChangeText={(bio) => {
+              setBio(bio);
+            }}
+            multiline
+            style={{fontSize: 16}}
+            placeholder={'About you'}
+            textAlignVertical={'top'}
+            numberOfLines={3}
+          />
+        </View>
         <View
           style={{
             alignSelf: 'center',
