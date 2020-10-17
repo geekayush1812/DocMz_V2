@@ -1,16 +1,12 @@
-import React, {useEffect} from 'react';
 import {createAppContainer} from 'react-navigation';
 
 import {createStackNavigator} from 'react-navigation-stack';
 import AuthNavigation from './AuthNavigation';
 import PatientNavigation from './PatientNavigation';
 import DoctorNavigation from './DoctorNavigaton';
-import DocProfileLite from '../screens/patient/docProfileLite/DocProfileLite';
 import AppointmentForm from '../screens/patient/appointmentForm/AppointmentForm';
 import ConfirmAppointment from '../components/molecules/ConfirmAppointment/ConfirmAppointment';
-import NewQuestionnaire from '../screens/patient/questionnaire/NewQuestionnaire';
 import {useSelector} from 'react-redux';
-import WaitingRoom from '../screens/patient/waitingRoom/WaitingRoom';
 import DoctorProfile from '../screens/examples/DoctorProfile/DoctorProfile';
 import QuestionnairePP from '../screens/patient/questionnaire/QuestionnairePP';
 import PatientCalendarScreen from '../screens/examples/PatientCalendar/PatientCalendarScreen';
@@ -49,7 +45,6 @@ const MainNavigation = createStackNavigator(
     DoctorHomePage: DoctorNavigation,
     PatientHomePage: PatientNavigation,
     docPatientStrem: docMainStream,
-    WaitingRoom: WaitingRoom,
   },
   {
     initialRouteName: 'pageNavigation',

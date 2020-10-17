@@ -73,6 +73,40 @@ export default function AppoinmentSlider({
     },
   });
 
+  //try this one
+
+  // const panResponder = useRef(
+  //   PanResponder.create({
+  //     onStartShouldSetPanResponder: (evt, gestureState) => true,
+  //     onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+  //     onMoveShouldSetPanResponder: (evt, gestureState) => true,
+  //     onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+  //     onPanResponderGrant: (evt, gestureState) => {
+  //       panning.setOffset(panning.__getValue());
+  //     },
+  //     onPanResponderMove: (evt, gestureState) => {
+  //       const scroll = panning.__getValue();
+  //       if (scroll > 10 || gestureState.dy > 0)
+  //         panning.setValue(gestureState.dy);
+  //       if (scroll < 0) panning.setOffset(0);
+
+  //       // console.log('%%%%%%%%%%');
+  //       // console.log(scroll <= height * 0.6);
+  //       // console.log(scroll);
+  //       // console.log(height * 0.6);
+  //     },
+  //     onPanResponderTerminationRequest: (evt, gestureState) => true,
+  //     onPanResponderRelease: (evt, gestureState) => {
+  //       if (!(panning.__getValue() > height * 0.6))
+  //         panning.setOffset(panning.__getValue());
+  //       panning.setValue(0);
+  //     },
+  //     onShouldBlockNativeResponder: (evt, gestureState) => {
+  //       return true;
+  //     },
+  //   }),
+  // ).current;
+
   const bookAppointment = (slot) => {
     console.log(slot._id);
     setModal({

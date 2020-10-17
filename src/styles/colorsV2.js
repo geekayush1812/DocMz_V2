@@ -1,4 +1,7 @@
-export default function color(theme) {
+import {useSelector} from 'react-redux';
+
+export default function color() {
+  const {theme} = useSelector((state) => state.AuthReducer);
   const values = {
     PRIMARY: {
       primary_color: '#047b7b',
@@ -34,7 +37,6 @@ export default function color(theme) {
       pop_color: '#ff4757',
     },
   };
-
   return values[theme];
 }
 

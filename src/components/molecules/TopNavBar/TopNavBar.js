@@ -2,16 +2,7 @@ import React from 'react';
 import {Animated, StyleSheet, Image, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-import NavBackButton from '../../../assets/svg/nav_back.svg';
-import NavHamButton from '../../../assets/svg/nav_ham.svg';
-
-import AntDesign from 'react-native-vector-icons/AntDesign';
-
-import {
-  PRIMARY,
-  NEW_HEADER_TEXT,
-  NEW_PRIMARY_COLOR,
-} from '../../../styles/colors';
+import {PRIMARY, NEW_HEADER_TEXT} from '../../../styles/colors';
 
 import DmzText from '../../atoms/DmzText/DmzText';
 
@@ -28,7 +19,7 @@ function TopNavBar({
   hideLeftComp,
 }) {
   return (
-    <Animated.View
+    <View
       style={[
         Styles.Container,
         isClap && {
@@ -88,24 +79,13 @@ function TopNavBar({
       ) : (
         <View />
       )}
-    </Animated.View>
+    </View>
   );
 }
 
 const Styles = StyleSheet.create({
-  Container: {
-    zIndex: 900,
-    marginTop: 30,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    marginTop: 5,
-  },
-  TouchableOpacity: {
-    padding: 10,
-    borderRadius: 20,
-  },
+  Container: {},
+  TouchableOpacity: {},
   BackButton: {height: 19, width: 10},
   HamburgerButton: {height: 19, width: 24},
 });

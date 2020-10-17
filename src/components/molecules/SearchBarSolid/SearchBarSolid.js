@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, TextInput} from 'react-native';
 
 function SearchBarSolid({
@@ -11,6 +11,7 @@ function SearchBarSolid({
   onEndEditing,
   style = {},
 }) {
+  const [searchText, setSearchText] = useState('');
   return (
     <View
       style={{
@@ -46,9 +47,9 @@ function SearchBarSolid({
           placeholder={
             placeholder ? placeholder : 'Search by conditions, symptoms...'
           }
-          onEndEditing={onEndEditing}
-          onChangeText={onChangeText}
-          enablesReturnKeyAutomatically
+          onEndEditing={() => onEndEditing(searchText)}
+          onChangeText={setSearchText}
+          // enablesReturnKeyAutomatically
         />
         {searchIcon ?? null}
       </View>

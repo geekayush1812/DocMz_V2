@@ -2,7 +2,6 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {Host} from '../../utils/connection';
 import {GetPatientInfo} from '../action/patientAccountAction';
-import {resetDataStore} from './dataStore';
 import {resetDoctor} from './doctoreAction';
 import {resetQuestion} from './questionAction';
 

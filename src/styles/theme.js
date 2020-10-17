@@ -1,51 +1,12 @@
-import {useEffect, useState} from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
-
+import {useDispatch, useSelector} from 'react-redux';
+import {changingTheme, themeChanged} from '../reduxV2/action/AuthAction';
 const useTheme = function () {
-  const [theme, setLocalTheme] = useState('PRIMARY');
-  const [themeChanged, setThemeChanged] = useState(false);
-  useEffect(() => {
-    AsyncStorage.getItem('theme')
-      .then((res) => {
-        if (!res) {
-          AsyncStorage.setItem('theme', 'PRIMARY')
-            .then(() => {
-              setThemeChanged(false);
-            })
-            .catch((e) => {
-              console.log(e);
-            });
-        } else {
-          setLocalTheme(res);
-        }
-      })
-      .catch((e) => {
-        console.log('Error:::', e);
-      });
-  }, [themeChanged]);
+  const dispatch = useDispatch();
   const setTheme = (tm) => {
-    AsyncStorage.setItem('theme', tm)
-      .then(() => {
-        setThemeChanged(true);
-        setLocalTheme(tm);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    dispatch(changingTheme());
+    dispatch(themeChanged(tm));
   };
-
-  return [theme, setTheme];
+  return setTheme;
 };
 
-function Theme() {
-  return {
-    THEME: {
-      PRIMARY: 'PRIMARY',
-      DARK: 'DARK',
-      MINI: 'MINI',
-    },
-    useTheme: useTheme,
-  };
-}
-
-export default new Theme();
+export default useTheme;

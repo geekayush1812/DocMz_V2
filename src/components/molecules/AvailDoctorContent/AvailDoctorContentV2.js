@@ -1,7 +1,5 @@
-/* eslint-disable prettier/prettier */
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import RatingStars from '../../atoms/ratingStars/RatingStarts';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {
   HEADER_TEXT,
@@ -14,7 +12,7 @@ import {
 } from '../../../styles/colors';
 import moment from 'moment';
 import {useSelector, useDispatch} from 'react-redux';
-import {AddFevDoc} from '../../../redux/action/patientAccountAction';
+import {AddFevDoc} from '../../../reduxV2/action/PatientAction';
 function AvailDoctorContentV2({
   Profile,
   DoctorName,
@@ -28,11 +26,11 @@ function AvailDoctorContentV2({
 }) {
   const [heartActive, setHeartActive] = useState(false);
   const {isLogedin} = useSelector((state) => state.AuthReducer);
-  const {patient} = useSelector((state) => state.PatientAccountReducer);
+  const {patient} = useSelector((state) => state.PatientReducer);
   const dispatch = useDispatch();
   const heartHandle = () => {
     if (!isLogedin) {
-      navigation.navigate('authentication');
+      navigation.navigate('Auth');
     } else {
       dispatch(AddFevDoc(data._id, patient._id));
     }
@@ -46,23 +44,35 @@ function AvailDoctorContentV2({
   return (
     <>
       <TouchableOpacity
-        style={CardContentStyles.AvailableDoctorsCardContent}
-        onPress={() => {
-          navigation.navigate('docPatientStrem', {data: data});
+        onPress={() => navigation.navigate('DoctorProfile', {data: data})}
+        style={{
+          flex: 4.5,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
         }}>
         {Profile}
-        <View style={CardContentStyles.AvailableDoctorsDetails}>
-          <Text
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            style={CardContentStyles.AvailableDoctorsName}>
-            {DoctorName}
-          </Text>
-          <Text style={CardContentStyles.AvailableDoctorsSpecialization}>
-            {Specialization}
-          </Text>
-          {/* can be made as molecule and touchable if needed */}
-          <View style={CardContentStyles.AvailableDoctorsAvailableTimes}>
+        <View
+          style={{
+            paddingLeft: '3%',
+            flex: 1,
+          }}>
+          <View style={{flex: 1, justifyContent: 'space-between'}}>
+            <Text
+              adjustsFontSizeToFit
+              style={CardContentStyles.AvailableDoctorsName}>
+              {DoctorName}
+            </Text>
+            <Text style={{textTransform: 'capitalize'}}>{Specialization}</Text>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: '1.5%',
+            }}>
             {schedule.map((item, index) => {
               return (
                 <>
@@ -72,7 +82,7 @@ function AvailDoctorContentV2({
                       marginRight: index === schedule.length - 1 ? 0 : '2%',
                       marginLeft: index === 0 ? 0 : '2%',
                     }}>
-                    {moment(item.bookedFor).format('HH:mm a')}
+                    {moment(item.bookedFor).format('hh:mm a')}
                   </Text>
                   {schedule.length - 1 === index ? null : (
                     <Text style={{fontWeight: 'bold', color: '#efa860'}}>
@@ -89,7 +99,7 @@ function AvailDoctorContentV2({
         <View
           style={{
             borderRadius: 5,
-            padding: 3,
+            padding: '1%',
             backgroundColor: SECONDARY_BACKGROUND,
             flexDirection: 'row',
             alignItems: 'center',
@@ -99,7 +109,10 @@ function AvailDoctorContentV2({
             style={{height: 15, width: 15}}
           />
           <Text
-            style={{marginHorizontal: 5, fontFamily: 'Montserrat-SemiBold'}}>
+            style={{
+              marginHorizontal: '1.5%',
+              fontFamily: 'Montserrat-SemiBold',
+            }}>
             {parseFloat(rating).toFixed(1)}
           </Text>
         </View>
@@ -117,7 +130,7 @@ function AvailDoctorContentV2({
             />
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => navigation.navigate('docPatientStrem', {data: data})}
+            onPress={() => navigation.navigate('DoctorProfile', {data: data})}
             style={{zIndex: 2000}}>
             <FontAwesomeIcon
               name="angle-right"
@@ -130,19 +143,20 @@ function AvailDoctorContentV2({
     </>
   );
 }
-import {fromPairs} from 'lodash';
 const CardContentStyles = StyleSheet.create({
   AvailableDoctorsCardContent: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     alignSelf: 'stretch',
   },
   AvailableDoctorsDetails: {
     marginLeft: 15,
     alignSelf: 'stretch',
+    justifyContent: 'space-between',
   },
   AvailableDoctorsName: {
     fontSize: 19,
-    // fontWeight: '700',
     color: NEW_HEADER_TEXT,
     textTransform: 'capitalize',
     fontFamily: 'Montserrat-SemiBold',
@@ -151,7 +165,7 @@ const CardContentStyles = StyleSheet.create({
   AvailableDoctorsSpecialization: {
     color: NEW_HEADER_TEXT,
     fontSize: 12,
-    lineHeight: 18,
+    lineHeight: 14,
     textTransform: 'capitalize',
     fontFamily: 'Montserrat-Regular',
   },
@@ -173,9 +187,10 @@ const CardContentStyles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   AvailableDoctorsContinueButton: {
+    flex: 1,
     marginLeft: '4%',
     alignSelf: 'stretch',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
   },
 });
 
