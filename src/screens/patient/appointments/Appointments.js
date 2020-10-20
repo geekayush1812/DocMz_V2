@@ -17,7 +17,7 @@ import AppointmentHistoryItem from '../../../components/molecules/Appointments/A
 import AppointmentOngoingItem from '../../../components/molecules/Appointments/AppointmentOngoingItem';
 import AppointmentUpcomingItem from '../../../components/molecules/Appointments/AppointmentUpcomingItem';
 
-import {GetAppointments} from '../../../redux/action/patientAccountAction';
+import {GetAppointments} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -49,7 +49,7 @@ const Appointments = ({navigation}) => {
     appointments,
     errorGettingAppointments,
     patient,
-  } = useSelector((state) => state.PatientAccountReducer);
+  } = useSelector((state) => state.PatientReducer);
   const dispatch = useDispatch();
 
   const [tablocation, setTabLocation] = useState(0);
@@ -59,37 +59,38 @@ const Appointments = ({navigation}) => {
     false,
   );
   useEffect(() => {
-    !gettingAppointments && dispatch(GetAppointments(patient._id));
+    !gettingAppointments && patient && dispatch(GetAppointments(patient._id));
     !gettingAppointments && setExtractingAppointmentList(true);
   }, []);
   useEffect(() => {
     const upcoming = [];
     const history = [];
-    appointments?.forEach((item) => {
-      const today = new Date();
-      const bookedFor = new Date(item.bookedFor);
+    appointments.length !== 0 &&
+      appointments?.forEach((item) => {
+        const today = new Date();
+        const bookedFor = new Date(item.bookedFor);
 
-      const todayFullYear = today.getFullYear();
-      const todayMonth = today.getMonth();
-      const todayDate = today.getDate();
-      const todayTime = today.getTime();
+        const todayFullYear = today.getFullYear();
+        const todayMonth = today.getMonth();
+        const todayDate = today.getDate();
+        const todayTime = today.getTime();
 
-      const bookedForFullYear = bookedFor.getFullYear();
-      const bookedForMonth = bookedFor.getMonth();
-      const bookedForDate = bookedFor.getDate();
-      const bookedForTime = bookedFor.getTime();
+        const bookedForFullYear = bookedFor.getFullYear();
+        const bookedForMonth = bookedFor.getMonth();
+        const bookedForDate = bookedFor.getDate();
+        const bookedForTime = bookedFor.getTime();
 
-      if (
-        bookedForFullYear >= todayFullYear &&
-        bookedForMonth >= todayMonth &&
-        bookedForDate >= todayDate &&
-        bookedForTime > todayTime
-      ) {
-        upcoming.push(item);
-      } else {
-        history.push(item);
-      }
-    });
+        if (
+          bookedForFullYear >= todayFullYear &&
+          bookedForMonth >= todayMonth &&
+          bookedForDate >= todayDate &&
+          bookedForTime > todayTime
+        ) {
+          upcoming.push(item);
+        } else {
+          history.push(item);
+        }
+      });
     setUpcomingAppointmentList(upcoming);
     setHistoryAppointmentList(history);
     setExtractingAppointmentList(false);
@@ -105,7 +106,7 @@ const Appointments = ({navigation}) => {
       <View
         style={{
           backgroundColor: '#fff',
-          padding: 10,
+          padding: '2%',
           //   borderWidth: 1,
           flexDirection: 'row',
           alignItems: 'center',
@@ -131,14 +132,14 @@ const Appointments = ({navigation}) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={{flex: 1, backgroundColor: GREY_BACKGROUND, padding: 15}}>
+      <View style={{flex: 1, backgroundColor: GREY_BACKGROUND}}>
         {tablocation === 1 ? (
           <FlatList
-            style={{flex: 1}}
+            style={{flex: 1, padding: '3%'}}
             data={historyAppointmentList}
             keyExtractor={(item) => item._id}
             renderItem={({item}) => (
-              <AppointmentHistoryItem item={item} style={{margin: 10}} />
+              <AppointmentHistoryItem item={item} style={{margin: '2%'}} />
             )}
           />
         ) : (
@@ -160,7 +161,7 @@ const Appointments = ({navigation}) => {
                   <AppointmentUpcomingItem
                     key={item._id}
                     item={item}
-                    style={{margin: 10}}
+                    style={{margin: '2%'}}
                   />
                 ))
               )}

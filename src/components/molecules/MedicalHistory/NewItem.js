@@ -9,12 +9,13 @@ const NewItem = ({onPress = () => {}}) => {
       <View
         style={{
           backgroundColor: NEW_PRIMARY_LIGHT_BG,
-          paddingHorizontal: 20,
+          paddingVertical: '4%',
+          marginVertical: '2%',
+          marginHorizontal: '2%',
+          marginTop: '5%',
           borderRadius: 13,
-          marginVertical: 10,
           elevation: 2,
           flexDirection: 'row',
-          paddingVertical: 13,
           alignItems: 'center',
           justifyContent: 'center',
         }}>

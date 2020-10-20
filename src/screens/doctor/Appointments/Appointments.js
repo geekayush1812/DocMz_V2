@@ -12,8 +12,8 @@ import VerticalText from '../../../components/atoms/VerticalText/VerticalText';
 import moment from 'moment';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useSelector, useDispatch} from 'react-redux';
-import {GetAppointments} from '../../../redux/action/doctor/myDoctorAction';
-import {RemoveAppointment} from '../../../redux/action/patientAccountAction';
+import {GetAppointments} from '../../../reduxV2/action/DoctorAction';
+import {RemoveAppointment} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
 
 export default function Appointments({navigation}) {
@@ -34,11 +34,11 @@ export default function Appointments({navigation}) {
     appointments,
     gettingAppointment,
     errorGettingAppointment,
-  } = useSelector((state) => state.MyDoctorReducer);
-  const {data} = useSelector((state) => state.AuthReducer);
+  } = useSelector((state) => state.DoctorReducer);
+  const {userData} = useSelector((state) => state.AuthReducer);
 
   useEffect(() => {
-    !gettingAppointment && dispatch(GetAppointments(data._id));
+    !gettingAppointment && dispatch(GetAppointments(userData._id));
   }, []);
 
   return (
@@ -167,7 +167,7 @@ export default function Appointments({navigation}) {
                 <Card
                   key={item._id}
                   item={item}
-                  doctorId={data._id}
+                  doctorId={userData._id}
                   navigation={navigation}
                 />
               );

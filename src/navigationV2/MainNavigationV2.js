@@ -1,7 +1,7 @@
-import React from 'react';
-import {createAppContainer, createSwitchNavigator} from 'react-navigation';
-import {createDrawerNavigator} from 'react-navigation-drawer';
-import {createStackNavigator} from 'react-navigation-stack';
+import React, {useEffect, useState} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+import {createStackNavigator} from '@react-navigation/stack';
 import {useSelector} from 'react-redux';
 import LandingPage from '../screens/common/LandingPage/LandingPage';
 import DoctorProfile from '../screens/doctor/DoctorProfile/DoctorProfile';
@@ -11,33 +11,44 @@ import AuthNavigationV2 from './AuthNavigationV2';
 import PatientNavigationV2 from './PatientNavigationV2';
 import DoctorNavigationV2 from './DoctorNavigationV2';
 import {Dimensions} from 'react-native';
+import CustomNoAuthDrawer from '../components/organisms/drawer/custom/CustomNoAuthDrawer';
 
 const screenWidth = Dimensions.get('screen').width;
-const NoAuthNavigation = createDrawerNavigator(
-  {
-    LandingPage: LandingPage,
-    DoctorProfile: DoctorProfile,
-    Auth: AuthNavigationV2,
-  },
-  {
-    initialRouteName: 'LandingPage',
-    drawerPosition: 'right',
-    headerMode: 'none',
-    drawerType: 'slide',
-    drawerWidth: screenWidth,
-    drawerBackgroundColor: 'rgba(255,255,255,.9)',
-    contentOptions: {
-      activeTintColor: '#fff',
-      activeBackgroundColor: '#6b52ae',
-    },
-    backBehavior: 'initialRoute',
-  },
-);
+const NoAuthDrawerNavigator = createDrawerNavigator();
 
-const NoAuthContainer = createAppContainer(NoAuthNavigation);
+function NoAuthNavigation() {
+  return (
+    <NoAuthDrawerNavigator.Navigator
+      drawerPosition={'right'}
+      initialRouteName={'LandingPage'}
+      drawerType={'slide'}
+      statusBarAnimation
+      minSwipeDistance={20}
+      backBehavior="history"
+      drawerContent={(props) => <CustomNoAuthDrawer {...props} />}
+      drawerStyle={{
+        width: screenWidth * 0.75,
+        drawerBackgroundColor: 'rgba(255,255,255,.9)',
+      }}>
+      <NoAuthDrawerNavigator.Screen
+        name={'LandingPage'}
+        component={LandingPage}
+      />
+      <NoAuthDrawerNavigator.Screen
+        name={'DoctorProfile'}
+        component={DoctorProfile}
+      />
+      <NoAuthDrawerNavigator.Screen
+        name={'Auth'}
+        component={AuthNavigationV2}
+      />
+    </NoAuthDrawerNavigator.Navigator>
+  );
+}
 
-const MainController = () => {
+const MainController = ({navigation, route}) => {
   const {isLoggedin, isDoctor} = useSelector((state) => state.AuthReducer);
+  console.log(isLoggedin, isDoctor);
   if (isLoggedin) {
     if (isDoctor) {
       return <DoctorNavigationV2 />;
@@ -45,22 +56,34 @@ const MainController = () => {
       return <PatientNavigationV2 />;
     }
   } else {
-    return <NoAuthContainer />;
+    return <NoAuthNavigation />;
   }
 };
 
-const MainNavigation = createSwitchNavigator(
-  {
-    Splash: Splash,
-    // GetStarted: GetStarted,
-    MainController: {
-      screen: (props) => <MainController {...props} />,
-    },
-  },
-  {
-    initialRouteName: 'Splash',
-    headerMode: 'none',
-  },
-);
-
-export default createAppContainer(MainNavigation);
+const MainStack = createStackNavigator();
+function MainNavigation() {
+  const [splash, setSplash] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSplash(false);
+    }, 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  });
+  return (
+    <NavigationContainer>
+      <MainStack.Navigator headerMode={'none'}>
+        {splash ? (
+          <MainStack.Screen name={'Splash'} component={Splash} />
+        ) : (
+          <MainStack.Screen
+            name={'MainController'}
+            component={MainController}
+          />
+        )}
+      </MainStack.Navigator>
+    </NavigationContainer>
+  );
+}
+export default MainNavigation;

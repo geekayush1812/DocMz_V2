@@ -6,15 +6,12 @@ const GET_MORE_DOCTORS = 'GET_MORE_DOCTORS';
 const GETTING_MORE_DOCTORS = 'GETTING_MORE_DOCTORS';
 const GETTING_DOCTORS = 'GETTING_DOCTORS';
 const ERROR = 'ERROR';
-const RESET_DOCTOR = 'RESET_DOCTOR';
+const RESET_DOCTOR_TO_PATIENT = 'RESET_DOCTOR_TO_PATIENT';
 const TMP_DOC_STORE = 'TMP_DOC_STORE';
 const SEARCHING_DOCTORS = 'SEARCHING_DOCTORS';
 const SEARCHED_DOCTORS = 'SEARCHED_DOCTORS';
 const GETTING_SUPER_DOC = 'GETTING_SUPER_DOCS';
 const SUPER_DOCS = 'SUPER_DOCS';
-// const UPLOADING_IMAGE = 'UPLOADING_IMAGE';
-// const UPLOADED_IMAGE = 'UPLOADED_IMAGE';
-// const ERROR_UPLOADING_IMAGE = 'ERROR_UPLOADING_IMAGE';
 
 const setDoctors = (doctors, searchable) => {
   return {
@@ -79,26 +76,9 @@ const setSuperDoc = (data) => {
   };
 };
 
-// const startUploadingImage = () => {
-//   return {
-//     type: UPLOADING_IMAGE,
-//   };
-// };
-// const uploadedImage = () => {
-//   return {
-//     type: UPLOADED_IMAGE,
-//   };
-// };
-// const errorUploadingImage = (e) => {
-//   return {
-//     type: ERROR_UPLOADING_IMAGE,
-//     payload: e,
-//   };
-// };
-
-export const resetDoctor = () => {
+export const resetDoctorToPatientReducer = () => {
   return {
-    type: RESET_DOCTOR,
+    type: RESET_DOCTOR_TO_PATIENT,
   };
 };
 
@@ -233,31 +213,3 @@ export const fetchSuperDoc = (page, size) => {
       });
   };
 };
-
-// export const UploadProfilePic = (id, ImageData, success = () => {}) => {
-//   return (dispatch) => {
-//     dispatch(startUploadingImage());
-//     const Image = {
-//       uri: ImageData.uri,
-//       type: ImageData.type,
-//       name: ImageData.fileName,
-//     };
-//     const data = new FormData();
-//     data.append('image', Image);
-//     data.append('id', id);
-//     const config = {
-//       headers: {
-//         'Content-Type': 'multipart/form-data',
-//       },
-//     };
-//     axios
-//       .post(`${Host}/doctors/upload/image`, data, config)
-//       .then((responseStatus) => {
-//         success();
-//         dispatch(uploadedImage());
-//       })
-//       .catch((err) => {
-//         dispatch(errorUploadingImage(err));
-//       });
-//   };
-// };

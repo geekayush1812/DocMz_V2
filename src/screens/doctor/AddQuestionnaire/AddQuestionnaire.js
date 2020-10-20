@@ -10,7 +10,7 @@ import {
   GetQuestion,
   UpdateQuestion,
   DeleteRootQuestion,
-} from '../../../redux/action/doctor/questionnaireAction';
+} from '../../../reduxV2/action/QuestionnaireAction';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import ExpandableListOld from '../../../components/molecules/ExpandableList/ExpandableListOld';
 import Overlay from '../../../components/atoms/Overlay/Overlay';
@@ -38,16 +38,16 @@ function AddQuestionnaire({navigation}) {
   const [parentId, setParentId] = useState('');
   const [optionId, setOptionId] = useState('');
   const dispatch = useDispatch();
-  const {data} = useSelector((state) => state.AuthReducer);
+  const {userData} = useSelector((state) => state.AuthReducer);
   const {
     gettingQuestionnaire,
     questions,
     isLoading,
     questionDetails,
-  } = useSelector((state) => state.questionnaireReducer);
+  } = useSelector((state) => state.QuestionnaireReducer);
 
   useEffect(() => {
-    !gettingQuestionnaire && dispatch(GetQuestion(data.id));
+    !gettingQuestionnaire && dispatch(GetQuestion(userData.id));
   }, []);
 
   //could be used when API return data of added question till then dispatch an action when submit
@@ -95,10 +95,10 @@ function AddQuestionnaire({navigation}) {
     let Fques = {
       ...Question,
       option: JSON.stringify(optionTemp),
-      id: data.id,
+      id: userData.id,
     };
     dispatch(AddQuestion(Fques));
-    dispatch(GetQuestion(data.id));
+    dispatch(GetQuestion(userData.id));
     // console.log(Fques);
   };
   const onUpdateQuestion = () => {
@@ -121,17 +121,17 @@ function AddQuestionnaire({navigation}) {
       id: _id,
     };
     dispatch(UpdateQuestion(Fques));
-    dispatch(GetQuestion(data.id));
+    dispatch(GetQuestion(userData.id));
   };
   const onDeleteQuestion = () => {
     const {root, _id} = Question;
     if (root) {
       const question = {
-        docId: data.id,
+        docId: userData.id,
         questionId: _id,
       };
       dispatch(DeleteRootQuestion(question));
-      dispatch(GetQuestion(data.id));
+      dispatch(GetQuestion(userData.id));
     }
   };
   const onPressReset = () => {
@@ -474,7 +474,7 @@ const LinkedController = ({parentId, optionId, closeLinkedPopup}) => {
     parent: '',
     optionId: '',
   });
-  const {data} = useSelector((state) => state.AuthReducer);
+  const {userData} = useSelector((state) => state.AuthReducer);
   const addOption = () => {
     const schema = {
       _id: new Date().getTime().toString(),
@@ -522,12 +522,12 @@ const LinkedController = ({parentId, optionId, closeLinkedPopup}) => {
     let Fques = {
       ...Question,
       option: JSON.stringify(optionTemp),
-      id: data.id,
+      id: userData.id,
       parent: parentId,
       optionId: optionId,
     };
     dispatch(AddQuestion(Fques));
-    dispatch(GetQuestion(data.id));
+    dispatch(GetQuestion(userData.id));
   };
   return (
     <Overlay

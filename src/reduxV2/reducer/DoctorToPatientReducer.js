@@ -73,14 +73,21 @@ const DoctorReducer = (state = initialState, action) => {
         superDocs: action.payload,
         superDocsLoading: false,
       };
-    case 'RESET_DOCTOR':
+    case 'RESET_DOCTOR_TO_PATIENT':
       return {
         ...state,
-        error: [],
-        loading: false,
         doctors: [],
+        loading: false,
+        moreDoctorLoading: false,
+        error: [],
         tmp: null,
-        tmpLoading: false,
+        tmpLoading: true,
+        searchedDoctors: [],
+        searchDoctorsLoading: false,
+        superDocs: [],
+        superDocsLoading: false,
+        uploadingImage: false,
+        errorUploadingImage: '',
       };
     case 'UPLOADING_IMAGE':
       return {

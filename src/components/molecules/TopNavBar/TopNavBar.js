@@ -19,7 +19,7 @@ function TopNavBar({
   hideLeftComp,
 }) {
   return (
-    <View
+    <Animated.View
       style={[
         Styles.Container,
         isClap && {
@@ -79,13 +79,24 @@ function TopNavBar({
       ) : (
         <View />
       )}
-    </View>
+    </Animated.View>
   );
 }
 
 const Styles = StyleSheet.create({
-  Container: {},
-  TouchableOpacity: {},
+  Container: {
+    zIndex: 900,
+    marginTop: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    marginTop: 5,
+  },
+  TouchableOpacity: {
+    padding: 10,
+    borderRadius: 20,
+  },
   BackButton: {height: 19, width: 10},
   HamburgerButton: {height: 19, width: 24},
 });

@@ -18,17 +18,17 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Host} from '../../../utils/connection';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import {resetStore} from '../../../redux/action/auth';
+import {resetStore} from '../../../reduxV2/action/AuthAction';
 import ImagePicker from 'react-native-image-picker';
 import {
   UploadProfilePicPatient,
   GetPatientInfo,
   UpdateProfile,
-} from '../../../redux/action/patientAccountAction';
+} from '../../../reduxV2/action/PatientAction';
 
 const NewProfile = ({navigation}) => {
-  const {data} = useSelector((state) => state.AuthReducer);
-  const {patient} = useSelector((state) => state.PatientAccountReducer);
+  const {userData} = useSelector((state) => state.AuthReducer);
+  const {patient} = useSelector((state) => state.PatientReducer);
   const [credential, setCredential] = useState({
     name: '',
     age: '',
@@ -60,7 +60,7 @@ const NewProfile = ({navigation}) => {
   const onLogout = () => {
     dispatch(
       resetStore(() => {
-        navigation.replace('PatientHomePage');
+        navigation.navigate('MainController');
       }),
     );
   };
@@ -157,12 +157,12 @@ const NewProfile = ({navigation}) => {
         // const path = response.uri;
         // setData({...data, imagePath: path});
         // console.log(path);
-        if (data._id) {
+        if (userData._id) {
           dispatch(
-            UploadProfilePicPatient(data._id, response, () => {
+            UploadProfilePicPatient(userData._id, response, () => {
               setPopupVisible(!popupVisible);
               animateHeightOfPopup.setValue(0);
-              dispatch(GetPatientInfo(data._id));
+              dispatch(GetPatientInfo(userData._id));
             }),
           );
         } else {
@@ -190,12 +190,12 @@ const NewProfile = ({navigation}) => {
         // const path = response.uri;
         // setData({...data, imagePath: path});
         // console.log(path);
-        if (data._id) {
+        if (userData._id) {
           dispatch(
-            UploadProfilePicPatient(data._id, response, () => {
+            UploadProfilePicPatient(userData._id, response, () => {
               setPopupVisible(!popupVisible);
               animateHeightOfPopup.setValue(0);
-              dispatch(GetPatientInfo(data._id));
+              dispatch(GetPatientInfo(userData._id));
             }),
           );
         } else {
@@ -213,7 +213,7 @@ const NewProfile = ({navigation}) => {
       age: credential.age,
       gender: credential.gender,
     };
-    dispatch(UpdateProfile(profileData, data._id));
+    dispatch(UpdateProfile(profileData, userData._id));
   };
 
   const [errorInCredential, setErrorInCredential] = useState({
@@ -285,7 +285,7 @@ const NewProfile = ({navigation}) => {
                 fontFamily: 'Montserrat-SemiBold',
                 fontSize: 20,
               }}>
-              {(data.firstName ?? '') + ' ' + (data.lastName ?? '')}
+              {(userData.firstName ?? '') + ' ' + (userData.lastName ?? '')}
             </Text>
             <View
               style={{

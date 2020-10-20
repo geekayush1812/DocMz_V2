@@ -1,8 +1,13 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-community/async-storage';
 import {Host} from '../../utils/connection';
-import {GetPatientInfo} from '../action/PatientAction';
-import {GetDoctorProfile} from '../action/DoctorAction';
+import {GetPatientInfo, UploadProfilePicPatient} from '../action/PatientAction';
+import {GetDoctorProfile, UploadProfilePic} from '../action/DoctorAction';
+
+import {resetDoctorReducer} from '../action/DoctorAction';
+import {resetDoctorToPatientReducer} from '../action/DoctorToPatientAction';
+import {resetPatientAccountReducer} from '../action/PatientAction';
+import {resetQuestinnaireReducer} from '../action/QuestionnaireAction';
+
 // import {resetDataStore} from './dataStore';
 // import {resetQuestion} from './questionAction';
 
@@ -15,10 +20,10 @@ const SIGNED_UP = 'SIGNED_UP';
 const ERROR_SIGNUP = 'ERROR_SIGNUP';
 const CHANGING_THEME = 'CHANGING_THEME';
 const THEME_CHANGED = 'CHANGING_THEME';
+const RESET_AUTH_REDUCER = 'RESET_AUTH_REDUCER';
 
 const ERROR = 'HAVEING_ERROR';
 const LOADING = 'LOADING';
-const REMOVE_USER = 'REMOVE_USER';
 
 const saveNewUser = (data, type) => {
   return {
@@ -28,11 +33,17 @@ const saveNewUser = (data, type) => {
   };
 };
 
-export const resetStore = (callback) => {
-  return async (dispatch) => {
-    await dispatch(removeUser());
-    // await dispatch(resetDataStore());
-    // await dispatch(resetQuestion());
+const resetAuthReducer = () => ({
+  type: RESET_AUTH_REDUCER,
+});
+
+export const resetStore = (callback = () => {}) => {
+  return (dispatch) => {
+    dispatch(resetAuthReducer());
+    dispatch(resetQuestinnaireReducer());
+    dispatch(resetPatientAccountReducer());
+    dispatch(resetDoctorToPatientReducer());
+    dispatch(resetDoctorReducer());
     callback();
   };
 };
@@ -125,7 +136,6 @@ export const LoginPatient = (data, success, failed) => {
           dispatch(GetPatientInfo(_data.id));
           success({
             status: true,
-            id: data._id,
             message: 'Patient Login Successful',
           });
         } else {
@@ -209,7 +219,12 @@ const errorSignup = (err) => ({
   type: ERROR_SIGNUP,
   payload: err,
 });
-export const signupPatient = (data, successCallback, errorCallback) => {
+export const signupPatient = (
+  data,
+  imageData,
+  successCallback,
+  errorCallback,
+) => {
   return (dispatch) => {
     const config = {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -230,6 +245,7 @@ export const signupPatient = (data, successCallback, errorCallback) => {
           };
           dispatch(signedUp());
           dispatch(saveNewUser(__data, 'patient'));
+          dispatch(UploadProfilePicPatient(__data.id, imageData));
           dispatch(GetPatientInfo(__data.id));
           successCallback();
         } else {
@@ -243,7 +259,12 @@ export const signupPatient = (data, successCallback, errorCallback) => {
       });
   };
 };
-export const signupDoctor = (data, successCallback, errorCallback) => {
+export const signupDoctor = (
+  data,
+  imageData,
+  successCallback,
+  errorCallback,
+) => {
   return (dispatch) => {
     const config = {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -266,6 +287,7 @@ export const signupDoctor = (data, successCallback, errorCallback) => {
           };
           dispatch(signedUp());
           dispatch(saveNewUser(__data, 'doctor'));
+          dispatch(UploadProfilePic(__data.id, imageData));
           dispatch(GetDoctorProfile(__data.id));
           successCallback('Doctor Signup successful');
         } else {

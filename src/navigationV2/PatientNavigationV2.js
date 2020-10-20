@@ -21,14 +21,14 @@
 // import VoiceCall from '../screens/patient/Calls/Voicecall';
 
 import React from 'react';
-import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createDrawerNavigator} from '@react-navigation/drawer';
 import {Dimensions} from 'react-native';
 import MyDoctors from '../screens/patient/mydoctors/MyDoctors';
 import FamilyMember from '../screens/patient/familyMember/Newfamily';
 import ProfileScreen from '../screens/examples/Profile/NewProfile';
-import {createAppContainer} from 'react-navigation';
-import {createStackNavigator} from 'react-navigation-stack';
-import {createBottomTabNavigator} from 'react-navigation-tabs';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MedicalHistory from '../screens/examples/MedicalHistory/MedicalHistory';
 import HealthCare from '../screens/patient/HealthCare/HealthCare';
@@ -42,112 +42,114 @@ import AuthNavigationV2 from '../navigationV2/AuthNavigationV2';
 import Appointments from '../screens/patient/appointments/Appointments';
 import PatientDashboard from '../screens/patient/PatientDashboard/PatientDashboard';
 import WaitingRoom from '../screens/patient/waitingRoom/WaitingRoom';
+import {func} from 'prop-types';
+
 const screenWidth = Dimensions.get('screen').width;
+const Stack = createStackNavigator();
+const BottomTabs = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
-const PatientLanding = createStackNavigator(
-  {
-    PatientLandingScreen: LandingPage,
-    DoctorProfile: DoctorProfile,
-    TimeSlotScreen: TimeSlotScreen,
-    ConfirmAppointment: ConfirmAppointment,
-    Questionnaire: QuestionnairePP,
-    Payments: PaymentsV2,
-    Auth: AuthNavigationV2,
-  },
-  {headerMode: 'none', initialRouteName: 'PatientLandingScreen'},
-);
+function PatientLanding() {
+  return (
+    <Stack.Navigator
+      initialRouteName={'PatientLandingScreen'}
+      headerMode={'none'}>
+      <Stack.Screen name={'PatientLandingScreen'} component={LandingPage} />
+      <Stack.Screen name={'DoctorProfile'} component={DoctorProfile} />
+      <Stack.Screen name={'TimeSlotScreen'} component={TimeSlotScreen} />
+      <Stack.Screen
+        name={'ConfirmAppointment'}
+        component={ConfirmAppointment}
+      />
+      <Stack.Screen name={'Questionnaire'} component={QuestionnairePP} />
+      <Stack.Screen name={'Payments'} component={PaymentsV2} />
+      <Stack.Screen name={'Auth'} component={AuthNavigationV2} />
+    </Stack.Navigator>
+  );
+}
 
-// const AddressStack = createStackNavigator(
-//   {
-//     PatientAdressList,
-//     AddAdressScreen,
-//   },
-//   {headerMode: 'none', initialRouteName: 'PatientAdressList'},
-// );
-
-const PatientNavigationHome = createBottomTabNavigator(
-  {
-    PatientLanding: {
-      screen: PatientLanding,
-      navigationOptions: {
-        tabBarIcon: ({focused, horizontal, tintColor}) => {
-          return (
-            <Icon
-              name="home"
-              size={25}
-              color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
-            />
-          );
+function PatientNavigationHome() {
+  return (
+    <BottomTabs.Navigator
+      initialRouteName={'PatientLanding'}
+      tabBarOptions={{
+        showLabel: false,
+        style: {
+          backgroundColor: '#047b7b',
+          borderTopLeftRadius: 10,
+          borderTopRightRadius: 10,
         },
-      },
-    },
-    MedicalHistory: {
-      screen: MedicalHistory,
-      navigationOptions: {
-        tabBarIcon: ({focused, horizontal, tintColor}) => {
-          return (
-            <Icon
-              name="account"
-              size={25}
-              color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
-            />
-          );
-        },
-      },
-    },
-    // Chat: {
-    //   screen: MedicalHistory,
-    //   navigationOptions: {
-    //     tabBarIcon: ({focused, horizontal, tintColor}) => {
-    //       return (
-    //         <Icon
-    //           name="account"
-    //           size={25}
-    //           color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
-    //         />
-    //       );
-    //     },
-    //   },
-    // },
-    Appointments: {
-      screen: Appointments,
-      navigationOptions: {
-        tabBarIcon: ({focused, horizontal, tintColor}) => {
-          return (
-            <Icon
-              name="account"
-              size={25}
-              color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
-            />
-          );
-        },
-      },
-    },
-  },
-  {
-    tabBarOptions: {
-      showLabel: false,
-      style: {
-        backgroundColor: '#047b7b',
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-      },
-    },
-    initialRouteName: 'PatientLanding',
-  },
-);
-
-const PatientNavigationV2 = createDrawerNavigator(
-  {
-    Home: PatientNavigationHome,
-    MedicalHistory: MedicalHistory,
-    FamilyMember: FamilyMember,
-    HealthCare: HealthCare,
-    Appointments: Appointments,
-    MyDoctors: MyDoctors,
-    Dashboard: PatientDashboard,
-    WaitingRoom: WaitingRoom,
-    // Setting,
+      }}>
+      <BottomTabs.Screen
+        options={{
+          tabBarIcon: ({focused, horizontal, tintColor}) => {
+            return (
+              <Icon
+                name="home"
+                size={25}
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+              />
+            );
+          },
+        }}
+        name={'PatientLanding'}
+        component={PatientLanding}
+      />
+      <BottomTabs.Screen
+        options={{
+          tabBarIcon: ({focused, horizontal, tintColor}) => {
+            return (
+              <Icon
+                name="account"
+                size={25}
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+              />
+            );
+          },
+        }}
+        name={'MedicalHistory'}
+        component={MedicalHistory}
+      />
+      {/* <BottomTabs.Screen name={'Chat'} component={} /> */}
+      <BottomTabs.Screen
+        options={{
+          tabBarIcon: ({focused, horizontal, tintColor}) => {
+            return (
+              <Icon
+                name="account"
+                size={25}
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+              />
+            );
+          },
+        }}
+        name={'Appointments'}
+        component={Appointments}
+      />
+    </BottomTabs.Navigator>
+  );
+}
+function PatientNavigationV2({navigation, route}) {
+  return (
+    <Drawer.Navigator
+      initialRouteName={'Home'}
+      drawerPosition={'right'}
+      drawerType={'slide'}
+      backBehavior={'history'}
+      drawerContent={(props) => <ProfileScreen {...props} />}
+      drawerStyle={{
+        width: screenWidth,
+        drawerBackgroundColor: 'rgba(255,255,255,.9)',
+      }}>
+      <Drawer.Screen name={'Home'} component={PatientNavigationHome} />
+      <Drawer.Screen name={'MedicalHistory'} component={MedicalHistory} />
+      <Drawer.Screen name={'FamilyMember'} component={FamilyMember} />
+      <Drawer.Screen name={'HealthCare'} component={HealthCare} />
+      <Drawer.Screen name={'Appointments'} component={Appointments} />
+      <Drawer.Screen name={'MyDoctors'} component={MyDoctors} />
+      <Drawer.Screen name={'Dashboard'} component={PatientDashboard} />
+      <Drawer.Screen name={'WaitingRoom'} component={WaitingRoom} />
+      {/* // Setting,
     // Wishlist,
     // Orders,
     // Consultations,
@@ -159,22 +161,8 @@ const PatientNavigationV2 = createDrawerNavigator(
     // Questionnaire: QuestionnairePP,
     // Profile: {screen: ProfileStack},
     // Address: {screen: AddressStack},
-    // VoiceCall: {screen: VoiceCall},
-  },
-  {
-    initialRouteName: 'Home',
-    drawerPosition: 'right',
-    headerMode: 'none',
-    drawerType: 'none',
-    drawerWidth: screenWidth,
-    drawerBackgroundColor: 'rgba(255,255,255,.9)',
-    contentComponent: (props) => <ProfileScreen {...props} />,
-    contentOptions: {
-      activeTintColor: '#fff',
-      activeBackgroundColor: '#6b52ae',
-    },
-    backBehavior: 'initialRoute',
-  },
-);
-
-export default createAppContainer(PatientNavigationV2);
+    // VoiceCall: {screen: VoiceCall}, */}
+    </Drawer.Navigator>
+  );
+}
+export default PatientNavigationV2;

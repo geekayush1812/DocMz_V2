@@ -19,6 +19,11 @@ const inititalState = {
   appointments: [],
   gettingAppointment: false,
   errorGettingAppointment: '',
+  uploadingImage: false,
+  errorUploadingImage: '',
+  blockingDoctor: false,
+  blockingDoctorError: '',
+  forNow: false,
 };
 
 const MyDoctorReducer = (state = inititalState, action) => {
@@ -41,11 +46,33 @@ const MyDoctorReducer = (state = inititalState, action) => {
         ...state,
         isMyDoctorReducerLoading: true,
       };
-    case 'RESET_MY_DOCTOR_REDUCER':
+    case 'RESET_DOCTOR_REDUCER':
       return {
+        ...state,
         isMyDoctorReducerLoading: false,
-        doctorProfile: null,
+        doctorProfile: {},
         haveingMyDoctorReducerError: [],
+        appointmentLoading: false,
+        appointments: [],
+        appointmentFetchError: '',
+        allAppointmentLoading: false,
+        allAppointments: [],
+        allAppointmentFetchError: '',
+        specialtyLoading: false,
+        specialty: [],
+        specialtyLoadingError: '',
+        updatingDoctor: false,
+        updatingDoctorError: '',
+        recentPatientLoading: false,
+        recentPatient: [],
+        recentPatientError: '',
+        appointments: [],
+        gettingAppointment: false,
+        errorGettingAppointment: '',
+        uploadingImage: false,
+        errorUploadingImage: '',
+        blockingDoctor: false,
+        blockingDoctorError: '',
       };
     case 'APPOINTMENT_LOADING':
       return {
@@ -152,6 +179,44 @@ const MyDoctorReducer = (state = inititalState, action) => {
         gettingAppointment: false,
         appointments: '',
         errorGettingAppointment: action.payload,
+      };
+    case 'UPLOADING_IMAGE':
+      return {
+        ...state,
+        uploadingImage: true,
+      };
+    case 'UPLOADED_IMAGE':
+      return {
+        ...state,
+        uploadingImage: false,
+      };
+    case 'ERROR_UPLOADING_IMAGE':
+      return {
+        ...state,
+        uploadingImage: false,
+        errorUploadingImage: action.payload,
+      };
+    case 'BLOCK_DOCTOR_LOADING':
+      return {
+        ...state,
+        blockingDoctor: true,
+      };
+    case 'DOCTOR_BLOCKED':
+      return {
+        ...state,
+        blockingDoctor: false,
+        blockingDoctorError: '',
+      };
+    case 'BLOCK_DOCTOR_ERROR':
+      return {
+        ...state,
+        blockingDoctor: false,
+        blockingDoctorError: action.payload,
+      };
+    case 'SET_FOR_NOW':
+      return {
+        ...state,
+        forNow: action.payload,
       };
     default:
       return state;

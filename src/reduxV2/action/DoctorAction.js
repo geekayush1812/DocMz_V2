@@ -4,7 +4,7 @@ import {Host} from '../../utils/connection';
 const save = 'SAVE_MY_DOCTOR';
 const loading = 'START_MY_DOCTOR_REDUCER_LOADING';
 const err = 'HAVEING_MY_DOCTOR_REDUCER_ERROR';
-const reset = 'RESET_MY_DOCTOR_REDUCER';
+const RESET_DOCTOR_REDUCER = 'RESET_DOCTOR_REDUCER';
 const APPOINTMENT_LOADING = 'APPOINTMENT_LOADING';
 const APPOINTMENT_LOADED = 'APPOINTMENT_LOADED';
 const ERROR_APPOINTMENT_FETCHING = 'ERROR_APPOINTMENT_FETCHING';
@@ -41,9 +41,9 @@ const haveingError = (error) => {
   };
 };
 
-export const resetMyDoctorReducer = () => {
+export const resetDoctorReducer = () => {
   return {
-    type: reset,
+    type: RESET_DOCTOR_REDUCER,
   };
 };
 
@@ -336,8 +336,8 @@ export const UpdateDoctorProfile = (data, callback = () => {}) => (
       .post(`${Host}/doctors/profile/update`, _data, config)
       .then((response) => {
         dispatch(updatedDoctorProfile());
-        callback();
         dispatch(saveDoc(response.data.data));
+        callback();
       });
   } catch (e) {
     dispatch(updatingDoctorError(e));
@@ -355,3 +355,126 @@ export const GetRecentPatient = (docId) => (dispatch) => {
       dispatch(gettingRecentPatientError(e));
     });
 };
+
+/**
+ * ========================= Upload profile picture ===========================
+ */
+const UPLOADING_IMAGE = 'UPLOADING_IMAGE';
+const UPLOADED_IMAGE = 'UPLOADED_IMAGE';
+const ERROR_UPLOADING_IMAGE = 'ERROR_UPLOADING_IMAGE';
+
+const startUploadingImage = () => {
+  return {
+    type: UPLOADING_IMAGE,
+  };
+};
+const uploadedImage = () => {
+  return {
+    type: UPLOADED_IMAGE,
+  };
+};
+const errorUploadingImage = (e) => {
+  return {
+    type: ERROR_UPLOADING_IMAGE,
+    payload: e,
+  };
+};
+
+export const UploadProfilePic = (id, ImageData, success = () => {}) => {
+  return (dispatch) => {
+    dispatch(startUploadingImage());
+    const Image = {
+      uri: ImageData.uri,
+      type: ImageData.type,
+      name: ImageData.fileName,
+    };
+    const data = new FormData();
+    data.append('image', Image);
+    data.append('id', id);
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    axios
+      .post(`${Host}/doctors/upload/image`, data, config)
+      .then((responseStatus) => {
+        success();
+        dispatch(uploadedImage());
+      })
+      .catch((err) => {
+        dispatch(errorUploadingImage(err));
+      });
+  };
+};
+
+/**
+ * ========================= Upload profile picture END===========================
+ */
+
+/**
+ * ========================= Doctor block===========================
+ */
+
+const BLOCK_DOCTOR_LOADING = 'BLOCK_DOCTOR_LOADING';
+const DOCTOR_BLOCKED = 'DOCTOR_BLOCKED';
+const BLOCK_DOCTOR_ERROR = 'BLOCK_DOCTOR_ERROR';
+
+const blockingDoctor = () => {
+  return {
+    type: BLOCK_DOCTOR_LOADING,
+  };
+};
+
+const doctorBlocked = () => {
+  return {
+    type: DOCTOR_BLOCKED,
+  };
+};
+
+const blockingDoctorError = (e) => {
+  return {
+    type: BLOCK_DOCTOR_ERROR,
+    payload: e,
+  };
+};
+
+export const BlockDoctor = (id) => {
+  return (dispatch) => {
+    const config = {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    };
+    dispatch(blockingDoctor());
+    axios
+      .post(`${Host}/doctors/toggleblock`, {id}, config)
+      .then((response) => {
+        dispatch(doctorBlocked());
+        console.log(response.data.data);
+        dispatch(saveDoc(response.data.data));
+      })
+      .catch((e) => {
+        dispatch(blockingDoctorError(e));
+      });
+  };
+};
+
+/**
+ * ========================= Doctor block END ===========================
+ */
+
+/**
+ * ========================= forNow ACTION for Onboarding ===========================
+ */
+const SET_FOR_NOW = 'SET_FOR_NOW';
+const setForNow = (forNow) => ({
+  type: SET_FOR_NOW,
+  payload: forNow,
+});
+export const SetForNow = (forNow, callBack = () => {}) => (dispatch) => {
+  dispatch(setForNow(forNow));
+  callBack();
+};
+
+/**
+ * ========================= forNow ACTION for Onboarding  END ===========================
+ */

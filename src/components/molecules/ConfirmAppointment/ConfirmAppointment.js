@@ -31,10 +31,9 @@ import DmzButton from '../../atoms/DmzButton/DmzButton';
 import {Picker} from '@react-native-community/picker';
 import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
-import {bookAppointment} from '../../../redux/action/patientAccountAction';
 
-const ConfirmAppointment = ({navigation}) => {
-  const {data: slotData, doctorData} = navigation.state.params;
+const ConfirmAppointment = ({navigation, route}) => {
+  const {data: slotData, doctorData} = route.params;
   const dispatch = useDispatch();
   const [showPopup, setShowPopup] = useState(false);
   const [memberCredential, setMemberCredential] = useState({
@@ -46,9 +45,7 @@ const ConfirmAppointment = ({navigation}) => {
   const [reasonForVisit, setReasonForVisit] = useState('');
   const PopupTranslateY = useRef(new Animated.Value(0)).current;
 
-  const {familyMember, patient} = useSelector(
-    (state) => state.PatientAccountReducer,
-  );
+  const {familyMember, patient} = useSelector((state) => state.PatientReducer);
 
   const credentialSet = (id) => {
     const member = familyMember.find((item) => item._id === id);

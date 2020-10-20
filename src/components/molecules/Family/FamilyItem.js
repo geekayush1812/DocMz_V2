@@ -11,17 +11,17 @@ const FamilyItem = ({data}) => (
   <View
     style={{
       backgroundColor: 'white',
-      paddingHorizontal: 20,
+      paddingHorizontal: '6%',
       borderRadius: 13,
-      marginVertical: 10,
+      marginVertical: '3%',
       elevation: 2,
       flexDirection: 'row',
-      paddingVertical: 15,
+      paddingVertical: '5%',
     }}>
     <View style={{justifyContent: 'center'}}>
       <Image
         source={require('../../../assets/jpg/person2.jpg')}
-        style={{height: 40, width: 40, borderRadius: 20, marginRight: 15}}
+        style={{height: 40, width: 40, borderRadius: 40, marginRight: 15}}
       />
     </View>
     <View style={{flex: 1}}>
@@ -31,7 +31,7 @@ const FamilyItem = ({data}) => (
             fontFamily: 'Montserrat-SemiBold',
             fontSize: 17,
             paddingVertical: 2,
-            marginRight: 10,
+            marginRight: '5%',
           }}>
           {data.firstName + ' ' + data.lastName}
         </Text>

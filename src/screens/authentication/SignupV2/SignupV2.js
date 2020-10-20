@@ -6,12 +6,12 @@ import SignUpStep1Screen from './SignUpStep1Screen';
 import SignUpStep3Screen from './SignUpStep3Screen';
 import SignUpStep4Screen from './SignUpStep4Screen';
 import ImagePicker from 'react-native-image-picker';
-import {signupDoctor, signupPatient} from '../../../redux/action/auth';
+import {signupDoctor, signupPatient} from '../../../reduxV2/action/AuthAction';
 import Toast from 'react-native-root-toast';
 import {useDispatch, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
-import {UploadProfilePic} from '../../../redux/action/doctoreAction';
-import {UploadProfilePicPatient} from '../../../redux/action/patientAccountAction';
+import {UploadProfilePic} from '../../../reduxV2/action/DoctorAction';
+import {UploadProfilePicPatient} from '../../../reduxV2/action/PatientAction';
 import SignUpStep2Screen from './SignUpStep2Screen';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import AlertModal from '../../../components/molecules/Modal/AlertModal';
@@ -26,9 +26,8 @@ function SignupV2(props) {
   };
   const initialCredential = credential;
   const dispatch = useDispatch();
-  const {isLoading, data} = useSelector((state) => state.AuthReducer);
-  // const [signupAs, setSignupAs] = useState('patient');
-  const signupAs = props.navigation.state.params.loginAs;
+  const {signingUp, userData} = useSelector((state) => state.AuthReducer);
+  const signupAs = props.route.params.loginAs;
   const [imageData, setImageData] = useState(null);
   const [modal, setModal] = useState({visible: false, text: ''});
   const [credential, setCredential] = useState({
@@ -47,36 +46,25 @@ function SignupV2(props) {
   // const initialCredential = credential;
 
   const handleSubmit = () => {
-    console.log('in submit');
     signupAs === 'doctor' ? _handleDoctorSignup() : _handlePatientSignup();
   };
   const _handleDoctorSignup = () => {
-    console.log(credential);
-    dispatch(signupDoctor(credential, successCallback, errorCallback));
+    dispatch(
+      signupDoctor(credential, imageData, successCallback, errorCallback),
+    );
   };
   const _handlePatientSignup = () => {
-    console.log('in patient submit');
-    dispatch(signupPatient(credential, successCallback, errorCallback));
+    dispatch(
+      signupPatient(credential, imageData, successCallback, errorCallback),
+    );
   };
 
   const successCallback = () => {
     showTost('account created successfully');
-    AsyncStorage.getItem('userData').then((res) => {
-      const data = JSON.parse(res);
-      console.log(data.id);
-      console.log(imageData);
-      signupAs === 'doctor'
-        ? dispatch(UploadProfilePic(data.id, imageData))
-        : dispatch(UploadProfilePicPatient(data.id, imageData));
-      props.navigation.navigate('PatientHomePage');
-    });
-    //   : props.navigation.goBack(null);
-    // props.navigation.goBack(null);
+    props.navigation.navigate('MainController');
   };
   const errorCallback = (e) => {
     showModal(e);
-    // Alert.alert('something went wrong');
-    // showTost('error occured: ' + e);
   };
   const showTost = (msg = 'nothing') => {
     return Toast.show(msg, {
@@ -185,24 +173,15 @@ function SignupV2(props) {
       <ViewPager
         ref={pagerRef}
         style={styles.viewPager}
-        initialPage={1}
+        initialPage={0}
         scrollEnabled={false}>
         <View key="0">
-          <SignupSplash
-            credential={credential}
-            setCredential={setCredential}
-            signupAs={signupAs}
-            setSignupAs={setSignupAs}
-            onPress={() => nextpage(1)}
-          />
-        </View>
-        <View key="1">
           <SignUpStep1Screen
             onChoosePicture={onChoosePicture}
             imageData={imageData}
             credential={credential}
             setCredential={setCredential}
-            isLoading={isLoading}
+            isLoading={signingUp}
             signupAs={signupAs}
             navigation={props.navigation}
             onPress={() => {
@@ -218,7 +197,7 @@ function SignupV2(props) {
                 lastName != '' &&
                 firstName != ''
               ) {
-                nextpage(2);
+                nextpage(1);
               } else {
                 showModal(
                   lastName == '' && firstName == ''
@@ -233,15 +212,15 @@ function SignupV2(props) {
             }}
           />
         </View>
-        <View key="2">
+        <View key="1">
           <SignUpStep2Screen
             signupAs={signupAs}
             onPress={() => {
-              signupAs === 'doctor' ? nextpage(3) : handleSubmit();
+              signupAs === 'doctor' ? nextpage(2) : handleSubmit();
             }}
           />
         </View>
-        <View key="3">
+        <View key="2">
           <SignUpStep3Screen
             credential={credential}
             setCredential={setCredential}
@@ -255,7 +234,7 @@ function SignupV2(props) {
                 registration_number.length >= 4 &&
                 registration_number.length <= 15
               ) {
-                nextpage(4);
+                nextpage(3);
               } else {
                 showModal(
                   registration_number == '' && specialty == ''
@@ -268,11 +247,11 @@ function SignupV2(props) {
             }}
           />
         </View>
-        <View key="4">
+        <View key="3">
           <SignUpStep4Screen
             credential={credential}
             setCredential={setCredential}
-            isLoading={isLoading}
+            isLoading={signingUp}
             onPress={() => {
               const {phone, city, country} = credential;
               if (

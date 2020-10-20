@@ -16,7 +16,7 @@ const AuthReducer = (state = initialState, action) => {
         ...state,
         isDoctor: action.userType,
         userData: action.userData,
-        isLogedin: true,
+        isLoggedin: true,
       };
     case 'LOGGING_IN':
       return {
@@ -54,6 +54,18 @@ const AuthReducer = (state = initialState, action) => {
         signingUp: false,
         errorSingup: action.payload,
       };
+    case 'RESET_AUTH_REDUCER':
+      return {
+        ...state,
+        loggingIn: false,
+        isLoggedin: false,
+        errorLogin: '',
+        signingUp: false,
+        errorSingup: '',
+        isDoctor: false,
+        userData: {},
+        theme: 'PRIMARY',
+      };
 
     case 'HAVEING_ERROR':
       return {
@@ -70,16 +82,6 @@ const AuthReducer = (state = initialState, action) => {
       return {
         ...state,
         isLoading: false,
-      };
-    case 'REMOVE_USER':
-      return {
-        ...state,
-        isDoctor: false,
-        isLoading: false,
-        isLogedin: false,
-        data: [],
-        error: [],
-        appointment: [],
       };
     default:
       return state;

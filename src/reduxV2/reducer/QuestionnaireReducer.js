@@ -1,5 +1,5 @@
 const initialState = {
-  isLoading: false,
+  isAddingQuestion: false,
   questionDetails: [],
   questionnaireAdded: false,
   error: '',
@@ -13,20 +13,20 @@ const QuestionnaireReducer = (state = initialState, action) => {
     case 'ADDING_QUESTIONNAIRE':
       return {
         ...state,
-        isLoading: true,
+        isAddingQuestion: true,
         questionnaireAdded: false,
       };
     case 'QUESTIONNAIRE_ADDED':
       return {
         ...state,
-        isLoading: false,
+        isAddingQuestion: false,
         questionDetails: action.payload,
         questionnaireAdded: true,
       };
     case 'ERROR_ADDING_QUESTIONNAIRE':
       return {
         ...state,
-        isLoading: false,
+        isAddingQuestion: false,
         error: action.payload,
       };
     case 'GETTING_QUESTIONNAIRE':
@@ -45,6 +45,17 @@ const QuestionnaireReducer = (state = initialState, action) => {
         ...state,
         gettingQuestionnaire: false,
         errorGettingQuestionnaire: action.payload,
+      };
+    case 'RESET_QUESTINNAIRE_REDUCER':
+      return {
+        ...state,
+        isAddingQuestion: false,
+        questionDetails: [],
+        questionnaireAdded: false,
+        error: '',
+        gettingQuestionnaire: false,
+        questions: [],
+        errorGettingQuestionnaire: false,
       };
     default:
       return state;

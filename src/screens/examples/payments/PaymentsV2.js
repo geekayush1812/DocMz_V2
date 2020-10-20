@@ -10,11 +10,11 @@ import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
 import RazorpayCheckout from 'react-native-razorpay';
 import {useDispatch, useSelector} from 'react-redux';
-import {bookAppointment} from '../../../redux/action/patientAccountAction';
-const PaymentsV2 = ({params, navigation}) => {
+import {bookAppointment} from '../../../reduxV2/action/PatientAction';
+const PaymentsV2 = ({route, navigation}) => {
   const dispatch = useDispatch();
-  const {data} = useSelector((state) => state.AuthReducer);
-  const {appointmentBookingData} = navigation.state.params;
+  const {userData} = useSelector((state) => state.AuthReducer);
+  const {appointmentBookingData} = route.params;
   const OnClickPay = () => {
     var options = {
       key: 'rzp_test_5Jr1E6yhOrEsCI',
@@ -25,9 +25,9 @@ const PaymentsV2 = ({params, navigation}) => {
       image: 'https://i.imgur.com/3g7nmJC.png',
       // order_id: 'order_DslnoIgkIDL8Zt',
       prefill: {
-        email: data.email,
-        contact: data.phone,
-        name: `${data.firstName} ${data.lastName}`,
+        email: userData.email,
+        contact: userData.phone,
+        name: `${userData.firstName} ${userData.lastName}`,
       },
       theme: {color: '#047b7b'},
     };

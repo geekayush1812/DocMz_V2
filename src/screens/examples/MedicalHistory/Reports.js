@@ -11,10 +11,7 @@ import ReportsItem from '../../../components/molecules/MedicalHistory/ReportsIte
 import AddReport from '../../../components/molecules/Modal/AddReport';
 import DocumentPicker from 'react-native-document-picker';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  UploadRecords,
-  GetRecords,
-} from '../../../redux/action/patientAccountAction';
+import {UploadRecords, GetRecords} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
 const Reports = ({params}) => {
   const [modalVisible, setVisible] = useState(false);
@@ -24,7 +21,7 @@ const Reports = ({params}) => {
   const [testType, setTestType] = useState('');
   const [fileName, setFileName] = useState('');
   const {patient, records, gettingRecords, errorGettingRecords} = useSelector(
-    (state) => state.PatientAccountReducer,
+    (state) => state.PatientReducer,
   );
   const uploadFile = () => {
     const data = {
@@ -72,6 +69,7 @@ const Reports = ({params}) => {
         setTestName={setTestName}
         setTestType={setTestType}
         fileName={fileName}
+        disable={testName === '' || testType === ''}
       />
       {gettingRecords ? (
         <ListingWithThumbnailLoader />

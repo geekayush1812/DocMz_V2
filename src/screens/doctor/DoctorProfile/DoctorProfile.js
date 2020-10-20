@@ -51,51 +51,60 @@ const dummyFeeback = [
 ];
 
 function DoctorProfile(props) {
-  const {navigation} = props;
-  const dimen = useRef(new Animated.Value(0)).current;
+  const {navigation, route} = props;
+  const translateY = useRef(new Animated.Value(0)).current;
   const opacity = useRef(new Animated.Value(0)).current;
   const [tab, setTab] = useState('about');
   const [feedback, setFeedback] = useState(0);
 
   useEffect(() => {
-    // BackHandler.removeEventListener();
-    Animated.sequence([
-      Animated.timing(dimen, {
-        toValue: 1,
-        // delay: 200,
-        duration: 500,
-        easing: Easing.ease,
-        useNativeDriver: false,
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: 4,
+        duration: 700,
+        easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
+        useNativeDriver: true,
       }),
       Animated.timing(opacity, {
-        toValue: 1,
-        // delay: 200,
-        duration: 500,
-        easing: Easing.ease,
+        toValue: 4,
+        duration: 1300,
+        easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
         useNativeDriver: true,
       }),
     ]).start();
   }, []);
-  const {data} = props.navigation.state.params;
-  const authData = useSelector((state) => state.AuthReducer);
+  const {data} = route.params;
+  const {isLoggedin} = useSelector((state) => state.AuthReducer);
   const _checkLogedinAndDoTheStuff = () => {
-    if (!authData.isLogedin) {
-      console.log('>> authentication.');
-      navigation.navigate('authentication');
+    if (!isLoggedin) {
+      navigation.navigate('Auth');
     } else {
-      // navigation.navigate('ConfirmAppointment', {data: data});
-      // if (data.toggle === 0) {
-      navigation.navigate('PatientCalendarScreen', {data: data});
-      // } else {
-      //   alert('open schedule popup');
-      // }
+      navigation.navigate('TimeSlotScreen', {data: data});
     }
   };
   let imageSource = require('../../../assets/jpg/person1.jpg');
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <TopNavBar
-        style={{Container: {marginTop: 5}}}
+        style={{
+          Container: {
+            marginTop: '1%',
+            opacity: opacity.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, 1],
+              extrapolate: 'clamp',
+            }),
+            transform: [
+              {
+                translateY: translateY.interpolate({
+                  inputRange: [0, 1.5],
+                  outputRange: [-100, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
+          },
+        }}
         // hideRightComp
         navigation={navigation}
         headerText="Doctor's Profile"
@@ -104,12 +113,24 @@ function DoctorProfile(props) {
       <Animated.View
         style={{
           flex: 1,
-          opacity: opacity,
-          transform: [{scale: opacity}],
+          opacity: opacity.interpolate({
+            inputRange: [1, 2.5],
+            outputRange: [0, 1],
+            extrapolate: 'clamp',
+          }),
+          transform: [
+            {
+              translateY: translateY.interpolate({
+                inputRange: [1, 2],
+                outputRange: [-100, 0],
+                extrapolate: 'clamp',
+              }),
+            },
+          ],
           flexDirection: 'row',
           alignItems: 'center',
-          marginTop: 70,
-          marginHorizontal: 20,
+          marginTop: '12%',
+          marginHorizontal: '7%',
           // height: 135,
           // borderWidth: 1,
         }}>
@@ -145,7 +166,7 @@ function DoctorProfile(props) {
           style={{
             justifyContent: 'space-evenly',
             flex: 1,
-            marginLeft: 15,
+            marginLeft: '5%',
             alignSelf: 'stretch',
             // borderWidth: 1,
           }}>
@@ -171,10 +192,14 @@ function DoctorProfile(props) {
             {data.specialty}
           </Text>
           <View
-            style={{flexDirection: 'row', marginTop: 7, alignItems: 'center'}}>
+            style={{
+              flexDirection: 'row',
+              marginTop: '3%',
+              alignItems: 'center',
+            }}>
             <Image
               source={require('../../../assets/icons/star.png')}
-              style={{height: 15, width: 15, marginRight: 7}}
+              style={{height: 15, width: 15, marginRight: '3%'}}
             />
             <Text style={{fontFamily: 'Montserrat-SemiBold', fontSize: 13}}>
               {4.2}{' '}
@@ -187,7 +212,7 @@ function DoctorProfile(props) {
               name="heart"
               size={22}
               color="#EF786E"
-              style={{marginHorizontal: 10}}
+              style={{marginHorizontal: '5%'}}
             />
           </View>
         </View>
@@ -196,18 +221,19 @@ function DoctorProfile(props) {
         style={{
           flexDirection: 'row',
           alignSelf: 'center',
-          marginTop: 80,
-          marginBottom: 10,
-
+          marginTop: '12%',
+          marginBottom: '3%',
           opacity: opacity.interpolate({
-            inputRange: [0, 0.99, 1],
-            outputRange: [0, 0.2, 1],
+            inputRange: [2, 3.5],
+            outputRange: [0, 1],
+            extrapolate: 'clamp',
           }),
           transform: [
             {
-              scale: opacity.interpolate({
-                inputRange: [0, 0.99, 1],
-                outputRange: [0, 0.1, 1],
+              translateY: translateY.interpolate({
+                inputRange: [2, 3],
+                outputRange: [-100, 0],
+                extrapolate: 'clamp',
               }),
             },
           ],
@@ -249,7 +275,26 @@ function DoctorProfile(props) {
           </Text>
         </View>
       </Animated.View>
-      <View style={Styles.ContentContainer}>
+      <Animated.View
+        style={[
+          Styles.ContentContainer,
+          {
+            opacity: opacity.interpolate({
+              inputRange: [3, 4],
+              outputRange: [0, 1],
+              extrapolate: 'clamp',
+            }),
+            transform: [
+              {
+                translateY: translateY.interpolate({
+                  inputRange: [3, 4],
+                  outputRange: [-100, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
+          },
+        ]}>
         <View style={Styles.ContentContainerTabs}>
           <TouchableOpacity onPress={() => setTab('about')}>
             <View style={Styles.TabLabelContainer}>
@@ -320,18 +365,16 @@ function DoctorProfile(props) {
             </ScrollView>
 
             <TouchableOpacity
-              // onPress={_checkLogedinAndDoTheStuff}
-              onPress={() => navigation.openDrawer()}
+              onPress={_checkLogedinAndDoTheStuff}
               style={{
                 height: 40,
-                width: 250,
+                width: '70%',
                 borderRadius: 40,
                 backgroundColor: SECONDARY_COLOR,
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginLeft: 8,
                 alignSelf: 'center',
-                marginBottom: 15,
+                marginVertical: '10%',
               }}>
               <Text
                 style={{
@@ -414,7 +457,7 @@ function DoctorProfile(props) {
             </View>
           </ScrollView>
         ) : tab === 'more' ? null : null}
-      </View>
+      </Animated.View>
     </View>
   );
 }
@@ -438,13 +481,12 @@ const Styles = StyleSheet.create({
   },
   ContentContainerTabs: {
     backgroundColor: SECONDARY_BACKGROUND,
-    marginTop: 40,
+    marginTop: '7%',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 5,
+    padding: '1.5%',
     borderRadius: 10,
-    alignSelf: 'stretch',
-    marginHorizontal: 25,
+    alignSelf: 'center',
     justifyContent: 'space-between',
   },
   DoctorInfoScroll: {
@@ -455,7 +497,7 @@ const Styles = StyleSheet.create({
   TabLabelContainer: {
     // flex: 1,
     alignItems: 'center',
-    marginHorizontal: 5,
+    marginHorizontal: '1%',
   },
   activeTabText: {
     color: 'white',

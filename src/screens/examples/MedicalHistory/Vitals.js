@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Text,
   View,
@@ -20,8 +20,13 @@ import ThreeField from '../../../components/molecules/Modal/ThreeField';
 import {useSelector, useDispatch} from 'react-redux';
 import moment from 'moment';
 import Graph from '../../../components/atoms/Graphs/Graphs';
-import {UpdateVitals} from '../../../redux/action/patientAccountAction';
+import {UpdateVitals} from '../../../reduxV2/action/PatientAction';
 import {LineChart} from 'react-native-chart-kit';
+import AddHeight from '../../../components/molecules/Modal/AddHeight';
+import AddHeartRate from '../../../components/molecules/Modal/AddHeartRate';
+import AddWeight from '../../../components/molecules/Modal/AddWeight';
+import AddTemperature from '../../../components/molecules/Modal/AddTemperature';
+import AddBloodPressure from '../../../components/molecules/Modal/AddBloodPressure';
 const PADDING = 10;
 
 const Vitals = () => {
@@ -33,7 +38,7 @@ const Vitals = () => {
   const [bpModal, setBpModal] = useState(false);
   const [graphData, setGraphData] = useState([]);
 
-  const {patient} = useSelector((state) => state.PatientAccountReducer);
+  const {patient} = useSelector((state) => state.PatientReducer);
   const dispatch = useDispatch();
   const [vitalsInfo, setVitalsInfo] = useState({
     height: '',
@@ -75,17 +80,14 @@ const Vitals = () => {
 
   useEffect(() => {
     const ar = vitalsInfo?.bloodPressure?.map((item) => Number(item.value));
-    console.log(ar);
     setBloodPressure(ar);
   }, [vitalsInfo.bloodPressure]);
 
   return (
     <>
-      <SignleField
+      <AddHeight
         visible={heightModal}
         onCancel={() => setHeightModal(false)}
-        headingText="Add Height"
-        labelText="Height"
         unit="cm"
         onUpdate={(temp) => {
           updateVitals(
@@ -101,12 +103,9 @@ const Vitals = () => {
           );
         }}
       />
-      <SignleField
+      <AddHeartRate
         visible={heartModal}
         onCancel={() => setHeartModal(false)}
-        headingText="Add Heart Rate"
-        labelText=""
-        unit="bpm"
         onUpdate={(temp) => {
           updateVitals(
             {
@@ -121,11 +120,9 @@ const Vitals = () => {
           );
         }}
       />
-      <ThreeField
+      <AddWeight
         visible={weightModal}
         onCancel={() => setWeightModal(false)}
-        headingText="Add Weight"
-        labelText={['Weight (kg)', 'Fat Mass (kg)']}
         onUpdate={(weight, unit, date) => {
           updateVitals(
             {
@@ -140,11 +137,9 @@ const Vitals = () => {
           );
         }}
       />
-      <ThreeField
+      <AddTemperature
         visible={tempModal}
         onCancel={() => setTempModal(false)}
-        headingText="Record Temperature"
-        labelText={['C', 'F']}
         onUpdate={(celcius, faren, date) => {
           updateVitals(
             {
@@ -159,11 +154,9 @@ const Vitals = () => {
           );
         }}
       />
-      <ThreeField
+      <AddBloodPressure
         visible={bpModal}
         onCancel={() => setBpModal(false)}
-        headingText="Add Blood Pressure"
-        labelText={['Systolic', 'Diastolic']}
         onUpdate={(temp) => {
           updateVitals(
             {
@@ -395,7 +388,10 @@ const Vitals = () => {
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>
-                <Text style={styles.text3}>Updated on : 22 May ‘20</Text>
+                <Text style={styles.text3}>
+                  Updated on :{' '}
+                  {moment(vitalsInfo.temperature.date).format("DD MMM 'YY")}
+                </Text>
                 <Text style={styles.text2}>Fever</Text>
               </View>
               <TouchableOpacity onPress={() => setTempModal(true)}>

@@ -14,6 +14,8 @@ const persistConfig = {
   storage: AsyncStorage,
   whitelist: [
     'AuthReducer',
+    'PatientReducer',
+    'DoctorReducer',
     // 'PatientAccountReducer'
   ],
   //   blacklist: [

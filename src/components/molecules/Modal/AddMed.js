@@ -188,6 +188,12 @@ const AddMed = ({visible, onCancel, onUpdate}) => {
       </View>
 
       <DmzButton
+        disabled={
+          details.name === '' ||
+          details.amount == '' ||
+          details.category === '' ||
+          details.description === ''
+        }
         onPress={() => {
           onUpdate(details);
           onCancel();

@@ -15,8 +15,8 @@ import DmzText from '../../../components/atoms/DmzText/DmzText';
 import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
 import TextInputIcon from '../../../components/atoms/TextInputCustom/TextInputIcon';
 import {useDispatch} from 'react-redux/lib/hooks/useDispatch';
-import {LoginDoctor, LoginPatient} from '../../../redux/action/auth';
-import {GetPatientInfo} from '../../../redux/action/patientAccountAction';
+import {LoginDoctor, LoginPatient} from '../../../reduxV2/action/AuthAction';
+import {GetPatientInfo} from '../../../reduxV2/action/PatientAction';
 import {useSelector} from 'react-redux/lib/hooks/useSelector';
 import {
   HEADER_TEXT,
@@ -37,7 +37,7 @@ function LoginV2(props) {
   const [credential, setCredential] = useState({email: '', password: ''});
   const [loginAs, setLoginAs] = useState('patient');
   const [modal, setModal] = useState({visible: false, text: ''});
-  const {isLoading, data} = useSelector((state) => state.AuthReducer);
+  const {loggingIn, userData} = useSelector((state) => state.AuthReducer);
   const dispatch = useDispatch();
   let pagerRef = createRef();
   const handleEmail = (email) => {
@@ -86,15 +86,7 @@ function LoginV2(props) {
   };
   const successCallback = (successResponce) => {
     showTost(successResponce.message.toString(), () => {
-      console.log('444444444444444444444', loginAs);
-      console.log('++++++++++++++', successResponce.id);
-
-      loginAs === 'patient'
-        ? dispatch(GetPatientInfo(successResponce.id))
-        : null;
-      loginAs === 'patient'
-        ? props.navigation.navigate('PatientHomePage')
-        : props.navigation.navigate('DoctorHomePage');
+      props.navigation.navigate('MainController');
     });
   };
 
@@ -148,7 +140,9 @@ function LoginV2(props) {
       <View style={{backgroundColor: 'white', position: 'relative'}}>
         <TopNavBar
           hideRightComp={true}
-          // onLeftButtonPress={() => {}}
+          onLeftButtonPress={() => {
+            nextpage(0);
+          }}
           navigation={props.navigation}
           style={{
             Container: {
@@ -262,8 +256,8 @@ function LoginV2(props) {
               },
             }}
             text="LOGIN"
-            isLoading={isLoading}
-            disabled={isLoading}
+            isLoading={loggingIn}
+            disabled={loggingIn}
           />
           <View
             style={{

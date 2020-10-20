@@ -1,12 +1,8 @@
-/* eslint-disable react-native/no-inline-styles */
-/* eslint-disable prettier/prettier */
 import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
   Text,
-  KeyboardAvoidingView,
-  ActivityIndicator,
   Animated,
   Easing,
   PermissionsAndroid,
@@ -15,19 +11,20 @@ import {
 import Avater from '../../../atoms/Avater/Avater';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import {useSelector, useDispatch} from 'react-redux';
-import {resetStore} from '../../../../redux/action/auth';
+import {resetStore} from '../../../../reduxV2/action/AuthAction';
 import {HEADER_TEXT, TERTIARY_TEXT} from '../../../../styles/colors';
 import StepsTracker from '../../../atoms/StepsTracker/StepsTracker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import ToggleButton from '../../../molecules/ToggleButton/ToggleButton';
 import TopNavBar from '../../../molecules/TopNavBar/TopNavBar';
-import {UpdateDoctor, BlockDoctor} from '../../../../redux/action/auth';
-import {UploadProfilePic} from '../../../../redux/action/doctoreAction';
+import {BlockDoctor} from '../../../../reduxV2/action/DoctorAction';
 import {
-  GettingDocterLatestInfo,
+  UploadProfilePic,
   UpdateDoctorProfile,
-} from '../../../../redux/action/doctor/myDoctorAction';
+  GetDoctorProfile,
+} from '../../../../reduxV2/action/DoctorAction';
+
 import {Host} from '../../../../utils/connection';
 import ImagePicker from 'react-native-image-picker';
 
@@ -82,7 +79,7 @@ const Navigation = [
   // },
 ];
 
-const Custom = (props) => {
+const CustomDoctorDrawer = (props) => {
   const {navigation} = props;
   String.prototype.toTitleCase = function () {
     const splited = this.split(' ')
@@ -93,14 +90,8 @@ const Custom = (props) => {
     return splited;
   };
   const state = useSelector((state) => state.AuthReducer);
-  const {
-    data,
-    blockingDoctor,
-    blockingDoctorError,
-    isDoctor,
-    isLogedin,
-  } = state;
-  const {doctorProfile} = useSelector((state) => state.MyDoctorReducer);
+  const {userData} = state;
+  const {doctorProfile} = useSelector((state) => state.DoctorReducer);
 
   const [credential, setCredential] = useState({
     name: '',
@@ -120,15 +111,15 @@ const Custom = (props) => {
   const dispatch = useDispatch();
   const onUpdateDoctor = () => {
     dispatch(
-      UpdateDoctor(
-        {id: data.id, is_superDoc: !data.is_superDoc},
+      UpdateDoctorProfile(
+        {id: userData.id, is_superDoc: !doctorProfile.is_superDoc},
         () => {},
         () => {},
       ),
     );
   };
   const onBlock = () => {
-    dispatch(BlockDoctor(data._id));
+    dispatch(BlockDoctor(userData._id));
   };
 
   // if (data && isLogedin && !isDoctor && data.picture) {
@@ -145,9 +136,9 @@ const Custom = (props) => {
   //   imageSource = require('../../../../assets/images/dummy_profile.png');
   // }
 
-  useEffect(() => {
-    dispatch(GettingDocterLatestInfo(data._id));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(GetDoctorProfile(userData._id));
+  // }, []);
 
   useEffect(() => {
     if (doctorProfile.picture?.length) {
@@ -260,12 +251,12 @@ const Custom = (props) => {
         // const path = response.uri;
         // setData({...data, imagePath: path});
         // console.log(path);
-        if (data._id) {
+        if (userData._id) {
           dispatch(
-            UploadProfilePic(data._id, response, () => {
+            UploadProfilePic(userData._id, response, () => {
               setPopupVisible(!popupVisible);
               animateHeightOfPopup.setValue(0);
-              dispatch(GettingDocterLatestInfo(data._id));
+              dispatch(GetDoctorProfile(userData._id));
             }),
           );
         } else {
@@ -288,12 +279,12 @@ const Custom = (props) => {
       } else if (response.error) {
         console.log('Gallery picker Error: ', response.error);
       } else {
-        if (data._id) {
+        if (userData._id) {
           dispatch(
-            UploadProfilePic(data._id, response, () => {
+            UploadProfilePic(userData._id, response, () => {
               setPopupVisible(!popupVisible);
               animateHeightOfPopup.setValue(0);
-              dispatch(GettingDocterLatestInfo(data._id));
+              dispatch(GetDoctorProfile(userData._id));
             }),
           );
         } else {
@@ -308,7 +299,7 @@ const Custom = (props) => {
       name: credential.name,
       age: credential.age,
       gender: credential.gender,
-      id: data._id,
+      id: userData._id,
     };
     dispatch(UpdateDoctorProfile(profileData));
   };
@@ -346,9 +337,11 @@ const Custom = (props) => {
                   justifyContent: 'space-around',
                 }}>
                 <Text style={{fontSize: 22, color: '#000'}}>
-                  {!data || data.length == 0
+                  {!userData
                     ? ''
-                    : `Dr. ${data.firstName.toTitleCase()} ${data.lastName}`}
+                    : `Dr. ${userData.firstName.toTitleCase()} ${
+                        userData.lastName
+                      }`}
                 </Text>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                   <Text
@@ -417,7 +410,7 @@ const Custom = (props) => {
                 Doctor on demand
               </Text>
               <ToggleButton
-                toggle={data.is_superDoc}
+                toggle={doctorProfile.is_superDoc}
                 onToggle={onUpdateDoctor}
                 style={{borderRadius: 10, width: 120}}
                 dotStyle={{
@@ -443,7 +436,7 @@ const Custom = (props) => {
                 Block
               </Text>
               <ToggleButton
-                toggle={data.block}
+                toggle={doctorProfile.block}
                 onToggle={onBlock}
                 style={{borderRadius: 10, width: 120}}
                 dotStyle={{
@@ -730,4 +723,4 @@ const Section = ({children, style = {}}) => {
   );
 };
 
-export default Custom;
+export default CustomDoctorDrawer;

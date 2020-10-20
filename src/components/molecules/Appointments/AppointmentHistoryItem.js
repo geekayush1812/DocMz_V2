@@ -13,14 +13,14 @@ const AppointmentHistoryItem = ({style, item}) => {
     <View style={[styles.mainContainer, style ?? {}]}>
       <Image
         source={require('../../../assets/jpg/person1.jpg')}
-        style={{height: 70, width: 70, borderRadius: 35, margin: 10}}
+        style={{height: 70, width: 70, borderRadius: 35, margin: '2%'}}
       />
 
       <View
         style={{
           flex: 1,
           justifyContent: 'space-evenly',
-          margin: 10,
+          margin: '3%',
         }}>
         <Text style={styles.docName}>{doctor.basic.name}</Text>
         <Text style={styles.docSpeciality}>{doctor.specialty}</Text>

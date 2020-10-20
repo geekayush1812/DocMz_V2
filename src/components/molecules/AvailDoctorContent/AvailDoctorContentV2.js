@@ -25,11 +25,11 @@ function AvailDoctorContentV2({
   toggle,
 }) {
   const [heartActive, setHeartActive] = useState(false);
-  const {isLogedin} = useSelector((state) => state.AuthReducer);
+  const {isLoggedin} = useSelector((state) => state.AuthReducer);
   const {patient} = useSelector((state) => state.PatientReducer);
   const dispatch = useDispatch();
   const heartHandle = () => {
-    if (!isLogedin) {
+    if (!isLoggedin) {
       navigation.navigate('Auth');
     } else {
       dispatch(AddFevDoc(data._id, patient._id));
@@ -77,6 +77,7 @@ function AvailDoctorContentV2({
               return (
                 <>
                   <Text
+                    key={`${item.bookedFor}-${index}`}
                     style={{
                       fontSize: 13,
                       marginRight: index === schedule.length - 1 ? 0 : '2%',

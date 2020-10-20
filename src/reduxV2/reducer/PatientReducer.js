@@ -69,11 +69,37 @@ const PatientAccountReducer = (state = initialState, action) => {
     }
     case 'RESET_PATIENT_ACCOUNT_REDUCER': {
       return {
+        ...state,
         isPatientAccountReducerLoading: true,
-        patient: null,
+        patient: {},
+        patientVitals: null,
         errorInPatientAccountReducer: [],
         patientFavDoc: [],
         familyMember: [],
+        profileInfo: [],
+        appointmentForSlotLoading: false,
+        appointmentForSlot: [],
+        appointmentForSlotError: '',
+        bookingAppointment: false,
+        bookedAppointment: '',
+        errorBookingAppointment: '',
+        uploadingRecords: false,
+        uploadedRecords: '',
+        errorUploadingRecords: '',
+        addMedicineLoading: false,
+        addMedicineError: '',
+        gettingMedicine: false,
+        medicines: [],
+        gettingMedicineError: '',
+        gettingAppointments: false,
+        appointments: [],
+        errorGettingAppointments: '',
+        gettingRecentDoctors: false,
+        recentDoctors: [],
+        errorGettingRecentDoctors: '',
+        gettingRecords: false,
+        records: [],
+        errorGettingRecords: '',
       };
     }
     case 'PROFILE_PIC_UPLOADED':

@@ -182,6 +182,13 @@ const AddFamily = ({visible, onCancel, onUpdate}) => {
       ))}
 
       <DmzButton
+        disabled={
+          details.firstName === '' ||
+          details.lastName === '' ||
+          details.relation === '' ||
+          details.email === '' ||
+          details.contact === ''
+        }
         onPress={() => {
           onUpdate(details);
         }}

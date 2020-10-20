@@ -5,26 +5,23 @@ import MedsItem from '../../../components/molecules/MedicalHistory/MedsItem';
 import NewItem from '../../../components/molecules/MedicalHistory/NewItem';
 import AddMed from '../../../components/molecules/Modal/AddMed';
 import {useSelector, useDispatch} from 'react-redux';
-import {
-  GetMedicine,
-  AddMedicine,
-} from '../../../redux/action/patientAccountAction';
+import {GetMedicine, AddMedicine} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
 
 const Meds = () => {
   const [modalVisible, setVisible] = useState(false);
   const {medicines, gettingMedicine, addMedicineLoading} = useSelector(
-    (state) => state.PatientAccountReducer,
+    (state) => state.PatientReducer,
   );
-  const {data} = useSelector((state) => state.AuthReducer);
+  const {userData} = useSelector((state) => state.AuthReducer);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(GetMedicine(data.meta));
+    dispatch(GetMedicine(userData.meta));
   }, []);
   const onUpdate = (medicineData) => {
     const {name, amount, description} = medicineData;
     const obj = {
-      metaId: data.meta,
+      metaId: userData.meta,
       medicines: {
         name,
         description,

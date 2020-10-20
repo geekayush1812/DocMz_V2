@@ -287,7 +287,7 @@ export const GetRecentDoctor = (patientId) => (dispatch) => {
  *  End Recent doctor action
  */
 
-export const resetUserAccountReducer = () => {
+export const resetPatientAccountReducer = () => {
   return {
     type: RESET,
   };

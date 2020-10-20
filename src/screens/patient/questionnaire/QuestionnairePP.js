@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Image, ScrollView, ActivityIndicator} from 'react-native';
 
 import {useSelector, useDispatch} from 'react-redux';
-import {GetQuestion} from '../../../redux/action/doctor/questionnaireAction';
+import {GetQuestion} from '../../../reduxV2/action/QuestionnaireAction';
 import AnimInput from '../../../components/molecules/AnimInput/AnimInput';
 import RadioGroup from '../../../components/molecules/RadioGroup/RadioGroup';
 import RadioBtn from '../../../components/atoms/RadioBtn/RadioBtn';
@@ -13,14 +13,14 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useRef} from 'react';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import ConfirmAppointmentModel from '../../../components/molecules/Modal/ConfirmAppointmentModel';
-function QuestionnairePP({navigation}) {
+function QuestionnairePP({navigation, route}) {
   const {
     gettingQuestionnaire,
     questions,
     errorGettingQuestionnaire,
-  } = useSelector((state) => state.questionnaireReducer);
+  } = useSelector((state) => state.QuestionnaireReducer);
 
-  const {doctorData, appointmentBookingData} = navigation.state.params;
+  const {doctorData, appointmentBookingData} = route.params;
   const {_id} = doctorData;
   const dispatch = useDispatch();
   const [localQuestion, setLocalQuestion] = useState([]);

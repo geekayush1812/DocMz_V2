@@ -10,12 +10,13 @@ import DatePicker from 'react-native-datepicker';
 import {
   GetFamilyMember,
   AddFamilyMember,
-} from '../../../redux/action/patientAccountAction';
+} from '../../../reduxV2/action/PatientAction';
+import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
 
 const NewFamily = ({navigation}) => {
   const [addModal, setModal] = useState(false);
   const {familyMember, isPatientAccountReducerLoading, patient} = useSelector(
-    (state) => state.PatientAccountReducer,
+    (state) => state.PatientReducer,
   );
   const dispatch = useDispatch();
   useEffect(() => {
@@ -97,7 +98,7 @@ const NewFamily = ({navigation}) => {
       <TopNavBar
         headerText="My Family"
         {...{navigation}}
-        style={{Container: {marginTop: 5, marginBottom: 10}}}
+        style={{Container: {marginTop: '2%', marginBottom: '3%'}}}
       />
       <AddFamily
         visible={addModal}
@@ -105,14 +106,10 @@ const NewFamily = ({navigation}) => {
         onUpdate={onSubmit}
       />
       <View style={{flex: 1, backgroundColor: GREY_BACKGROUND}}>
-        {familyMember === null ? (
+        {familyMember.length === 0 ? (
           <Text>No member found</Text>
         ) : isPatientAccountReducerLoading ? (
-          <ActivityIndicator
-            size={25}
-            color={'#000'}
-            style={{alignSelf: 'center', width: '100%'}}
-          />
+          <ListingWithThumbnailLoader />
         ) : (
           <FlatList
             keyExtractor={(item) => item._id}

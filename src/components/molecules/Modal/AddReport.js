@@ -18,6 +18,7 @@ const AddReport = ({
   setTestName,
   setTestType,
   fileName = '',
+  disable,
 }) => {
   return (
     <BlurModal {...{visible, onCancel}}>
@@ -58,6 +59,7 @@ const AddReport = ({
           onUpload();
           onCancel();
         }}
+        disabled={disable}
         style={{
           Text: {
             width: '100%',

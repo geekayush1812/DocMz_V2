@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import {View, FlatList} from 'react-native';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import {GREY_BACKGROUND} from '../../../styles/colors';
 import {useDispatch, useSelector} from 'react-redux';
-import {GetRecentDoctor} from '../../../redux/action/patientAccountAction';
+import {GetRecentDoctor} from '../../../reduxV2/action/PatientAction';
 import MyDoctorItem from '../../../components/molecules/MyDoctorItem/MyDoctorItem';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
 const MyDoctors = ({navigation}) => {
@@ -12,7 +12,7 @@ const MyDoctors = ({navigation}) => {
     recentDoctors,
     errorGettingRecentDoctors,
     patient,
-  } = useSelector((state) => state.PatientAccountReducer);
+  } = useSelector((state) => state.PatientReducer);
   const dispatch = useDispatch();
   useEffect(() => {
     !gettingRecentDoctors && dispatch(GetRecentDoctor(patient._id));
@@ -32,7 +32,7 @@ const MyDoctors = ({navigation}) => {
           <FlatList
             keyExtractor={(item) => item._id}
             data={recentDoctors}
-            style={{flex: 1, padding: 20}}
+            style={{flex: 1, padding: '6%'}}
             renderItem={({item}) => (
               <MyDoctorItem
                 data={{canDoMessage: true}}

@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {setState, useState, useEffect} from 'react';
 import {View, Text, Dimensions, StyleSheet} from 'react-native';
 import {extendMoment} from 'moment-range';
@@ -10,7 +9,7 @@ import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import {
   GetAppointmentSlot,
   GetFamilyMember,
-} from '../../../redux/action/patientAccountAction';
+} from '../../../reduxV2/action/PatientAction';
 import {useDispatch, useSelector} from 'react-redux';
 import {
   NEW_HEADER_TEXT,
@@ -22,7 +21,7 @@ import AppointmentQuestion from '../../../components/molecules/Modal/Appointment
 const height = Dimensions.get('screen').height;
 const width = Dimensions.get('screen').width;
 
-export default function TimeSlotScreen({navigation}) {
+export default function TimeSlotScreen({navigation, route}) {
   const [selectedStartDate, setStartDate] = useState('');
   const [selectedEndDate, setEndDate] = useState('');
   const [questionModal, setModal] = useState({
@@ -30,9 +29,13 @@ export default function TimeSlotScreen({navigation}) {
     onNext: () => {},
   });
   const dispatch = useDispatch();
-  const {appointmentForSlotLoading, appointmentForSlot} = useSelector(
-    (state) => state.PatientAccountReducer,
-  );
+  const {
+    appointmentForSlotLoading,
+    appointmentForSlot,
+    familyMember,
+    isPatientAccountReducerLoading,
+    patient,
+  } = useSelector((state) => state.PatientReducer);
   const [forWhomOption, setForWhomOption] = useState([
     'Myself',
     'Mother',
@@ -40,12 +43,8 @@ export default function TimeSlotScreen({navigation}) {
     'Other',
   ]);
 
-  const data = navigation.state.params.data;
+  const data = route.params.data;
   const {_id} = data;
-
-  const {familyMember, isPatientAccountReducerLoading, patient} = useSelector(
-    (state) => state.PatientAccountReducer,
-  );
   useEffect(() => {
     !isPatientAccountReducerLoading && dispatch(GetFamilyMember(patient.meta));
   }, []);
@@ -105,7 +104,7 @@ export default function TimeSlotScreen({navigation}) {
           <TopNavBar
             navigation={navigation}
             headerText="Book"
-            style={{Container: {marginVertical: 15}}}
+            style={{Container: {marginVertical: 5}}}
           />
           <Calendar onDateChange={onDateChange} />
           <View

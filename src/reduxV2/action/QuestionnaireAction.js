@@ -1,16 +1,26 @@
 import axios from 'axios';
-import AsyncStorage from '@react-native-community/async-storage';
-import {Host} from '../../../utils/connection';
+import {Host} from '../../utils/connection';
 
+/**
+ *  ====================== Reset Question =============================
+ */
+
+const RESET_QUESTINNAIRE_REDUCER = 'RESET_QUESTINNAIRE_REDUCER';
+
+export const resetQuestinnaireReducer = () => ({
+  type: RESET_QUESTINNAIRE_REDUCER,
+});
+
+/**
+ *  ====================== Reset Question END=============================
+ */
+
+/**
+ *  ====================== Adding Question =============================
+ */
 const ADDING_QUESTIONNAIRE = 'ADDING_QUESTIONNAIRE';
 const QUESTIONNAIRE_ADDED = 'QUESTIONNAIRE_ADDED';
 const ERROR_ADDING_QUESTIONNAIRE = 'ERROR_ADDING_QUESTIONNAIRE';
-const GETTING_QUESTIONNAIRE = 'GETTING_QUESTIONNAIRE';
-const GOT_QUESTIONNAIRE = 'GOT_QUESTIONNAIRE';
-const ERROR_GETTING_QUESTIONNAIRE = 'ERROR_GETTING_QUESTIONNAIRE';
-const DELETING_QUESTION = 'DELETING_QUESTION';
-const QUESTION_DELETED = 'QUESTION_DELETED';
-const ERROR_DELETING_QUESTION = 'ERROR_DELETING_QUESTION';
 
 const startLoading = () => {
   return {
@@ -26,44 +36,6 @@ const questionnaireAdded = (data) => {
 const errorAddingQuestionnaire = (err) => {
   return {
     type: ERROR_ADDING_QUESTIONNAIRE,
-    payload: err,
-  };
-};
-
-const starGettingQuestionnaire = () => {
-  return {
-    type: GETTING_QUESTIONNAIRE,
-  };
-};
-
-const gotQuestionnaire = (questions) => {
-  return {
-    type: GOT_QUESTIONNAIRE,
-    payload: questions,
-  };
-};
-
-const errorGettingQuestionnaire = (err) => {
-  return {
-    type: ERROR_GETTING_QUESTIONNAIRE,
-    payload: err,
-  };
-};
-
-const startDeleting = () => {
-  return {
-    type: DELETING_QUESTION,
-  };
-};
-
-const questionDeleted = () => {
-  return {
-    type: QUESTION_DELETED,
-  };
-};
-const errorDeletingQuestion = (err) => {
-  return {
-    type: ERROR_DELETING_QUESTION,
     payload: err,
   };
 };
@@ -87,6 +59,37 @@ export const AddQuestion = (question) => {
         dispatch(errorAddingQuestionnaire(e));
         console.log(e);
       });
+  };
+};
+
+/**
+ *  ====================== Adding Question END =============================
+ */
+
+/**
+ *  ====================== Getting Question =============================
+ */
+const GETTING_QUESTIONNAIRE = 'GETTING_QUESTIONNAIRE';
+const GOT_QUESTIONNAIRE = 'GOT_QUESTIONNAIRE';
+const ERROR_GETTING_QUESTIONNAIRE = 'ERROR_GETTING_QUESTIONNAIRE';
+
+const starGettingQuestionnaire = () => {
+  return {
+    type: GETTING_QUESTIONNAIRE,
+  };
+};
+
+const gotQuestionnaire = (questions) => {
+  return {
+    type: GOT_QUESTIONNAIRE,
+    payload: questions,
+  };
+};
+
+const errorGettingQuestionnaire = (err) => {
+  return {
+    type: ERROR_GETTING_QUESTIONNAIRE,
+    payload: err,
   };
 };
 
@@ -116,6 +119,13 @@ export const GetQuestion = (id) => {
   };
 };
 
+/**
+ *  ====================== Getting Question END =============================
+ */
+
+/**
+ *  ====================== UPDATE Question =============================
+ */
 export const UpdateQuestion = (question) => {
   return (dispatch) => {
     const config = {
@@ -136,6 +146,35 @@ export const UpdateQuestion = (question) => {
         dispatch(errorAddingQuestionnaire(e));
         console.log(e);
       });
+  };
+};
+/**
+ *  ====================== UPDATE Question END =============================
+ */
+
+/**
+ *  ====================== DELETE Question =============================
+ */
+
+const DELETING_QUESTION = 'DELETING_QUESTION';
+const QUESTION_DELETED = 'QUESTION_DELETED';
+const ERROR_DELETING_QUESTION = 'ERROR_DELETING_QUESTION';
+
+const startDeleting = () => {
+  return {
+    type: DELETING_QUESTION,
+  };
+};
+
+const questionDeleted = () => {
+  return {
+    type: QUESTION_DELETED,
+  };
+};
+const errorDeletingQuestion = (err) => {
+  return {
+    type: ERROR_DELETING_QUESTION,
+    payload: err,
   };
 };
 
@@ -159,3 +198,7 @@ export const DeleteRootQuestion = (question) => {
       });
   };
 };
+
+/**
+ *  ====================== DELETE Question END=============================
+ */

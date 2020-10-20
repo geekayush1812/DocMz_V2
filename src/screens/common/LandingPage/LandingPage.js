@@ -28,7 +28,6 @@ import {
 } from '../../../reduxV2/action/DoctorToPatientAction';
 
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
-import {GetPatientInfo} from '../../../reduxV2/action/PatientAction';
 import {
   NEW_PRIMARY_COLOR,
   NEW_HEADER_TEXT,
@@ -59,7 +58,6 @@ function LandingPage({navigation}) {
     superDocsLoading,
     superDocs,
   } = useSelector((state) => state.DoctorToPatientReducer);
-  const {isLogedin, userData} = useSelector((state) => state.AuthReducer);
   const {specialtyLoading, specialty} = useSelector(
     (state) => state.DoctorReducer,
   );
@@ -74,7 +72,6 @@ function LandingPage({navigation}) {
 
   useEffect(() => {
     dispatch(fetchDoctorLite('', 0, false));
-    isLogedin && dispatch(GetPatientInfo(userData.id));
     !specialtyLoading && dispatch(getSpecialty());
   }, []);
 
@@ -166,8 +163,7 @@ function LandingPage({navigation}) {
   return (
     <>
       <StatusBar barStyle={'dark-content'} backgroundColor={'#fff'} />
-
-      <View style={{height: screenHeight - 45, backgroundColor: '#fff'}}>
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
         <Toast
           visible={toastVisible}
           position={screenHeight * 0.9}
@@ -176,35 +172,18 @@ function LandingPage({navigation}) {
           hideOnPress={true}>
           Press again to Exit
         </Toast>
-        <View
+        <TopNavBar
+          onLeftButtonPress={() => {}}
+          // onRightButtonPress={() => {}}
+          navigation={navigation}
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <TouchableOpacity>
-            <Image
-              source={require('../../../assets/icons/back.png')}
-              style={{height: 19, width: 10}}
-            />
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 20,
-              color: NEW_HEADER_TEXT,
-              alignSelf: 'center',
-              fontFamily: 'Montserrat-Medium',
-            }}>
-            Search
-          </Text>
-          <TouchableOpacity onPress={() => navigation.openDrawer()}>
-            <Image
-              source={require('../../../assets/icons/hamburger_menu.png')}
-              style={{height: 19, width: 24}}
-            />
-          </TouchableOpacity>
-        </View>
-
+            Container: {
+              height: '5%',
+              marginTop: '4%',
+            },
+          }}
+          headerText="Search"
+        />
         <View
           style={{
             flexDirection: 'row',
@@ -463,6 +442,19 @@ function LandingPage({navigation}) {
           },
         }}
         HeaderText={toggle ? 'Available Doctors' : 'Book Doctors'}> */}
+        {/* <Animated.View
+            style={{
+              transform: [
+                {
+                  translateY: headerPos.interpolate({
+                    inputRange: [0, 350],
+                    outputRange: [0, -300],
+                    extrapolate: 'clamp',
+                  }),
+                },
+              ],
+              marginBottom: 20,
+            }}> */}
         {loading || searchDoctorsLoading || superDocsLoading ? (
           <ListingWithThumbnailLoader style={{marginTop: 20}} />
         ) : searchedDoctors.length !== 0 && searchKey !== '' ? (
@@ -484,21 +476,20 @@ function LandingPage({navigation}) {
             )}
           />
         ) : !toggle ? (
-          <Animated.View
-            style={{
-              transform: [
-                {
-                  translateY: headerPos.interpolate({
-                    inputRange: [0, 350],
-                    outputRange: [0, -300],
-                    extrapolate: 'clamp',
-                  }),
-                },
-              ],
-              marginBottom: 20,
-            }}>
+          <View style={{width: '100%', height: screenHeight * 0.5}}>
             <AnimatedFlatList
               scrollEventThrottle={16}
+              style={{
+                transform: [
+                  {
+                    translateY: headerPos.interpolate({
+                      inputRange: [0, 400],
+                      outputRange: [0, -300],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ],
+              }}
               onScroll={Animated.event(
                 [
                   {
@@ -514,6 +505,7 @@ function LandingPage({navigation}) {
               onEndReached={({distanceFromEnd}) => {
                 console.log('end reached');
                 // console.log(page);
+                //check parent height and this component height, if this component heigh is less than parent height,dont fetch more docs....
                 // _fetchMoreDoctorLite();
               }}
               // onScroll={onScroll}
@@ -561,10 +553,9 @@ function LandingPage({navigation}) {
                 );
               }}
             />
-          </Animated.View>
+          </View>
         ) : (
           <FlatList
-            nestedScrollEnabled
             initialNumToRender={5}
             ListEmptyComponent={
               <View
@@ -605,6 +596,7 @@ function LandingPage({navigation}) {
             )}
           />
         )}
+
         {/* </Animated.View> */}
         {/* </AnimatedScrollView> */}
       </View>

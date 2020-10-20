@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {useState, useEffect} from 'react';
 import {
   View,
@@ -8,8 +7,6 @@ import {
   ScrollView,
   Image,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import RadialGradient from 'react-native-radial-gradient';
 import StepsTracker from '../../../components/atoms/StepsTracker/StepsTracker';
 import TextInputIcon from '../../../components/atoms/TextInputCustom/TextInputIcon';
 import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
@@ -27,7 +24,7 @@ import {
 } from '../../../styles/colors';
 import {Picker} from '@react-native-community/picker';
 import {useSelector, useDispatch} from 'react-redux';
-import {getSpecialty} from '../../../redux/action/doctor/myDoctorAction';
+import {getSpecialty} from '../../../reduxV2/action/DoctorAction';
 
 const height = Dimensions.get('screen').height;
 
@@ -40,7 +37,7 @@ export default function SignUpStep3Screen(props) {
     setCredential({...credential, specialty});
   };
   const dispatch = useDispatch();
-  const {specialty} = useSelector((state) => state.MyDoctorReducer);
+  const {specialty} = useSelector((state) => state.DoctorReducer);
   useEffect(() => {
     dispatch(getSpecialty());
   }, []);

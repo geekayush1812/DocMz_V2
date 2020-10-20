@@ -58,22 +58,6 @@ export default function Calendar({onDateChange, getDateView}) {
     console.log(index2, ' --- ', index);
   };
 
-  // const onDateChange2 = async (date, type) => {
-  //   if (type == 'START_DATE') {
-  //     await setStartDate(date);
-  //     console.log('in1', date);
-  //     // setEndDate(null);
-  //   } else if (type === 'END_DATE') {
-  //     await setEndDate(date);
-  //     console.log('in2', date);
-  //     if (date != null) {
-  //       console.log(selectedStartDate, date);
-  //       getDateView(selectedStartDate, date);
-  //     }
-  //   }
-  //   // console.log(selectedStartDate, EndDate);
-  // };
-
   useEffect(() => {
     getMonths();
   }, []);
@@ -150,7 +134,7 @@ export default function Calendar({onDateChange, getDateView}) {
         data={daysLable}
         scrollEnabled={false}
         horizontal
-        style={{marginHorizontal: 10, marginTop: 40}}
+        style={{marginHorizontal: 10, marginTop: 20}}
         renderItem={({item}) => {
           return (
             <View
