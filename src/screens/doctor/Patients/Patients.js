@@ -123,7 +123,7 @@ function PatientList({navigation}) {
             </View>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('PatientDetails');
+                // navigation.navigate('PatientDetails',{});
               }}>
               <MaterialIcon
                 name={'chevron-right'}

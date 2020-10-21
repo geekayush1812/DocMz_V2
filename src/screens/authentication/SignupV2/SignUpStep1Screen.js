@@ -36,18 +36,19 @@ export default function SignUpStep1Screen(props) {
     isLoading,
     onChoosePicture,
     imageData,
+    error,
   } = props;
   const handleFirstName = (firstName) => {
-    setCredential({...credential, firstName});
+    setCredential('firstName', firstName);
   };
   const handleLastName = (lastName) => {
-    setCredential({...credential, lastName});
+    setCredential('lastName', lastName);
   };
   const handleEmail = (email) => {
-    setCredential({...credential, email});
+    setCredential('email', email);
   };
   const handlePassword = (password) => {
-    setCredential({...credential, password});
+    setCredential('password', password);
   };
 
   const [passVisible, setPass] = useState(false);
@@ -82,7 +83,6 @@ export default function SignUpStep1Screen(props) {
   //   };
   //   val();
   // });
-  console.log(props.signupAs);
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView
@@ -152,7 +152,10 @@ export default function SignUpStep1Screen(props) {
           placeholder="First Name"
           inputHandler={handleFirstName}
           placeholderTextColor={INPUT_PLACEHOLDER}
-          style={styles.inputStyle}
+          style={[
+            styles.inputStyle,
+            !error.firstName && {borderBottomColor: 'red'},
+          ]}
           textStyle={styles.textStyle}
           validationCallback={() => credential.firstName != ''}
           value={credential.firstName}
@@ -161,7 +164,10 @@ export default function SignUpStep1Screen(props) {
           placeholder="Last Name"
           inputHandler={handleLastName}
           placeholderTextColor={INPUT_PLACEHOLDER}
-          style={styles.inputStyle}
+          style={[
+            styles.inputStyle,
+            !error.lastName && {borderBottomColor: 'red'},
+          ]}
           textStyle={styles.textStyle}
           validationCallback={() => credential.lastName != ''}
           value={credential.lastName}
@@ -171,7 +177,10 @@ export default function SignUpStep1Screen(props) {
           inputHandler={handleEmail}
           keyboardType={'email-address'}
           placeholderTextColor={INPUT_PLACEHOLDER}
-          style={styles.inputStyle}
+          style={[
+            styles.inputStyle,
+            !error.email && {borderBottomColor: 'red'},
+          ]}
           textStyle={styles.textStyle}
           validationCallback={() => reg.test(credential.email)}
           value={credential.email}
@@ -187,7 +196,10 @@ export default function SignUpStep1Screen(props) {
           placeholder="Password"
           inputHandler={handlePassword}
           placeholderTextColor={INPUT_PLACEHOLDER}
-          style={styles.inputStyle}
+          style={[
+            styles.inputStyle,
+            !error.password && {borderBottomColor: 'red'},
+          ]}
           iconStyle={{
             alignSelf: 'center',
             justifyContent: 'center',
@@ -299,7 +311,17 @@ export default function SignUpStep1Screen(props) {
           }}
           text="Next"
           isLoading={isLoading}
-          disabled={isLoading}
+          disabled={
+            isLoading ||
+            !error.firstName ||
+            !error.lastName ||
+            !error.email ||
+            !error.password ||
+            credential.firstName === '' ||
+            credential.lastName === '' ||
+            credential.email === '' ||
+            credential.password === ''
+          }
         />
         <TouchableOpacity
           style={{alignSelf: 'center', marginBottom: 20}}

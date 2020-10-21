@@ -28,15 +28,15 @@ import {
 const height = Dimensions.get('screen').height;
 
 export default function SignUpStep4Screen(props) {
-  const {credential, setCredential, isLoading} = props;
+  const {credential, setCredential, isLoading, error} = props;
   const handlePhone = (phone) => {
-    setCredential({...credential, phone});
+    setCredential('phone', phone);
   };
   const handleCity = (city) => {
-    setCredential({...credential, city});
+    setCredential('city', city);
   };
   const handleCountry = (country) => {
-    setCredential({...credential, country});
+    setCredential('country', country);
   };
   const reg = new RegExp(/^([0-9]{10})$/);
 
@@ -70,7 +70,7 @@ export default function SignUpStep4Screen(props) {
             style={{
               fontSize: 30,
               color: NEW_HEADER_TEXT,
-              marginBottom: 20,
+              marginBottom: '6%',
               alignSelf: 'center',
               fontFamily: 'Montserrat-Bold',
             }}>
@@ -82,7 +82,10 @@ export default function SignUpStep4Screen(props) {
             inputHandler={handlePhone}
             keyboardType="number-pad"
             placeholderTextColor={INPUT_PLACEHOLDER}
-            style={styles.inputStyle}
+            style={[
+              styles.inputStyle,
+              !error.phone && {borderBottomColor: 'red'},
+            ]}
             textStyle={styles.textStyle}
             maxLength={10}
             validationCallback={() => reg.test(credential.phone)}
@@ -92,7 +95,10 @@ export default function SignUpStep4Screen(props) {
             placeholder="City of Residence"
             inputHandler={handleCity}
             placeholderTextColor={INPUT_PLACEHOLDER}
-            style={styles.inputStyle}
+            style={[
+              styles.inputStyle,
+              !error.city && {borderBottomColor: 'red'},
+            ]}
             textStyle={styles.textStyle}
             validationCallback={() => credential.city.length > 0}
             value={credential.city}
@@ -101,7 +107,10 @@ export default function SignUpStep4Screen(props) {
             placeholder="Country"
             inputHandler={handleCountry}
             placeholderTextColor={INPUT_PLACEHOLDER}
-            style={styles.inputStyle}
+            style={[
+              styles.inputStyle,
+              !error.country && {borderBottomColor: 'red'},
+            ]}
             textStyle={styles.textStyle}
             validationCallback={() => credential.country.length > 0}
             value={credential.country}
@@ -117,19 +126,29 @@ export default function SignUpStep4Screen(props) {
                 fontFamily: 'Montserrat-SemiBold',
               },
               Container: {
-                width: 250,
+                width: '70%',
                 height: 46,
+                justifyContent: 'center',
+                alignItems: 'center',
                 borderRadius: 26,
                 backgroundColor: SECONDARY_COLOR,
                 alignSelf: 'center',
-                marginTop: 60,
+                marginTop: '15%',
                 elevation: 2,
                 marginBottom: 10,
               },
             }}
             text="SUBMIT"
             isLoading={isLoading}
-            disabled={isLoading}
+            disabled={
+              isLoading ||
+              !error.phone ||
+              !error.city ||
+              !error.country ||
+              credential.phone === '' ||
+              credential.city === '' ||
+              credential.country === ''
+            }
           />
         </View>
         <View

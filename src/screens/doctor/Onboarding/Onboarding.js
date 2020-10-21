@@ -38,39 +38,31 @@ function Onboarding({navigation}) {
   const {userData, isLoggedin, isDoctor} = useSelector(
     (state) => state.AuthReducer,
   );
-  const {specialtyLoading, specialty, forNow, doctorProfile} = useSelector(
+  const {specialtyLoading, specialty, doctorProfile} = useSelector(
     (state) => state.DoctorReducer,
   );
 
-  if (forNow || doctorProfile.onboarding) {
-    navigation.navigate('DoctorMain');
-  }
+  const [imageSource, setImageSource] = useState(
+    require('../../../assets/images/dummy_profile.png'),
+  );
+  useEffect(() => {
+    if (doctorProfile.picture?.length) {
+      setImageSource({
+        uri: `${Host}${doctorProfile.picture[0]
+          .replace('public', '')
+          .replace('\\\\', '/')}`,
+      });
+    } else {
+      setImageSource(require('../../../assets/images/dummy_profile.png'));
+    }
+  }, [doctorProfile]);
+  // if (forNow || doctorProfile.onboarding) {
+  //   navigation.navigate('DoctorMain');
+  // }
 
   useEffect(() => {
     !specialtyLoading && dispatch(getSpecialty());
   }, []);
-
-  let imageSource = '';
-  if (userData && isLoggedin && !isDoctor) {
-    imageSource = {
-      uri: `${Host}${userData.picture
-        .replace('public', '')
-        .replace('\\\\', '/')}`,
-    };
-  } else if (
-    userData &&
-    isLoggedin &&
-    isDoctor &&
-    userData.picture.length > 0
-  ) {
-    imageSource = {
-      uri: `${Host}${userData.picture[0]
-        .replace('public', '')
-        .replace('\\\\', '/')}`,
-    };
-  } else {
-    imageSource = require('../../../assets/images/dummy_profile.png');
-  }
 
   const handleSubmit = () => {
     const obj = {
@@ -530,6 +522,19 @@ function Onboarding({navigation}) {
 
           <DmzButton
             onPress={handleSubmit}
+            disabled={
+              activeGender === '' ||
+              city === '' ||
+              specialitySelected === '' ||
+              bio === '' ||
+              degree === '' ||
+              college === '' ||
+              year === '' ||
+              registrationNumber === '' ||
+              registrationCouncil === '' ||
+              registrationYear === '' ||
+              yearOfExperience === ''
+            }
             style={{
               Text: {
                 width: '100%',

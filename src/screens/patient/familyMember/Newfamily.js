@@ -106,14 +106,13 @@ const NewFamily = ({navigation}) => {
         onUpdate={onSubmit}
       />
       <View style={{flex: 1, backgroundColor: GREY_BACKGROUND}}>
-        {familyMember.length === 0 ? (
-          <Text>No member found</Text>
-        ) : isPatientAccountReducerLoading ? (
+        {isPatientAccountReducerLoading ? (
           <ListingWithThumbnailLoader />
         ) : (
           <FlatList
             keyExtractor={(item) => item._id}
             data={familyMember}
+            ListEmptyComponent={<Text>No member found</Text>}
             style={{flex: 1, padding: 20}}
             renderItem={({item}) => <FamilyItem data={item} />}
             ListFooterComponent={<NewItem onPress={() => setModal(true)} />}

@@ -6,6 +6,7 @@ const initialState = {
   errorSingup: '',
   isDoctor: false,
   userData: {},
+  // changingTheme: false,
   theme: 'PRIMARY',
 };
 
@@ -53,6 +54,11 @@ const AuthReducer = (state = initialState, action) => {
         ...state,
         signingUp: false,
         errorSingup: action.payload,
+      };
+    case 'CHANGE_THEME':
+      return {
+        ...state,
+        theme: action.payload,
       };
     case 'RESET_AUTH_REDUCER':
       return {

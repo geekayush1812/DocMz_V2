@@ -34,7 +34,7 @@ function QuestionnairePP({navigation, route}) {
   };
   const onYesConfirmModel = () => {
     setShowConfirmModel(false);
-    navigation.navigate('NewPayment', {appointmentBookingData});
+    navigation.navigate('Payments', {appointmentBookingData});
   };
 
   return (

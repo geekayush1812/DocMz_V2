@@ -21,6 +21,7 @@ import {
   SECONDARY_COLOR,
   NEW_PRIMARY_COLOR,
   INPUT_PLACEHOLDER,
+  PRIMARY_TEXT,
 } from '../../../styles/colors';
 import {Picker} from '@react-native-community/picker';
 import {useSelector, useDispatch} from 'react-redux';
@@ -29,12 +30,12 @@ import {getSpecialty} from '../../../reduxV2/action/DoctorAction';
 const height = Dimensions.get('screen').height;
 
 export default function SignUpStep3Screen(props) {
-  const {credential, setCredential, onChoosePicture, imageData} = props;
+  const {credential, setCredential, onChoosePicture, imageData, error} = props;
   const handleRegistrationNumber = (registration_number) => {
-    setCredential({...credential, registration_number});
+    setCredential('registration_number', registration_number);
   };
   const handleSpecialty = (specialty) => {
-    setCredential({...credential, specialty});
+    setCredential('specialty', specialty);
   };
   const dispatch = useDispatch();
   const {specialty} = useSelector((state) => state.DoctorReducer);
@@ -106,7 +107,7 @@ export default function SignUpStep3Screen(props) {
                   position: 'absolute',
                   textAlign: 'center',
                   fontSize: 18,
-                  color: TERTIARY_TEXT,
+                  color: '#444',
                   fontWeight: 'bold',
                 }}>
                 Upload {'\n'}Picture/Video
@@ -116,10 +117,16 @@ export default function SignUpStep3Screen(props) {
         </TouchableOpacity>
         <TextInputIcon
           placeholder="Registration Number"
-          keyboardType="numbers-and-punctuation"
+          keyboardType="number-pad"
           inputHandler={handleRegistrationNumber}
           placeholderTextColor={INPUT_PLACEHOLDER}
-          style={styles.inputStyle}
+          style={[
+            styles.inputStyle,
+            {
+              paddingLeft: '1.5%',
+            },
+            !error.registration_number && {borderBottomColor: 'red'},
+          ]}
           textStyle={styles.textStyle}
           maxLength={15}
           validationCallback={() => credential.registration_number.length >= 8}
@@ -140,7 +147,11 @@ export default function SignUpStep3Screen(props) {
             onValueChange={(itemValue, itemIndex) =>
               handleSpecialty(itemValue)
             }>
-            <Picker.Item label={'Speciality'} value={''} />
+            <Picker.Item
+              color={INPUT_PLACEHOLDER}
+              label={'Speciality'}
+              value={''}
+            />
             {specialty?.map((item) => {
               return <Picker.Item label={item} value={item} />;
             })}
@@ -148,6 +159,11 @@ export default function SignUpStep3Screen(props) {
         </View>
         <DmzButton
           onPress={props.onPress}
+          disabled={
+            !error.registration_number ||
+            credential.registration_number === '' ||
+            credential.specialty === ''
+          }
           style={{
             Text: {
               width: '100%',
@@ -157,16 +173,16 @@ export default function SignUpStep3Screen(props) {
               fontFamily: 'Montserrat-SemiBold',
             },
             Container: {
-              width: 250,
+              width: '70%',
               height: 46,
               borderRadius: 23,
               backgroundColor: SECONDARY_COLOR,
               alignSelf: 'center',
-              marginTop: 40,
+              marginTop: '10%',
               elevation: 2,
             },
           }}
-          text="SUBMIT"
+          text="NEXT"
         />
         <Text
           style={{
@@ -174,7 +190,7 @@ export default function SignUpStep3Screen(props) {
             textAlign: 'center',
             color: INPUT_PLACEHOLDER,
             fontSize: 14,
-            marginTop: 10,
+            marginTop: '3%',
           }}>
           Just one more step to complete{'\n'}your registration process!
         </Text>
@@ -182,8 +198,8 @@ export default function SignUpStep3Screen(props) {
           style={{
             backgroundColor: 'white',
             alignItems: 'center',
-            paddingTop: 5,
-            paddingBottom: 15,
+            paddingTop: '2%',
+            paddingBottom: '5%',
           }}>
           <Image
             source={require('../../../assets/icons/docmz.png')}

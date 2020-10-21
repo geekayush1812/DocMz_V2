@@ -21,8 +21,8 @@ import {
   FONT_SIZE_18,
 } from '../../../styles/typography';
 import ExpandableList from '../../../components/molecules/ExpandableList/ExpandableList';
-function PatientDetails({navigation}) {
-  const {patient} = navigation.state.params;
+function PatientDetails({navigation, route}) {
+  const {patient} = route.params;
   console.log(patient);
   const HeightExpand = useRef(new Animated.Value(0)).current;
   const [expandedHeight, setExpandedHeight] = useState(0);
@@ -92,7 +92,9 @@ function PatientDetails({navigation}) {
                   width: '45%',
                   justifyContent: 'space-between',
                 }}>
-                <Text style={{fontSize: FONT_SIZE_20}}>27yrs</Text>
+                <Text style={{fontSize: FONT_SIZE_20}}>
+                  {patient.age ? patient.age : '-'}yrs
+                </Text>
                 <View
                   style={{
                     height: 7,

@@ -49,8 +49,14 @@ function DoctorLanding() {
       }}>
       <BottomTabs.Screen
         options={{
-          tabBarIcon: ({tintColor}) => {
-            return <FontAwesome name="home" color={tintColor} size={24} />;
+          tabBarIcon: ({focused}) => {
+            return (
+              <FontAwesome
+                name="home"
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+                size={24}
+              />
+            );
           },
         }}
         name={'Dashboard'}
@@ -58,11 +64,11 @@ function DoctorLanding() {
       />
       <BottomTabs.Screen
         options={{
-          tabBarIcon: ({focused, tintColor}) => {
+          tabBarIcon: ({focused}) => {
             return (
               <MaterialCommunityIcons
                 name="doctor"
-                color={focused ? tintColor : '#555'}
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
                 size={24}
               />
             );
@@ -73,15 +79,34 @@ function DoctorLanding() {
       />
       <BottomTabs.Screen
         options={{
-          tabBarIcon: ({tintColor}) => {
+          tabBarIcon: ({focused}) => {
             return (
-              <MaterialCommunityIcons name="chat" color={tintColor} size={24} />
+              <MaterialCommunityIcons
+                name="format-list-checkbox"
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+                size={24}
+              />
+            );
+          },
+        }}
+        name={'PatientsList'}
+        component={Patients}
+      />
+      {/* <BottomTabs.Screen
+        options={{
+          tabBarIcon: ({focused}) => {
+            return (
+              <MaterialCommunityIcons
+                name="chat"
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+                size={24}
+              />
             );
           },
         }}
         name={'Chats'}
         component={Chats}
-      />
+      /> */}
       {/* <BottomTabs.Screen name={"WaitingRoom"} component={} /> */}
     </BottomTabs.Navigator>
   );

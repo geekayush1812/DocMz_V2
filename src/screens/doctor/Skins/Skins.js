@@ -1,38 +1,38 @@
 import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
+import {useSelector} from 'react-redux';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
-import THEME from '../../../styles/theme';
-import Colors from '../../../styles/colorsV2';
+import {Colors} from '../../../styles/colorsV2';
+import useTheme from '../../../styles/theme';
 
 function Skins({navigation}) {
-  const [theme, setTheme] = THEME.useTheme();
-  const [themeValue, setThemeValue] = useState({});
+  const {theme} = useSelector((state) => state.AuthReducer);
+  const setTheme = useTheme();
   useEffect(() => {
-    const THEME_VALUE = Colors(theme);
-    setThemeValue(THEME_VALUE);
+    console.log(theme);
   }, [theme]);
   return (
-    <View style={{flex: 1, backgroundColor: themeValue.primary_background}}>
+    <View style={{flex: 1, backgroundColor: Colors[theme].primary_background}}>
       <TopNavBar navigation={navigation} headerText={'Theme'} />
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
         <TouchableOpacity
           style={{paddingVertical: '3%'}}
           onPress={() => {
-            setTheme(THEME.THEME.PRIMARY);
+            setTheme('PRIMARY');
           }}>
           <Text>Primary</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{paddingVertical: '3%'}}
           onPress={() => {
-            setTheme(THEME.THEME.DARK);
+            setTheme('DARK');
           }}>
           <Text>Dark</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={{paddingVertical: '3%'}}
           onPress={() => {
-            setTheme(THEME.THEME.MINI);
+            setTheme('MINI');
           }}>
           <Text>Mini</Text>
         </TouchableOpacity>

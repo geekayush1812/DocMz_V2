@@ -15,11 +15,16 @@ import {useSelector, useDispatch} from 'react-redux';
 import {GetAppointments} from '../../../reduxV2/action/DoctorAction';
 import {RemoveAppointment} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
+import calculateMonths from '../../../utils/calculateMonths';
+
+const week = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 export default function Appointments({navigation}) {
   const [months, setMonths] = useState([]);
+  const [month, setMonth] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const dispatch = useDispatch();
+  const today = new Date();
   const getMonths = () => {
     const monthList = moment.months();
     const coming12Months = monthList
@@ -30,6 +35,13 @@ export default function Appointments({navigation}) {
   useEffect(() => {
     getMonths();
   }, []);
+  useEffect(() => {
+    const d = new Date();
+    const MONTH_INDEX = d.getMonth();
+    const monthIndex = (selectedIndex + MONTH_INDEX) % 12;
+    const m = calculateMonths(monthIndex);
+    setMonth(m);
+  }, [selectedIndex]);
   const {
     appointments,
     gettingAppointment,
@@ -43,12 +55,14 @@ export default function Appointments({navigation}) {
 
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <TopNavBar headerText="My Appointments"></TopNavBar>
+      <TopNavBar
+        navigation={navigation}
+        headerText="My Appointments"></TopNavBar>
       <View
         style={{
           flexDirection: 'row',
-          paddingHorizontal: 25,
-          paddingVertical: 10,
+          paddingHorizontal: '8%',
+          paddingVertical: '3%',
           alignItems: 'center',
           width: '100%',
           marginTop: 10,
@@ -95,7 +109,6 @@ export default function Appointments({navigation}) {
           horizontal
           showsHorizontalScrollIndicator={false}
           renderItem={({item, index}) => {
-            console.log(item, index);
             return (
               <TouchableOpacity
                 style={{
@@ -105,7 +118,7 @@ export default function Appointments({navigation}) {
                   borderColor: NEW_PRIMARY_COLOR,
                 }}
                 onPress={() => {
-                  setMonth(item);
+                  setSelectedIndex(index);
                 }}>
                 <Text
                   style={{
@@ -135,13 +148,21 @@ export default function Appointments({navigation}) {
           paddingHorizontal: '4%',
           paddingVertical: '4%',
         }}>
-        <VerticalText isActive text={{Top: 'S', Bottom: '28'}}></VerticalText>
-        <VerticalText text={{Top: 'M', Bottom: '29'}}></VerticalText>
-        <VerticalText text={{Top: 'T', Bottom: '30'}}></VerticalText>
-        <VerticalText text={{Top: 'W', Bottom: '1'}}></VerticalText>
-        <VerticalText text={{Top: 'T', Bottom: '2'}}></VerticalText>
-        <VerticalText text={{Top: 'F', Bottom: '3'}}></VerticalText>
-        <VerticalText text={{Top: 'S', Bottom: '4'}}></VerticalText>
+        <FlatList
+          horizontal
+          data={month}
+          renderItem={({item}) => {
+            if (!item.date) return null;
+            return (
+              <VerticalText
+                isActive={
+                  item.date === today.getDate() &&
+                  item.month === today.getMonth()
+                }
+                text={{Top: week[item.day], Bottom: item.date}}></VerticalText>
+            );
+          }}
+        />
       </View>
       <ScrollView>
         <View
@@ -190,8 +211,8 @@ const Card = ({item, doctorId, navigation}) => {
       byDoctor: true,
       byPatient: false,
     };
-    dispatch(RemoveAppointment(data));
-    dispatch(GetAppointments(doctorId));
+    // dispatch(RemoveAppointment(data));
+    // dispatch(GetAppointments(doctorId));
   };
   return (
     <View

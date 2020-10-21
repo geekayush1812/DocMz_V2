@@ -32,7 +32,7 @@ export default function SignUpStep2Screen(props) {
   const [otp, setOtp] = useState(['', '', '', '']);
   const [validated, setValidated] = useState([true, true, true, true]);
   const inputRefs = [null, null, null, null];
-  const {signupAs} = props;
+  const {signupAs, isLoading} = props;
   let timeout = null;
 
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function SignUpStep2Screen(props) {
         />
 
         <View style={{justifyContent: 'center', flex: 1, alignItems: 'center'}}>
-          <View style={{margin: 40, alignItems: 'center'}}>
+          <View style={{margin: '10%', alignItems: 'center'}}>
             <Text
               style={{
                 color: NEW_HEADER_TEXT,
@@ -87,16 +87,16 @@ export default function SignUpStep2Screen(props) {
                 color: NEW_HEADER_TEXT,
                 fontSize: 18,
                 textAlign: 'center',
-                marginHorizontal: 30,
+                marginHorizontal: '9%',
                 letterSpacing: 0.3,
                 fontFamily: 'Montserrat-Regular',
-                marginTop: 10,
+                marginTop: '4%',
               }}>
               Please enter the 4 digit OTP sent to you
             </Text>
           </View>
 
-          <View style={{flexDirection: 'row', marginTop: 15}}>
+          <View style={{flexDirection: 'row', marginTop: '5%'}}>
             {[0, 1, 2, 3].map((i) => (
               <TextInput
                 //   maxLength={1}
@@ -128,6 +128,7 @@ export default function SignUpStep2Screen(props) {
 
           <DmzButton
             onPress={props.onPress}
+            isLoading={isLoading}
             style={{
               Text: {
                 width: '100%',
@@ -137,7 +138,7 @@ export default function SignUpStep2Screen(props) {
                 fontFamily: 'Montserrat-SemiBold',
               },
               Container: {
-                width: 250,
+                width: '70%',
                 height: 46,
                 borderRadius: 23,
                 backgroundColor: SECONDARY_COLOR,
@@ -145,6 +146,9 @@ export default function SignUpStep2Screen(props) {
                 marginTop: 40,
                 elevation: 2,
                 marginBottom: 5,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
               },
             }}
             text={signupAs === 'doctor' ? 'Next' : 'CONFIRM'}
@@ -152,8 +156,8 @@ export default function SignUpStep2Screen(props) {
           <View
             style={{
               flexDirection: 'row',
-              margin: 15,
-              marginBottom: 10,
+              margin: '4%',
+              marginBottom: '3%',
             }}>
             <Text style={{fontFamily: 'Montserrat-Regular'}}>
               Didn't recieve OTP?{' '}
@@ -183,8 +187,8 @@ export default function SignUpStep2Screen(props) {
           style={{
             backgroundColor: 'white',
             alignItems: 'center',
-            paddingTop: 5,
-            paddingBottom: 15,
+            paddingTop: '2%',
+            paddingBottom: '4%',
           }}>
           <Image
             source={require('../../../assets/icons/docmz.png')}

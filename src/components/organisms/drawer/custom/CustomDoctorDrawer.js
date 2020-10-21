@@ -24,7 +24,6 @@ import {
   UpdateDoctorProfile,
   GetDoctorProfile,
 } from '../../../../reduxV2/action/DoctorAction';
-
 import {Host} from '../../../../utils/connection';
 import ImagePicker from 'react-native-image-picker';
 
@@ -57,7 +56,7 @@ const Navigation = [
     active: true,
     name: 'Questionnaire',
     icon: 'question',
-    navigateTo: 'AddQuestionnaire',
+    navigateTo: 'Questionnaire',
   },
   {
     active: true,
@@ -155,7 +154,7 @@ const CustomDoctorDrawer = (props) => {
   const onLogout = () => {
     dispatch(
       resetStore(() => {
-        console.log(navigation);
+        navigation.navigate('MainController');
       }),
     );
   };
@@ -470,7 +469,7 @@ const CustomDoctorDrawer = (props) => {
               </Section>
             );
           })}
-          {/* <Section>
+          <Section>
             <TouchableOpacity onPress={onLogout}>
               <Text
                 style={{
@@ -480,7 +479,7 @@ const CustomDoctorDrawer = (props) => {
                 {'Logout'}
               </Text>
             </TouchableOpacity>
-          </Section> */}
+          </Section>
         </ScrollView>
       </View>
       <Animated.View

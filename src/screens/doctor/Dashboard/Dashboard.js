@@ -21,17 +21,27 @@ import {
   FONT_SIZE_16,
   FONT_SIZE_24,
 } from '../../../styles/typography';
-import {GetRecentPatient} from '../../../reduxV2/action/DoctorAction';
+import {
+  GetRecentPatient,
+  GetAppointments,
+} from '../../../reduxV2/action/DoctorAction';
 import {Host} from '../../../utils/connection';
 import NetInfo from '@react-native-community/netinfo';
-
-import Colors from '../../../styles/colorsV2';
+import {RowLoader} from '../../../components/atoms/Loader/Loader';
+import moment from 'moment';
+import {Colors} from '../../../styles/colorsV2';
 
 function Dashboard({navigation}) {
-  const {recentPatient, recentPatientLoading, doctorProfile} = useSelector(
-    (state) => state.DoctorReducer,
-  );
-  const {userData} = useSelector((state) => state.AuthReducer);
+  const {
+    recentPatient,
+    recentPatientLoading,
+    doctorProfile,
+    appointments,
+    gettingAppointment,
+    errorGettingAppointment,
+  } = useSelector((state) => state.DoctorReducer);
+  console.log(appointments);
+  const {userData, theme} = useSelector((state) => state.AuthReducer);
   const [imageSource, setImageSource] = useState(
     require('../../../assets/images/dummy_profile.png'),
   );
@@ -47,14 +57,12 @@ function Dashboard({navigation}) {
     }
   }, [doctorProfile]);
 
-  const upcomingOppointment = [
-    {name: 'Veronica Stevens', reason: ' -General Checkup'},
-    {name: 'Alan Robert', reason: ' -Osteopathy'},
-    {name: 'Amy Border', reason: ' -Cosmotology'},
-  ];
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(GetRecentPatient(userData._id));
+    !recentPatientLoading && dispatch(GetRecentPatient(userData._id));
+  }, []);
+  useEffect(() => {
+    !gettingAppointment && dispatch(GetAppointments(userData._id));
   }, []);
 
   const [isConnected, setIsConnected] = useState(true);
@@ -96,8 +104,12 @@ function Dashboard({navigation}) {
 
   return (
     <>
-      <StatusBar backgroundColor={'#fff'} barStyle={'dark-content'} />
-      <View style={{flex: 1, backgroundColor: '#fff'}}>
+      <StatusBar
+        backgroundColor={Colors[theme].primary_background}
+        barStyle={'dark-content'}
+      />
+      <View
+        style={{flex: 1, backgroundColor: Colors[theme].primary_background}}>
         <TopNavBar
           navigation={navigation}
           headerText={'My Dashboard'}
@@ -262,7 +274,7 @@ function Dashboard({navigation}) {
               marginTop: '5%',
               paddingVertical: '5%',
               backgroundColor: '#fcf0e4',
-              paddingHorizontal: '5%',
+              paddingHorizontal: '4%',
               borderRadius: 15,
             }}>
             <View
@@ -288,23 +300,21 @@ function Dashboard({navigation}) {
                 Upcoming Appointments
               </Text>
             </View>
-            {upcomingOppointment.map((item) => (
-              <View
-                style={{
-                  width: '90%',
-                  // backgroundColor: 'red',
-                  alignSelf: 'center',
-                  borderBottomWidth: 1.5,
-                  borderColor: 'rgba(0,0,0,0.08)',
-                  paddingVertical: '4%',
-                }}>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}>
-                  <View>
+            {gettingAppointment ? (
+              <RowLoader />
+            ) : appointments.length === 0 ? null : (
+              appointments?.map((item) => {
+                const {patient} = item;
+                return (
+                  <View
+                    style={{
+                      width: '90%',
+                      // backgroundColor: 'red',
+                      alignSelf: 'center',
+                      borderBottomWidth: 1.5,
+                      borderColor: 'rgba(0,0,0,0.08)',
+                      paddingVertical: '4%',
+                    }}>
                     <View
                       style={{
                         flexDirection: 'row',
@@ -313,55 +323,76 @@ function Dashboard({navigation}) {
                       }}>
                       <View
                         style={{
-                          height: 8,
-                          width: 8,
-                          borderRadius: 10,
-                          backgroundColor: '#efa860',
-                          marginRight: '2%',
-                        }}></View>
-                      <Text style={{fontWeight: 'bold'}}>{item.name}</Text>
-                      <Text style={{fontSize: FONT_SIZE_12}}>
-                        {item.reason}
-                      </Text>
-                    </View>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        paddingHorizontal: '6%',
-                        alignItems: 'center',
-                      }}>
-                      <Text
-                        style={{
-                          fontSize: FONT_SIZE_12,
-                          marginRight: '4%',
-                          fontWeight: 'bold',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
                         }}>
-                        10:00 am
-                      </Text>
-                      <Text style={{fontWeight: '900', color: '#efa860'}}>
-                        |
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: FONT_SIZE_12,
-                          marginLeft: '4%',
-                          color: '#a09e9e',
-                          fontWeight: 'bold',
-                        }}>
-                        30 mins
-                      </Text>
+                        <View
+                          style={{
+                            height: 8,
+                            width: 8,
+                            borderRadius: 10,
+                            backgroundColor: '#efa860',
+                            marginRight: '1%',
+                          }}></View>
+                        <View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                            }}>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                              }}>{`${patient.firstName} ${patient.lastName}`}</Text>
+                            <Text style={{fontSize: FONT_SIZE_12}}>
+                              {/* {item.reason} */}
+                              --
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              // paddingHorizontal: '6%',
+                              alignItems: 'center',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: FONT_SIZE_12,
+                                marginRight: '4%',
+                                fontWeight: 'bold',
+                              }}>
+                              {moment(item.bookedFor).format('hh:mm a')}
+                            </Text>
+                            <Text style={{fontWeight: '900', color: '#efa860'}}>
+                              |
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: FONT_SIZE_12,
+                                marginLeft: '4%',
+                                color: '#a09e9e',
+                                fontWeight: 'bold',
+                              }}>
+                              30 mins
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+
+                      <View>
+                        <MaterialIcon
+                          name="chevron-right"
+                          size={28}
+                          color={'#a09e9e'}
+                        />
+                      </View>
                     </View>
                   </View>
-                  <View>
-                    <MaterialIcon
-                      name="chevron-right"
-                      size={28}
-                      color={'#a09e9e'}
-                    />
-                  </View>
-                </View>
-              </View>
-            ))}
+                );
+              })
+            )}
           </View>
           <View
             style={{

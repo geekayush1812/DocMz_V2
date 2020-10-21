@@ -18,8 +18,7 @@ const ERROR_LOGIN = 'ERROR_LOGIN';
 const SIGNING_UP = 'SIGNING_UP';
 const SIGNED_UP = 'SIGNED_UP';
 const ERROR_SIGNUP = 'ERROR_SIGNUP';
-const CHANGING_THEME = 'CHANGING_THEME';
-const THEME_CHANGED = 'CHANGING_THEME';
+
 const RESET_AUTH_REDUCER = 'RESET_AUTH_REDUCER';
 
 const ERROR = 'HAVEING_ERROR';
@@ -308,13 +307,18 @@ export const signupDoctor = (
 /**
  * ====================== THEME ACTION ==============================
  */
-export const changingTheme = () => ({
-  type: CHANGING_THEME,
-});
-export const themeChanged = (theme) => ({
-  type: THEME_CHANGED,
-  payload: theme,
-});
+// const CHANGING_THEME = 'CHANGING_THEME';
+const CHANGE_THEME = 'CHANGE_THEME';
+
+// export const changingTheme = () => ({
+//   type: CHANGING_THEME,
+// });
+export const themeChanged = (theme) => {
+  return {
+    type: CHANGE_THEME,
+    payload: theme,
+  };
+};
 /**
  * ====================== THEME ACTION END ==============================
  */

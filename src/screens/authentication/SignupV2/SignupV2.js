@@ -43,6 +43,61 @@ function SignupV2(props) {
     basic: JSON.stringify({}),
     state: '',
   });
+  const [error, setError] = useState({
+    firstName: true,
+    lastName: true,
+    email: true,
+    password: true,
+    registration_number: true,
+    specialty: true,
+    phone: true,
+    city: true,
+    country: true,
+    basic: true,
+    state: true,
+  });
+
+  const SetCredential = (credentialName, value) => {
+    const nameReg = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
+    const emailReg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    const passReg = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const phoneReg = /^[1-9]{1}\d{9}$/;
+    const cityReg = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
+    const countryReg = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
+
+    let match = true;
+
+    switch (credentialName) {
+      case 'firstName':
+        match = nameReg.test(value);
+        break;
+      case 'lastName':
+        match = nameReg.test(value);
+        break;
+      case 'email':
+        match = emailReg.test(value);
+        break;
+      case 'password':
+        match = passReg.test(value);
+        break;
+      case 'phone':
+        match = phoneReg.test(value);
+        break;
+      case 'city':
+        match = cityReg.test(value);
+        break;
+      case 'country':
+        match = countryReg.test(value);
+        break;
+      case 'registration_number':
+        match = value.length >= 8;
+        break;
+    }
+    console.log(credentialName, match);
+    setError({...error, [`${credentialName}`]: match});
+    setCredential({...credential, [`${credentialName}`]: value});
+  };
+
   // const initialCredential = credential;
 
   const handleSubmit = () => {
@@ -180,7 +235,8 @@ function SignupV2(props) {
             onChoosePicture={onChoosePicture}
             imageData={imageData}
             credential={credential}
-            setCredential={setCredential}
+            error={error}
+            setCredential={SetCredential}
             isLoading={signingUp}
             signupAs={signupAs}
             navigation={props.navigation}
@@ -215,6 +271,7 @@ function SignupV2(props) {
         <View key="1">
           <SignUpStep2Screen
             signupAs={signupAs}
+            isLoading={signingUp}
             onPress={() => {
               signupAs === 'doctor' ? nextpage(2) : handleSubmit();
             }}
@@ -223,7 +280,8 @@ function SignupV2(props) {
         <View key="2">
           <SignUpStep3Screen
             credential={credential}
-            setCredential={setCredential}
+            error={error}
+            setCredential={SetCredential}
             onChoosePicture={onChoosePicture}
             imageData={imageData}
             onPress={() => {
@@ -250,7 +308,8 @@ function SignupV2(props) {
         <View key="3">
           <SignUpStep4Screen
             credential={credential}
-            setCredential={setCredential}
+            setCredential={SetCredential}
+            error={error}
             isLoading={signingUp}
             onPress={() => {
               const {phone, city, country} = credential;
