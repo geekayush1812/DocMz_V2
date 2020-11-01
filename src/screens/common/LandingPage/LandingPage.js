@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 
 import {
@@ -41,6 +42,7 @@ import {
 import Toast from 'react-native-root-toast';
 import {getSpecialty} from '../../../reduxV2/action/DoctorAction';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import LottieView from 'lottie-react-native';
 
 function LandingPage({navigation}) {
   const screenHeight = Dimensions.get('window').height;
@@ -48,6 +50,7 @@ function LandingPage({navigation}) {
   const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
   const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
   const PopupTranslateY = useRef(new Animated.Value(0)).current;
+
   const dispatch = useDispatch();
   const {
     doctors,
@@ -75,7 +78,6 @@ function LandingPage({navigation}) {
     !specialtyLoading && dispatch(getSpecialty());
   }, []);
 
-  const tempSpeciality = ['Pulmanologist', 'Cardiologist', 'Neurologist'];
   const tempSpecialityIcons = [
     require('../../../assets/icons/lungs.png'),
     require('../../../assets/icons/heart.png'),
@@ -142,6 +144,16 @@ function LandingPage({navigation}) {
     }
   };
 
+  const onSearchDoctorRefresh = () => {
+    dispatch(searchDoctors(searchKey, 0));
+  };
+  const onDoctorsRefresh = () => {
+    dispatch(fetchDoctorLite('', 0, false));
+  };
+  const onSuperDocRefresh = () => {
+    dispatch(fetchSuperDoc(0));
+  };
+
   const headerViewStyle = headerPos.interpolate({
     inputRange: [0, 250],
     outputRange: [1, 0],
@@ -175,6 +187,7 @@ function LandingPage({navigation}) {
         <TopNavBar
           onLeftButtonPress={() => {}}
           // onRightButtonPress={() => {}}
+          LeftComp={<View></View>}
           navigation={navigation}
           style={{
             Container: {
@@ -461,7 +474,30 @@ function LandingPage({navigation}) {
           <FlatList
             keyExtractor={(item) => item._id}
             data={searchedDoctors}
+            refreshControl={
+              <RefreshControl
+                refreshing={searchDoctorsLoading}
+                onRefresh={onSearchDoctorRefresh}
+              />
+            }
             nestedScrollEnabled
+            ListEmptyComponent={
+              <View
+                style={{
+                  height: 200,
+                  width: '70%',
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <LottieView
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../../../assets/anim_svg/empty_bottle.json')}
+                  autoPlay
+                  loop
+                />
+              </View>
+            }
             renderItem={({item, index}) => (
               <AvailDoctorContainerV2
                 toggle={toggle}
@@ -526,17 +562,29 @@ function LandingPage({navigation}) {
               ListEmptyComponent={
                 <View
                   style={{
-                    height: 300,
-                    marginTop: 30,
+                    height: 200,
+                    width: '70%',
+                    alignSelf: 'center',
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
-                  <Text>Empty</Text>
+                  <LottieView
+                    style={{height: '100%', width: '100%'}}
+                    source={require('../../../assets/anim_svg/empty_bottle.json')}
+                    autoPlay
+                    loop
+                  />
                 </View>
               }
               onEndReachedThreshold={0.2}
               // extraData={doctors}
               data={doctors}
+              refreshControl={
+                <RefreshControl
+                  refreshing={loading}
+                  onRefresh={onDoctorsRefresh}
+                />
+              }
               renderItem={({item, index}) => {
                 console.log(item);
                 return (
@@ -560,11 +608,18 @@ function LandingPage({navigation}) {
             ListEmptyComponent={
               <View
                 style={{
-                  height: '100%',
+                  height: 200,
+                  width: '70%',
+                  alignSelf: 'center',
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Text>Empty superDocs</Text>
+                <LottieView
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../../../assets/anim_svg/empty_bottle.json')}
+                  autoPlay
+                  loop
+                />
               </View>
             }
             // ListFooterComponent={moreDoctorLoading && <ActivityIndicator />}
@@ -583,6 +638,12 @@ function LandingPage({navigation}) {
             // onScrollEndDrag={scrollAnimation}
             // scrollEventThrottle={16}
             data={superDocs}
+            refreshControl={
+              <RefreshControl
+                refreshing={superDocsLoading}
+                onRefresh={onSuperDocRefresh}
+              />
+            }
             renderItem={({item}) => (
               <AvailDoctorContainerV2
                 toggle={toggle}

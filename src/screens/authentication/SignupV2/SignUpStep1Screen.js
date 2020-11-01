@@ -28,6 +28,8 @@ import {AccessToken, LoginManager, LoginButton} from 'react-native-fbsdk';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import auth from '@react-native-firebase/auth';
 import UserProfile from '../../../assets/svg/male_profile.svg';
+import AnimatedErrorText from '../../../components/atoms/animatedErrorText/AnimatedErrorText';
+import PasswordStrengthChecker from '../../../components/atoms/PasswordStrengthChecker/PasswordStrengthChecker';
 
 export default function SignUpStep1Screen(props) {
   const {
@@ -52,6 +54,7 @@ export default function SignUpStep1Screen(props) {
   };
 
   const [passVisible, setPass] = useState(false);
+  const [passwordFocus, setPasswordFocus] = useState(false);
   const viewPassword = () => {
     setPass(!passVisible);
   };
@@ -148,65 +151,99 @@ export default function SignUpStep1Screen(props) {
             <UserProfile />
           )}
         </TouchableOpacity>
-        <TextInputIcon
-          placeholder="First Name"
-          inputHandler={handleFirstName}
-          placeholderTextColor={INPUT_PLACEHOLDER}
-          style={[
-            styles.inputStyle,
-            !error.firstName && {borderBottomColor: 'red'},
-          ]}
-          textStyle={styles.textStyle}
-          validationCallback={() => credential.firstName != ''}
-          value={credential.firstName}
-        />
-        <TextInputIcon
-          placeholder="Last Name"
-          inputHandler={handleLastName}
-          placeholderTextColor={INPUT_PLACEHOLDER}
-          style={[
-            styles.inputStyle,
-            !error.lastName && {borderBottomColor: 'red'},
-          ]}
-          textStyle={styles.textStyle}
-          validationCallback={() => credential.lastName != ''}
-          value={credential.lastName}
-        />
-        <TextInputIcon
-          placeholder="Email"
-          inputHandler={handleEmail}
-          keyboardType={'email-address'}
-          placeholderTextColor={INPUT_PLACEHOLDER}
-          style={[
-            styles.inputStyle,
-            !error.email && {borderBottomColor: 'red'},
-          ]}
-          textStyle={styles.textStyle}
-          validationCallback={() => reg.test(credential.email)}
-          value={credential.email}
-        />
-        <TextInputIcon
-          hasIcon={true}
-          iconName={passVisible ? 'eye' : 'eye-off'}
-          validationCallback={() => credential.password.length >= 4}
-          size={25}
-          iconPos="right"
-          secureTextEntry={!passVisible}
-          onPress={viewPassword}
-          placeholder="Password"
-          inputHandler={handlePassword}
-          placeholderTextColor={INPUT_PLACEHOLDER}
-          style={[
-            styles.inputStyle,
-            !error.password && {borderBottomColor: 'red'},
-          ]}
-          iconStyle={{
-            alignSelf: 'center',
-            justifyContent: 'center',
-          }}
-          textStyle={[styles.textStyle, {width: '83%'}]}
-          value={credential.password}
-        />
+        <>
+          <TextInputIcon
+            placeholder="First Name"
+            inputHandler={handleFirstName}
+            placeholderTextColor={INPUT_PLACEHOLDER}
+            style={[
+              styles.inputStyle,
+              !error.firstName && {borderBottomColor: 'red'},
+            ]}
+            textStyle={styles.textStyle}
+            validationCallback={() => credential.firstName != ''}
+            value={credential.firstName}
+          />
+          {!error.firstName && (
+            <AnimatedErrorText
+              style={{width: '70%', alignSelf: 'center'}}
+              text={'First name should only contain letters'}
+            />
+          )}
+        </>
+        <>
+          <TextInputIcon
+            placeholder="Last Name"
+            inputHandler={handleLastName}
+            placeholderTextColor={INPUT_PLACEHOLDER}
+            style={[
+              styles.inputStyle,
+              !error.lastName && {borderBottomColor: 'red'},
+            ]}
+            textStyle={styles.textStyle}
+            validationCallback={() => credential.lastName != ''}
+            value={credential.lastName}
+          />
+          {!error.lastName && (
+            <AnimatedErrorText
+              style={{width: '70%', alignSelf: 'center'}}
+              text={'Last name should only contain letters'}
+            />
+          )}
+        </>
+        <>
+          <TextInputIcon
+            placeholder="Email"
+            inputHandler={handleEmail}
+            keyboardType={'email-address'}
+            placeholderTextColor={INPUT_PLACEHOLDER}
+            style={[
+              styles.inputStyle,
+              !error.email && {borderBottomColor: 'red'},
+            ]}
+            textStyle={styles.textStyle}
+            validationCallback={() => reg.test(credential.email)}
+            value={credential.email}
+          />
+          {!error.email && (
+            <AnimatedErrorText
+              style={{width: '70%', alignSelf: 'center'}}
+              text={'Email ID should be valid'}
+            />
+          )}
+        </>
+        <>
+          <TextInputIcon
+            hasIcon={true}
+            iconName={passVisible ? 'eye' : 'eye-off'}
+            validationCallback={() => credential.password.length >= 4}
+            size={25}
+            iconPos="right"
+            secureTextEntry={!passVisible}
+            onPress={viewPassword}
+            placeholder="Password"
+            inputHandler={handlePassword}
+            placeholderTextColor={INPUT_PLACEHOLDER}
+            style={[
+              styles.inputStyle,
+              !error.password && {borderBottomColor: 'red'},
+            ]}
+            iconStyle={{
+              alignSelf: 'center',
+              justifyContent: 'center',
+            }}
+            textStyle={[styles.textStyle, {width: '83%'}]}
+            value={credential.password}
+            onFocus={() => setPasswordFocus(true)}
+            onBlur={() => setPasswordFocus(false)}
+          />
+          {passwordFocus && (
+            <PasswordStrengthChecker
+              password={credential.password}
+              style={{width: '70%', alignSelf: 'center', marginTop: '1%'}}
+            />
+          )}
+        </>
         <View
           style={{
             width: '50%',

@@ -104,6 +104,7 @@ function AvailDoctorContentV2({
             backgroundColor: SECONDARY_BACKGROUND,
             flexDirection: 'row',
             alignItems: 'center',
+            justifyContent: 'space-around',
           }}>
           <Image
             source={require('../../../assets/icons/star.png')}

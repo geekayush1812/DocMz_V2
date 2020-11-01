@@ -8,6 +8,8 @@ import {
 } from '../../../styles/colors';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {FONT_SIZE_16} from '../../../styles/typography';
+import {useSelector} from 'react-redux';
+import LottieView from 'lottie-react-native';
 function PatientList({navigation}) {
   const patientList = [
     {
@@ -51,9 +53,15 @@ function PatientList({navigation}) {
       lastVisit: 'Last visit: 10 May 20',
     },
   ];
+  const {recentPatient, recentPatientLoading} = useSelector(
+    (state) => state.DoctorReducer,
+  );
+
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <TopNavBar headerText={'Patients List'}></TopNavBar>
+      <TopNavBar
+        navigation={navigation}
+        headerText={'Patients List'}></TopNavBar>
       <View
         style={{
           backgroundColor: '#fff',
@@ -66,6 +74,7 @@ function PatientList({navigation}) {
         <SearchBarSolid
           withIcon
           placeholderTextColor={SEARCH_PLACEHOLDER_COLOR}
+          placeholder={'Search by name'}
           searchIcon={
             <Image
               source={require('../../../assets/icons/search.png')}
@@ -81,58 +90,86 @@ function PatientList({navigation}) {
         />
       </View>
       <ScrollView
-        style={{backgroundColor: '#f8f8f8', flex: 1, paddingVertical: '5%'}}>
-        {patientList.map((item, index) => (
+        style={{backgroundColor: '#fff', flex: 1, paddingVertical: '5%'}}>
+        {recentPatient.length === 0 ? (
           <View
-            key={index}
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              width: '95%',
+              height: 200,
+              width: '70%',
               alignSelf: 'center',
-              backgroundColor: '#fff',
-              elevation: 2,
-              padding: '3%',
-              borderRadius: 10,
-              marginBottom: '4%',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}>
-            <View style={{width: '90%'}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <View
-                  style={{
-                    height: 8,
-                    width: 8,
-                    borderRadius: 15,
-                    backgroundColor: '#efa860',
-                  }}></View>
-                <Text
-                  style={{
-                    fontSize: FONT_SIZE_16,
-                    fontWeight: 'bold',
-                    marginLeft: '2%',
-                    letterSpacing: 0.5,
-                  }}>
-                  {item.name}
-                </Text>
-                <Text>{item.reason}</Text>
-              </View>
-              <Text style={{marginLeft: '4.5%', color: '#a09e9e'}}>
-                {item.lastVisit}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => {
-                // navigation.navigate('PatientDetails',{});
-              }}>
-              <MaterialIcon
-                name={'chevron-right'}
-                size={32}
-                color={'#a4a2a2'}
-              />
-            </TouchableOpacity>
+            <LottieView
+              style={{height: '100%', width: '100%'}}
+              source={require('../../../assets/anim_svg/empty_bottle.json')}
+              autoPlay
+              // loop={false}
+            />
           </View>
-        ))}
+        ) : (
+          recentPatient.map((item) => {
+            if (item) {
+              const {patient, _id} = item;
+              return patient ? (
+                <View
+                  key={_id}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    width: '95%',
+                    alignSelf: 'center',
+                    backgroundColor: '#fff',
+                    elevation: 2,
+                    padding: '3%',
+                    borderRadius: 10,
+                    marginBottom: '4%',
+                  }}>
+                  <View style={{width: '90%'}}>
+                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                      <View
+                        style={{
+                          height: 8,
+                          width: 8,
+                          borderRadius: 15,
+                          backgroundColor: '#efa860',
+                        }}></View>
+                      <Text
+                        style={{
+                          fontSize: FONT_SIZE_16,
+                          fontWeight: 'bold',
+                          marginLeft: '2%',
+                          letterSpacing: 0.5,
+                        }}>
+                        {`${patient.firstName} ${patient.lastName}`}
+                      </Text>
+                      <Text>
+                        {/* {item.reason} */}
+                        --
+                      </Text>
+                    </View>
+                    <Text style={{marginLeft: '4.5%', color: '#a09e9e'}}>
+                      {/* {item.lastVisit} */}
+                      --
+                    </Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('PatientDetails', {patient});
+                    }}>
+                    <MaterialIcon
+                      name={'chevron-right'}
+                      size={32}
+                      color={'#a4a2a2'}
+                    />
+                  </TouchableOpacity>
+                </View>
+              ) : null;
+            }
+            return null;
+          })
+        )}
       </ScrollView>
     </View>
   );

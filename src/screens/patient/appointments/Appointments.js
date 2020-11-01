@@ -19,29 +19,12 @@ import AppointmentUpcomingItem from '../../../components/molecules/Appointments/
 
 import {GetAppointments} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
+import LottieView from 'lottie-react-native';
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 }
-
-const dummyData = [
-  {
-    docName: 'Dr. Dropkin Jared',
-    docSpeciality: 'Physician',
-    appointmentName: 'Annual Physical',
-  },
-  {
-    docName: 'Dr. Dropkin Jared',
-    docSpeciality: 'Physician',
-    appointmentName: 'Annual Physical',
-  },
-  {
-    docName: 'Dr. Dropkin Jared',
-    docSpeciality: 'Physician',
-    appointmentName: 'Annual Physical',
-  },
-];
 
 const Appointments = ({navigation}) => {
   const {
@@ -137,6 +120,23 @@ const Appointments = ({navigation}) => {
           <FlatList
             style={{flex: 1, padding: '3%'}}
             data={historyAppointmentList}
+            ListEmptyComponent={
+              <View
+                style={{
+                  height: 200,
+                  width: '70%',
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <LottieView
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../../../assets/anim_svg/empty_bottle.json')}
+                  autoPlay
+                  loop
+                />
+              </View>
+            }
             keyExtractor={(item) => item._id}
             renderItem={({item}) => (
               <AppointmentHistoryItem item={item} style={{margin: '2%'}} />
@@ -144,18 +144,27 @@ const Appointments = ({navigation}) => {
           />
         ) : (
           <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-            {/* <View style={styles.section}>
-              <Text style={styles.sectionHead}>Ongoing Appointment</Text>
-              {dummyData.slice(0, 1).map((item) => (
-                <AppointmentOngoingItem {...item} style={{margin: 10}} />
-              ))}
-            </View> */}
             <View style={styles.section}>
               <Text style={styles.sectionHead}>Upcoming Appointments</Text>
               {gettingAppointments && extractingAppointmentList ? (
                 <ListingWithThumbnailLoader />
               ) : upcomingAppointmentList.length === 0 ? (
-                <Text>0 Upcoming Appointments</Text>
+                <View
+                  style={{
+                    height: 200,
+                    width: '70%',
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <LottieView
+                    style={{height: '100%', width: '100%'}}
+                    source={require('../../../assets/anim_svg/empty_bottle.json')}
+                    autoPlay
+                    loop
+                  />
+                  <Text>0 Upcoming Appointments</Text>
+                </View>
               ) : (
                 upcomingAppointmentList.map((item) => (
                   <AppointmentUpcomingItem
@@ -199,6 +208,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat-SemiBold',
     fontSize: 18,
     color: NEW_HEADER_TEXT,
+    marginTop: 10,
     marginBottom: 15,
   },
 });

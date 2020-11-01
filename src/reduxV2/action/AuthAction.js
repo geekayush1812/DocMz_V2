@@ -140,9 +140,9 @@ export const LoginPatient = (data, success, failed) => {
         } else {
           failed({
             status: false,
-            message: result.data.error.slice(0, 20),
+            message: result.data.error.slice(0, 40),
           });
-          dispatch(errorLogin(result.data.error.slice(0, 20)));
+          dispatch(errorLogin(result.data.error.slice(0, 40)));
         }
       })
       .catch((err) => {
@@ -186,15 +186,15 @@ export const LoginDoctor = (data, success, failed) => {
         } else {
           failed({
             status: false,
-            message: result.data.error.slice(0, 20),
+            message: result.data.error.slice(0, 40),
           });
-          dispatch(errorLogin(result.data.error.slice(0, 20)));
+          dispatch(errorLogin(result.data.error.slice(0, 40)));
         }
       })
       .catch((err) => {
         failed({
           status: false,
-          message: 'something went wrong',
+          message: 'Something went wrong!! Try again',
         });
         dispatch(errorLogin(err));
       });

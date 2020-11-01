@@ -13,6 +13,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {useRef} from 'react';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import ConfirmAppointmentModel from '../../../components/molecules/Modal/ConfirmAppointmentModel';
+import LottieView from 'lottie-react-native';
 function QuestionnairePP({navigation, route}) {
   const {
     gettingQuestionnaire,
@@ -59,7 +60,7 @@ function QuestionnairePP({navigation, route}) {
         <View style={{width: '45%'}}>
           <DmzButton
             onPress={() => {
-              navigation.navigate('NewPayment', {appointmentBookingData});
+              navigation.navigate('Payments', {appointmentBookingData});
             }}
             style={{
               Container: {
@@ -69,12 +70,12 @@ function QuestionnairePP({navigation, route}) {
                 borderBottomLeftRadius: 0,
                 borderTopRightRadius: 15,
                 borderBottomRightRadius: 15,
-                backgroundColor: '#d6d6d6',
+                backgroundColor: questions.length === 0 ? '#efa860' : '#d6d6d6',
                 paddingHorizontal: '12%',
                 width: '90%',
               },
               Text: {
-                color: '#4f4f4f',
+                color: questions.length === 0 ? '#fff' : '#4f4f4f',
               },
             }}
             text={'SKIP QUESTIONS'}
@@ -84,7 +85,27 @@ function QuestionnairePP({navigation, route}) {
       {gettingQuestionnaire && (
         <ActivityIndicator size={40} color={'#047b7b'} />
       )}
-      {questions.length !== 0 && (
+      {questions.length === 0 ? (
+        <View
+          style={{
+            height: 200,
+            width: '70%',
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <LottieView
+            style={{height: '100%', width: '100%'}}
+            source={require('../../../assets/anim_svg/empty_bottle.json')}
+            autoPlay
+            loop
+          />
+          <Text style={{textAlign: 'center', color: '#555'}}>
+            No Questions has been added by the doctor.{'\n'}You can Skip
+            Question
+          </Text>
+        </View>
+      ) : (
         <QuestionController questions={questions} onFinish={onFinish} />
       )}
     </>

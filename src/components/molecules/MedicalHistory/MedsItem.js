@@ -1,5 +1,12 @@
-import React from 'react';
-import {Text, View, ScrollView, TouchableOpacity, Image} from 'react-native';
+import React, {useState} from 'react';
+import {
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {
   GREY_BACKGROUND,
   NEW_PRIMARY_COLOR,
@@ -8,6 +15,7 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const MedsItem = ({data}) => {
+  const [medicineActive, setMedicineActive] = useState(false);
   return data.map((item) => {
     const {_id, name, quantity, description} = item;
     return (
@@ -55,11 +63,14 @@ const MedsItem = ({data}) => {
         </View>
 
         <View style={{justifyContent: 'space-between', alignItems: 'flex-end'}}>
-          <MaterialIcons
-            name={data.alert ? 'timer' : 'timer-off'}
-            color={data.alert ? NEW_PRIMARY_COLOR : INPUT_PLACEHOLDER}
-            size={25}
-          />
+          <TouchableWithoutFeedback
+            onPress={() => setMedicineActive(!medicineActive)}>
+            <MaterialIcons
+              name={medicineActive ? 'timer' : 'timer-off'}
+              color={medicineActive ? NEW_PRIMARY_COLOR : INPUT_PLACEHOLDER}
+              size={25}
+            />
+          </TouchableWithoutFeedback>
 
           <TouchableOpacity>
             <Image

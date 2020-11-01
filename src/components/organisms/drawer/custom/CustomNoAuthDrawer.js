@@ -15,7 +15,10 @@ function CustomNoAuthDrawer({navigation}) {
         source={require('../../../../assets/images/logo.png')}
       />
       <TouchableOpacity
-        onPress={() => navigation.navigate('Auth')}
+        onPress={() => {
+          navigation.closeDrawer();
+          navigation.navigate('Auth');
+        }}
         style={{
           height: 40,
           width: '50%',

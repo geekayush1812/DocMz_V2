@@ -7,7 +7,7 @@ import AddMed from '../../../components/molecules/Modal/AddMed';
 import {useSelector, useDispatch} from 'react-redux';
 import {GetMedicine, AddMedicine} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
-
+import LottieView from 'lottie-react-native';
 const Meds = () => {
   const [modalVisible, setVisible] = useState(false);
   const {medicines, gettingMedicine, addMedicineLoading} = useSelector(
@@ -54,6 +54,22 @@ const Meds = () => {
 
         {gettingMedicine ? (
           <ListingWithThumbnailLoader />
+        ) : medicines.length === 0 ? (
+          <View
+            style={{
+              height: 200,
+              width: '70%',
+              alignSelf: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <LottieView
+              style={{height: '100%', width: '100%'}}
+              source={require('../../../assets/anim_svg/empty_bottle.json')}
+              autoPlay
+              loop
+            />
+          </View>
         ) : (
           medicines.map((item) => (
             <MedsItem key={item._id} data={item.medicines} />

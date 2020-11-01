@@ -48,7 +48,6 @@ function NoAuthNavigation() {
 
 const MainController = ({navigation, route}) => {
   const {isLoggedin, isDoctor} = useSelector((state) => state.AuthReducer);
-  console.log(isLoggedin, isDoctor);
   if (isLoggedin) {
     if (isDoctor) {
       return <DoctorNavigationV2 />;

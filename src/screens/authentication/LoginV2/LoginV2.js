@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState, createRef} from 'react';
+import React, {useState, createRef, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,9 @@ import {
   ScrollView,
   BackHandler,
   Image,
+  Animated,
+  Easing,
+  Button,
 } from 'react-native';
 import Toast from 'react-native-root-toast';
 import DmzText from '../../../components/atoms/DmzText/DmzText';
@@ -33,14 +36,25 @@ import ViewPager from '@react-native-community/viewpager';
 import SignupSplash from '../SignupV2/SignupSplash';
 import UserProfile from '../../../assets/svg/male_profile.svg';
 import GenericError from '../../../components/molecules/Modal/GenericError';
+import AnimatedErrorText from '../../../components/atoms/animatedErrorText/AnimatedErrorText';
 function LoginV2(props) {
   const [credential, setCredential] = useState({email: '', password: ''});
+  const [error, setError] = useState({
+    email: true,
+    password: true,
+  });
   const [loginAs, setLoginAs] = useState('patient');
   const [modal, setModal] = useState({visible: false, text: ''});
   const {loggingIn, userData} = useSelector((state) => state.AuthReducer);
+
   const dispatch = useDispatch();
   let pagerRef = createRef();
+  const reg = new RegExp(
+    /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/,
+  );
   const handleEmail = (email) => {
+    const test = reg.test(email);
+    setError({...error, email: test});
     setCredential({...credential, email});
   };
   const handlePassword = (pass) => {
@@ -57,9 +71,6 @@ function LoginV2(props) {
   // BackHandler.addEventListener('hardwareBackPress', () => {
   //   props.navigation.navigate('pageNavigation');
   // });
-  const reg = new RegExp(
-    /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/,
-  );
 
   const handleLogin = () => {
     const {email, password} = credential;
@@ -184,28 +195,34 @@ function LoginV2(props) {
             }}>
             <UserProfile />
           </View>
-          <TextInputIcon
-            style={styles.inputContainer}
-            inputHandler={handleEmail}
-            textContentType="emailAddress"
-            keyboardType={'email-address'}
-            textStyle={{
-              paddingLeft: 20,
-              color: NEW_HEADER_TEXT,
-              fontSize: 14,
-              fontFamily: 'Montserrat-Medium',
-              flex: 1,
-            }}
-            placeholderTextColor={INPUT_PLACEHOLDER}
-            hasIcon={true}
-            iconName="email"
-            placeholder="Email Id"
-            iconStyle={{alignSelf: 'center'}}
-            iconColor={NEW_PRIMARY_BACKGROUND}
-            size={30}
-            validationCallback={() => reg.test(credential.email)}
-            value={credential.email}
-          />
+          <View>
+            <TextInputIcon
+              style={styles.inputContainer}
+              inputHandler={handleEmail}
+              textContentType="emailAddress"
+              keyboardType={'email-address'}
+              textStyle={{
+                paddingLeft: 20,
+                color: NEW_HEADER_TEXT,
+                fontSize: 14,
+                fontFamily: 'Montserrat-Medium',
+                flex: 1,
+              }}
+              placeholderTextColor={INPUT_PLACEHOLDER}
+              hasIcon={true}
+              iconName="email"
+              placeholder="Email Id"
+              iconStyle={{alignSelf: 'center'}}
+              iconColor={NEW_PRIMARY_BACKGROUND}
+              size={30}
+              validationCallback={() => reg.test(credential.email)}
+              value={credential.email}
+            />
+            {!error.email && (
+              <AnimatedErrorText text={'Email Id should be valid'} />
+            )}
+          </View>
+
           <TextInputIcon
             style={styles.inputContainer}
             textStyle={{

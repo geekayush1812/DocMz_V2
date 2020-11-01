@@ -39,23 +39,19 @@ export default function Calendar({onDateChange, getDateView}) {
   const setMonth = async (i) => {
     var index = months.indexOf(i);
     var index2 = selectedIndex;
-    console.log(index2, ' --- ', index);
     if (index > index2) {
       while (index2 < index) {
         await exampleRef.current.handleOnPressNext();
-        console.log('changing');
         index2++;
       }
       setSelectedIndex(index2);
     } else if (index < index2) {
       while (index2 > index) {
         await exampleRef.current.handleOnPressPrevious();
-        console.log('changing');
         index2--;
       }
       setSelectedIndex(index2);
     }
-    console.log(index2, ' --- ', index);
   };
 
   useEffect(() => {
@@ -156,6 +152,12 @@ export default function Calendar({onDateChange, getDateView}) {
         }}
       />
       <CalendarPicker
+        disabledDates={(date) => {
+          const t2 = new Date();
+          return (
+            Moment(date).format('DD-MM-YYYY') < Moment(t2).format('DD-MM-YYYY')
+          );
+        }}
         ref={exampleRef}
         startFromMonday={false}
         allowRangeSelection={true}

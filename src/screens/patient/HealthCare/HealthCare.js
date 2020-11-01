@@ -5,7 +5,7 @@ import {GREY_BACKGROUND} from '../../../styles/colors';
 import NewItem from '../../../components/molecules/MedicalHistory/NewItem';
 import AddHealthCare from '../../../components/molecules/Modal/AddHealthCare';
 import HealthCareItem from '../../../components/molecules/HealthCareItem/HealthCareItem';
-
+import LottieView from 'lottie-react-native';
 const HealthCare = ({navigation}) => {
   const [addModal, setModal] = useState(false);
   const HealthCareData = [
@@ -44,6 +44,23 @@ const HealthCare = ({navigation}) => {
         <FlatList
           keyExtractor={(item) => item._id}
           data={HealthCareData}
+          ListEmptyComponent={
+            <View
+              style={{
+                height: 200,
+                width: '70%',
+                alignSelf: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <LottieView
+                style={{height: '100%', width: '100%'}}
+                source={require('../../../assets/anim_svg/empty_bottle.json')}
+                autoPlay
+                loop
+              />
+            </View>
+          }
           style={{flex: 1, padding: 20}}
           renderItem={({item}) => <HealthCareItem data={item} />}
           ListFooterComponent={<NewItem onPress={() => setModal(true)} />}

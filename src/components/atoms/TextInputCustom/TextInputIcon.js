@@ -30,6 +30,8 @@ function TextInputIcon({
   children,
   // validated = true,
   validationCallback = () => true,
+  onFocus = () => {},
+  onBlur = () => {},
 }) {
   const [validated, setValidated] = useState(true);
   let timeout = null;
@@ -81,6 +83,8 @@ function TextInputIcon({
         onChangeText={(text) => inputHandler(text)}
         style={[textStyle ? textStyle : null, {flex: 1}]}
         maxLength={maxLength}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       {children}
     </View>

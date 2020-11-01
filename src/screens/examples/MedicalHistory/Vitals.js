@@ -27,6 +27,7 @@ import AddHeartRate from '../../../components/molecules/Modal/AddHeartRate';
 import AddWeight from '../../../components/molecules/Modal/AddWeight';
 import AddTemperature from '../../../components/molecules/Modal/AddTemperature';
 import AddBloodPressure from '../../../components/molecules/Modal/AddBloodPressure';
+import LottieView from 'lottie-react-native';
 const PADDING = 10;
 
 const Vitals = () => {
@@ -66,11 +67,11 @@ const Vitals = () => {
       weight: patient?.weight?.value ? patient.weight : '',
       temperature: patient?.temperature?.value ? patient.temperature : '',
       oxygen: patient?.oxygen?.value ? patient.oxygen : '',
-      heartRate: patient?.meta.heartRate,
-      bloodPressure: patient?.meta.bloodPressure,
+      heartRate: patient?.meta?.heartRate,
+      bloodPressure: patient?.meta?.bloodPressure,
       respiration: patient?.respiration?.value ? patient.respiration : '',
     });
-    setGraphData(patient?.meta.heartRate.map((item) => Number(item.value)));
+    setGraphData(patient?.meta?.heartRate.map((item) => Number(item.value)));
   }, [patient]);
 
   const updateVitals = (res, callback = () => {}) => {
@@ -186,7 +187,9 @@ const Vitals = () => {
         <View style={{flexDirection: 'row'}}>
           <View style={[styles.card, {flex: 1}]}>
             <Text style={styles.cardHeaderText}>Weight</Text>
-            <Text style={styles.text1}>{vitalsInfo.weight.value} kg</Text>
+            <Text style={styles.text1}>
+              {vitalsInfo.weight.value ? vitalsInfo.weight.value : '--'} kg
+            </Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>
@@ -213,8 +216,14 @@ const Vitals = () => {
           <View style={[styles.card, {flex: 1}]}>
             <Text style={styles.cardHeaderText}>Height</Text>
             <Text style={styles.text1}>
-              {cmToFeet(vitalsInfo.height.value).feet} ft ,
-              {cmToFeet(vitalsInfo.height.value).inches} in
+              {vitalsInfo.height.value
+                ? cmToFeet(vitalsInfo.height.value).feet
+                : '--'}{' '}
+              ft ,
+              {vitalsInfo.height.value
+                ? cmToFeet(vitalsInfo.height.value).inches
+                : ' --'}{' '}
+              in
             </Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -245,7 +254,7 @@ const Vitals = () => {
 
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 3, marginRight: 20}}>
-              {bloodPressure.length != 0 && (
+              {bloodPressure.length !== 0 && (
                 <LineChart
                   bezier
                   data={{
@@ -346,11 +355,15 @@ const Vitals = () => {
 
           <View style={{flexDirection: 'row'}}>
             <View style={{flex: 3, marginRight: 20}}>
-              <Graph
-                data={graphData}
-                hasAxis={false}
-                style={{alignSelf: 'center'}}
-              />
+              <View style={{flex: 2}}>
+                <LottieView
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../../../assets/anim_svg/heart_rate.json')}
+                  autoPlay
+                  loop
+                  speed={0.65}
+                />
+              </View>
 
               <Text style={styles.text3}>
                 Updated on :{' '}
@@ -384,7 +397,12 @@ const Vitals = () => {
         <View style={{flexDirection: 'row'}}>
           <View style={[styles.card, {flex: 1}]}>
             <Text style={styles.cardHeaderText}>Temperature</Text>
-            <Text style={styles.text1}>{vitalsInfo.temperature.value} C</Text>
+            <Text style={styles.text1}>
+              {vitalsInfo.temperature.value
+                ? vitalsInfo.temperature.value
+                : '--'}{' '}
+              C
+            </Text>
             <View
               style={{flexDirection: 'row', justifyContent: 'space-between'}}>
               <View>

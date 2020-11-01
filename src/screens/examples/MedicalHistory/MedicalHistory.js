@@ -29,7 +29,14 @@ import Allergies from './Allergies';
 
 const MedicalHistory = ({navigation}) => {
   const [tab, setTab] = useState('vitals');
-
+  const screenWidth = Dimensions.get('screen').width;
+  const tabs = [
+    {name: 'Vitals', key: 'vitals'},
+    {name: 'Meds', key: 'meds'},
+    {name: 'Reports', key: 'reports'},
+    // "Surgeries",
+    // "Allergies"
+  ];
   return (
     <View style={styles.mianContainer}>
       <TopNavBar
@@ -37,82 +44,33 @@ const MedicalHistory = ({navigation}) => {
         style={{Container: {marginTop: 5, marginBottom: 10}}}
         navigation={navigation}
       />
-      <View>
-        <ScrollView
+      <View style={{height: 50, width: '100%', paddingVertical: '2%'}}>
+        <FlatList
           horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginBottom: 10,
-            width: 600,
-          }}>
-          <TouchableOpacity
-            style={[styles.tabContainer, {borderRightWidth: 1}]}
-            onPress={() => setTab('vitals')}>
-            <Text
-              style={
-                tab === 'vitals' ? styles.activeTabText : styles.inactiveTabText
-              }>
-              Vitals
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.tabContainer,
-              {borderRightWidth: 1, borderLeftWidth: 1},
-            ]}
-            onPress={() => setTab('meds')}>
-            <Text
-              style={
-                tab === 'meds' ? styles.activeTabText : styles.inactiveTabText
-              }>
-              Meds
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[
-              styles.tabContainer,
-              {borderRightWidth: 1, borderLeftWidth: 1},
-            ]}
-            onPress={() => setTab('reports')}>
-            <Text
-              style={
-                tab === 'reports'
-                  ? styles.activeTabText
-                  : styles.inactiveTabText
-              }>
-              Reports
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={[styles.tabContainer, {borderLeftWidth: 1}]}
-            onPress={() => setTab('surgeries')}>
-            <Text
-              style={
-                tab === 'surgeries'
-                  ? styles.activeTabText
-                  : styles.inactiveTabText
-              }>
-              Surgeries
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tabContainer, {borderLeftWidth: 1}]}
-            onPress={() => setTab('allergies')}>
-            <Text
-              style={
-                tab === 'allergies'
-                  ? styles.activeTabText
-                  : styles.inactiveTabText
-              }>
-              Allergies
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
+          data={tabs}
+          renderItem={({item}) => {
+            return (
+              <TouchableOpacity
+                onPress={() => setTab(item.key)}
+                style={{
+                  width: screenWidth * 0.33,
+                  justifyContent: 'center',
+                  borderRightColor: 'green',
+                  borderRightWidth: 1,
+                  alignItems: 'center',
+                }}>
+                <Text
+                  style={
+                    item.key === tab
+                      ? styles.activeTabText
+                      : styles.inactiveTabText
+                  }>
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          }}
+        />
       </View>
 
       <View style={{flex: 1, backgroundColor: GREY_BACKGROUND}}>
@@ -122,11 +80,11 @@ const MedicalHistory = ({navigation}) => {
           <Meds />
         ) : tab === 'reports' ? (
           <Reports />
-        ) : tab == 'surgeries' ? (
-          <Surgeries />
-        ) : tab == 'allergies' ? (
-          <Allergies />
-        ) : null}
+        ) : // ) : tab == 'surgeries' ? (
+        //   <Surgeries />
+        // ) : tab == 'allergies' ? (
+        //   <Allergies />
+        null}
       </View>
     </View>
   );
@@ -137,15 +95,15 @@ export default MedicalHistory;
 const styles = StyleSheet.create({
   mianContainer: {
     flex: 1,
-    backgroundColor: 'white',
-    justifyContent: 'flex-start',
+    backgroundColor: '#fff',
   },
   tabContainer: {
-    flex: 1,
-    marginVertical: 15,
+    width: '33%',
+    alignSelf: 'center',
+    paddingHorizontal: '7%',
+    justifyContent: 'center',
     alignItems: 'center',
     borderColor: NEW_PRIMARY_COLOR,
-    paddingVertical: 3,
   },
   inactiveTabText: {
     fontFamily: 'Montserrat-Regular',

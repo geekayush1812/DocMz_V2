@@ -64,34 +64,6 @@ const AddBloodPressure = ({
         </View>
       </View>
 
-      <Text style={styles.smallText}>Date</Text>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          borderColor: NEW_PRIMARY_BACKGROUND,
-          borderBottomWidth: 1.5,
-          marginBottom: 30,
-        }}>
-        <TextInput
-          value={date}
-          onChangeText={(text) => setDate(text)}
-          style={[
-            styles.inputText,
-            {borderBottomWidth: 0, flex: 1, marginBottom: 0},
-          ]}
-          editable={false}
-        />
-        <TouchableOpacity>
-          <FontAwesome5
-            name="calendar-alt"
-            size={22}
-            color={NEW_PRIMARY_COLOR}
-            style={{marginHorizontal: 5}}
-          />
-        </TouchableOpacity>
-      </View>
-
       <DmzButton
         disabled={!sys || !Dia}
         onPress={() => {

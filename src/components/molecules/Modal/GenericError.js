@@ -2,9 +2,12 @@ import React, {useEffect} from 'react';
 import {Text, View, Modal, Image} from 'react-native';
 import DmzButton from '../../atoms/DmzButton/DmzButton';
 import {SECONDARY_COLOR} from '../../../styles/colors';
-import {cos} from 'react-native-reanimated';
 
-const GenericError = ({visible, onCancel}) => {
+const GenericError = ({
+  text = "There seems to be a{'\n'}problem with that!",
+  visible,
+  onCancel,
+}) => {
   return (
     <Modal backgroundColor="#ffffff" visible={visible} animationType="fade">
       <View
@@ -31,7 +34,7 @@ const GenericError = ({visible, onCancel}) => {
             marginBottom: 30,
             paddingHorizontal: 20,
           }}>
-          There seems to be a{'\n'}problem with that!
+          {text}
         </Text>
 
         <DmzButton

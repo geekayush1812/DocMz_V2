@@ -13,6 +13,7 @@ import DocumentPicker from 'react-native-document-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {UploadRecords, GetRecords} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
+import LottieView from 'lottie-react-native';
 const Reports = ({params}) => {
   const [modalVisible, setVisible] = useState(false);
   const dispatch = useDispatch();
@@ -77,6 +78,23 @@ const Reports = ({params}) => {
         <FlatList
           style={{padding: 20}}
           data={records}
+          ListEmptyComponent={
+            <View
+              style={{
+                height: 200,
+                width: '70%',
+                alignSelf: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <LottieView
+                style={{height: '100%', width: '100%'}}
+                source={require('../../../assets/anim_svg/empty_bottle.json')}
+                autoPlay
+                loop
+              />
+            </View>
+          }
           keyExtractor={(item) => JSON.stringify(item)}
           ListFooterComponent={<NewItem onPress={() => setVisible(true)} />}
           renderItem={({item}) => <ReportsItem data={item} />}

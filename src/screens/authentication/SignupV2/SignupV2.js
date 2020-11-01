@@ -60,7 +60,7 @@ function SignupV2(props) {
   const SetCredential = (credentialName, value) => {
     const nameReg = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
     const emailReg = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    const passReg = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const passReg = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[#@.\-\$!])(?=.*[a-zA-Z]).{8,}$/;
     const phoneReg = /^[1-9]{1}\d{9}$/;
     const cityReg = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
     const countryReg = /^[a-zA-Z]+\s?[a-zA-Z]+$/;
@@ -93,7 +93,6 @@ function SignupV2(props) {
         match = value.length >= 8;
         break;
     }
-    console.log(credentialName, match);
     setError({...error, [`${credentialName}`]: match});
     setCredential({...credential, [`${credentialName}`]: value});
   };

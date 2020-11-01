@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {createRef, useEffect, useRef, useState} from 'react';
 import {View, Text, FlatList, TouchableOpacity, ScrollView} from 'react-native';
 import {
   NEW_HEADER_TEXT,
@@ -16,15 +16,18 @@ import {GetAppointments} from '../../../reduxV2/action/DoctorAction';
 import {RemoveAppointment} from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
 import calculateMonths from '../../../utils/calculateMonths';
+import LottieView from 'lottie-react-native';
 
 const week = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 export default function Appointments({navigation}) {
   const [months, setMonths] = useState([]);
   const [month, setMonth] = useState([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const dispatch = useDispatch();
   const today = new Date();
+  const [selectedMonthDateObj, setSelectedMonthDateObj] = useState(today);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const dateListRef = useRef();
+  const dispatch = useDispatch();
   const getMonths = () => {
     const monthList = moment.months();
     const coming12Months = monthList
@@ -33,6 +36,27 @@ export default function Appointments({navigation}) {
     setMonths(coming12Months);
   };
   useEffect(() => {
+    const wait = new Promise((resolve) => {
+      setTimeout(resolve, 1000);
+    });
+    wait
+      .then(() => {
+        const now_scroll_index = selectedMonthDateObj.getDate() - 1;
+        // console.log(selectedMonthDateObj.getDate());
+        // console.log(selectedIndex);
+        // console.log('now scroll index', now_scroll_index);
+        dateListRef.current.scrollToIndex({
+          index: now_scroll_index,
+          animated: true,
+          viewPosition:
+            now_scroll_index < 25 ? 0.5 : now_scroll_index < 6 ? 0 : 1,
+        });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [month]);
+  useEffect(() => {
     getMonths();
   }, []);
   useEffect(() => {
@@ -40,7 +64,15 @@ export default function Appointments({navigation}) {
     const MONTH_INDEX = d.getMonth();
     const monthIndex = (selectedIndex + MONTH_INDEX) % 12;
     const m = calculateMonths(monthIndex);
-    setMonth(m);
+    const month_filtered = m.filter((item) => item.date !== '');
+
+    const MonthDateObj = new Date(
+      d.getFullYear(),
+      monthIndex,
+      monthIndex === MONTH_INDEX ? d.getDate() : 1,
+    );
+    setSelectedMonthDateObj(MonthDateObj);
+    setMonth(month_filtered);
   }, [selectedIndex]);
   const {
     appointments,
@@ -151,6 +183,12 @@ export default function Appointments({navigation}) {
         <FlatList
           horizontal
           data={month}
+          ref={dateListRef}
+          // initialScrollIndex={`${selectedMonthDateObj.getDate() - 1}`}
+          // onScrollToIndexFailed={() => {
+          //   console.log('failed');
+          // }}
+          keyExtractor={(item) => `${item.date}`}
           renderItem={({item}) => {
             if (!item.date) return null;
             return (
@@ -167,11 +205,12 @@ export default function Appointments({navigation}) {
       <ScrollView>
         <View
           style={{
-            backgroundColor: '#f8f8f8',
+            backgroundColor: '#fff',
             paddingHorizontal: '5%',
+            paddingTop: '4%',
             paddingBottom: '2%',
           }}>
-          <Text
+          {/* <Text
             style={{
               fontSize: 22,
               marginTop: '4%',
@@ -179,10 +218,26 @@ export default function Appointments({navigation}) {
               marginLeft: '1%',
             }}>
             10:00 am - 12:00 pm
-          </Text>
+          </Text> */}
           {gettingAppointment ? (
             <ListingWithThumbnailLoader />
-          ) : appointments.length === 0 ? null : (
+          ) : appointments.length === 0 ? (
+            <View
+              style={{
+                height: 200,
+                width: '70%',
+                alignSelf: 'center',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <LottieView
+                style={{height: '100%', width: '100%'}}
+                autoPlay
+                loop
+                source={require('../../../assets/anim_svg/empty_bottle.json')}
+              />
+            </View>
+          ) : (
             appointments?.map((item) => {
               return (
                 <Card

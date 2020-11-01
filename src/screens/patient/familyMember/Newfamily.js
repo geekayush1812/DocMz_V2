@@ -12,7 +12,7 @@ import {
   AddFamilyMember,
 } from '../../../reduxV2/action/PatientAction';
 import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
-
+import LottieView from 'lottie-react-native';
 const NewFamily = ({navigation}) => {
   const [addModal, setModal] = useState(false);
   const {familyMember, isPatientAccountReducerLoading, patient} = useSelector(
@@ -112,7 +112,24 @@ const NewFamily = ({navigation}) => {
           <FlatList
             keyExtractor={(item) => item._id}
             data={familyMember}
-            ListEmptyComponent={<Text>No member found</Text>}
+            ListEmptyComponent={
+              <View
+                style={{
+                  height: 200,
+                  width: '70%',
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <LottieView
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../../../assets/anim_svg/empty_bottle.json')}
+                  autoPlay
+                  loop
+                />
+                <Text>No Family member found</Text>
+              </View>
+            }
             style={{flex: 1, padding: 20}}
             renderItem={({item}) => <FamilyItem data={item} />}
             ListFooterComponent={<NewItem onPress={() => setModal(true)} />}

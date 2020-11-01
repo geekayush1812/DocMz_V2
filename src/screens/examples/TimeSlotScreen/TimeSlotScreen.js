@@ -45,6 +45,7 @@ export default function TimeSlotScreen({navigation, route}) {
 
   const data = route.params.data;
   const {_id} = data;
+
   useEffect(() => {
     !isPatientAccountReducerLoading && dispatch(GetFamilyMember(patient.meta));
   }, []);
@@ -80,6 +81,12 @@ export default function TimeSlotScreen({navigation, route}) {
       // getDateView(selectedStartDate, selectedEndDate);
     }
   }
+  useEffect(() => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    getDateView(today.toISOString(), tomorrow.toISOString());
+  }, []);
 
   // const onDateChange = (date, type) => {
   //   if (type === 'END_DATE') {

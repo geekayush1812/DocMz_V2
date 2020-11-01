@@ -30,7 +30,7 @@ import NetInfo from '@react-native-community/netinfo';
 import {RowLoader} from '../../../components/atoms/Loader/Loader';
 import moment from 'moment';
 import {Colors} from '../../../styles/colorsV2';
-
+import LottieView from 'lottie-react-native';
 function Dashboard({navigation}) {
   const {
     recentPatient,
@@ -112,6 +112,7 @@ function Dashboard({navigation}) {
         style={{flex: 1, backgroundColor: Colors[theme].primary_background}}>
         <TopNavBar
           navigation={navigation}
+          onLeftButtonPress={() => {}}
           headerText={'My Dashboard'}
           LeftComp={
             <ProfilePic
@@ -302,7 +303,13 @@ function Dashboard({navigation}) {
             </View>
             {gettingAppointment ? (
               <RowLoader />
-            ) : appointments.length === 0 ? null : (
+            ) : appointments.length === 0 ? (
+              <LottieView
+                source={require('../../../assets/anim_svg/empty_bottle.json')}
+                autoPlay
+                loop={false}
+              />
+            ) : (
               appointments?.map((item) => {
                 const {patient} = item;
                 return (
@@ -427,94 +434,112 @@ function Dashboard({navigation}) {
                 Recent Patients
               </Text>
             </View>
-            {recentPatient.map((item) => {
-              if (item) {
-                const {patient, _id} = item;
-                return patient ? (
-                  <View
-                    key={_id}
-                    style={{
-                      width: '90%',
-                      // backgroundColor: 'red',
-                      alignSelf: 'center',
-                      borderBottomWidth: 1.5,
-                      borderColor: 'rgba(0,0,0,0.08)',
-                      paddingVertical: '4%',
-                    }}>
+            {recentPatient.length === 0 ? (
+              <View
+                style={{
+                  height: 100,
+                  width: 100,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <LottieView
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../../../assets/anim_svg/empty_bottle.json')}
+                  autoPlay
+                  // loop={false}
+                />
+              </View>
+            ) : (
+              recentPatient.map((item) => {
+                if (item) {
+                  const {patient, _id} = item;
+                  return patient ? (
                     <View
+                      key={_id}
                       style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
+                        width: '90%',
+                        // backgroundColor: 'red',
+                        alignSelf: 'center',
+                        borderBottomWidth: 1.5,
+                        borderColor: 'rgba(0,0,0,0.08)',
+                        paddingVertical: '4%',
                       }}>
-                      <View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                          }}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}>
+                        <View>
                           <View
                             style={{
-                              height: 8,
-                              width: 8,
-                              borderRadius: 10,
-                              backgroundColor: '#efa860',
-                              marginRight: '2%',
-                            }}></View>
-                          <Text
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                            }}>
+                            <View
+                              style={{
+                                height: 8,
+                                width: 8,
+                                borderRadius: 10,
+                                backgroundColor: '#efa860',
+                                marginRight: '2%',
+                              }}></View>
+                            <Text
+                              style={{
+                                fontWeight: 'bold',
+                              }}>{`${patient.firstName} ${patient.lastName}`}</Text>
+                            <Text style={{fontSize: FONT_SIZE_12}}>
+                              {' '}
+                              - General Checkup
+                            </Text>
+                          </View>
+                          <View
                             style={{
-                              fontWeight: 'bold',
-                            }}>{`${patient.firstName} ${patient.lastName}`}</Text>
-                          <Text style={{fontSize: FONT_SIZE_12}}>
-                            {' '}
-                            - General Checkup
-                          </Text>
+                              flexDirection: 'row',
+                              paddingHorizontal: '6%',
+                              alignItems: 'center',
+                            }}>
+                            <Text
+                              style={{
+                                fontSize: FONT_SIZE_12,
+                                marginRight: '4%',
+                                fontWeight: 'bold',
+                              }}>
+                              10:00 am
+                            </Text>
+                            <Text style={{fontWeight: '900', color: '#efa860'}}>
+                              |
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: FONT_SIZE_12,
+                                marginLeft: '4%',
+                                color: '#a09e9e',
+                                fontWeight: 'bold',
+                              }}>
+                              30 mins
+                            </Text>
+                          </View>
                         </View>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            paddingHorizontal: '6%',
-                            alignItems: 'center',
+                        <TouchableOpacity
+                          onPress={() => {
+                            navigation.navigate('PatientDetails', {patient});
                           }}>
-                          <Text
-                            style={{
-                              fontSize: FONT_SIZE_12,
-                              marginRight: '4%',
-                              fontWeight: 'bold',
-                            }}>
-                            10:00 am
-                          </Text>
-                          <Text style={{fontWeight: '900', color: '#efa860'}}>
-                            |
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: FONT_SIZE_12,
-                              marginLeft: '4%',
-                              color: '#a09e9e',
-                              fontWeight: 'bold',
-                            }}>
-                            30 mins
-                          </Text>
-                        </View>
+                          <MaterialIcon
+                            name="chevron-right"
+                            size={28}
+                            color={'#a09e9e'}
+                          />
+                        </TouchableOpacity>
                       </View>
-                      <TouchableOpacity
-                        onPress={() => {
-                          navigation.navigate('PatientDetails', {patient});
-                        }}>
-                        <MaterialIcon
-                          name="chevron-right"
-                          size={28}
-                          color={'#a09e9e'}
-                        />
-                      </TouchableOpacity>
                     </View>
-                  </View>
-                ) : null;
-              }
-              return null;
-            })}
+                  ) : null;
+                }
+                return null;
+              })
+            )}
           </View>
         </ScrollView>
         {!isConnected && (

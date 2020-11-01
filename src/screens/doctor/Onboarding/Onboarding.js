@@ -38,10 +38,11 @@ function Onboarding({navigation}) {
   const {userData, isLoggedin, isDoctor} = useSelector(
     (state) => state.AuthReducer,
   );
+  console.log(userData);
   const {specialtyLoading, specialty, doctorProfile} = useSelector(
     (state) => state.DoctorReducer,
   );
-
+  console.log('doctor profile', doctorProfile);
   const [imageSource, setImageSource] = useState(
     require('../../../assets/images/dummy_profile.png'),
   );
@@ -199,9 +200,9 @@ function Onboarding({navigation}) {
               }}>
               <Picker
                 selectedValue={city}
-                style={{width: '100%', color: '#8e9393'}}
+                style={{width: '100%'}}
                 onValueChange={(itemValue, itemIndex) => setCity(itemValue)}>
-                <Picker.Item label="Select City" value="" />
+                <Picker.Item color={'#8e9393'} label="Select City" value="" />
                 <Picker.Item label="Bangalore" value="bangalore" />
                 <Picker.Item label="Pune" value="pune" />
               </Picker>
@@ -212,11 +213,11 @@ function Onboarding({navigation}) {
               }}>
               <Picker
                 selectedValue={specialitySelected}
-                style={{width: '100%', color: '#8e9393'}}
+                style={{width: '100%'}}
                 onValueChange={(itemValue, itemIndex) =>
                   setSpecialitySelected(itemValue)
                 }>
-                <Picker.Item label="Speciality" value="" />
+                <Picker.Item color={'#8e9393'} label="Speciality" value="" />
                 {specialty.map((item) => {
                   return <Picker.Item label={item} value={item} />;
                 })}
@@ -284,10 +285,18 @@ function Onboarding({navigation}) {
               }}>
               <Picker
                 selectedValue={degree}
-                style={{width: '100%', color: '#8e9393'}}
+                mode={'dropdown'}
+                style={{width: '100%'}}
                 onValueChange={(itemValue, itemIndex) => setDegree(itemValue)}>
-                <Picker.Item label="Degree" value="" />
+                <Picker.Item color={'#8e9393'} label="Degree" value="" />
                 <Picker.Item label="MBBS" value="MBBS" />
+                <Picker.Item label="BHMS" value="BHMS" />
+                <Picker.Item label="DHMS" value="DHMS" />
+                <Picker.Item label="B.V.Sc & AH" value="B.V.Sc & AH" />
+                <Picker.Item label="D.Pharma" value="D.Pharma" />
+                <Picker.Item label="BMLT" value="BMLT" />
+                <Picker.Item label="BDS" value="BDS" />
+                <Picker.Item label="BAMS" value="BAMS" />
                 <Picker.Item label="MS" value="MS" />
               </Picker>
             </View>
@@ -311,11 +320,12 @@ function Onboarding({navigation}) {
               }}>
               <Picker
                 selectedValue={year}
-                style={{width: '100%', color: '#8e9393'}}
+                mode={'dropdown'}
+                style={{width: '100%'}}
                 onValueChange={(itemValue, itemIndex) =>
                   setYearSelected(itemValue)
                 }>
-                <Picker.Item label="Year" value="" />
+                <Picker.Item color={'#8e9393'} label="Year" value="" />
                 <Picker.Item label="2020" value="2020" />
                 <Picker.Item label="2019" value="2019" />
                 <Picker.Item label="2018" value="2018" />
@@ -355,6 +365,7 @@ function Onboarding({navigation}) {
                 borderColor: '#e0e0e0',
               }}>
               <TextInput
+                keyboardType={'number-pad'}
                 onChangeText={(text) => {
                   setRegistrationNumber(text);
                 }}
@@ -370,11 +381,15 @@ function Onboarding({navigation}) {
               }}>
               <Picker
                 selectedValue={registrationCouncil}
-                style={{width: '100%', color: '#8e9393'}}
+                style={{width: '100%'}}
                 onValueChange={(itemValue, itemIndex) =>
                   setRegistrationCouncil(itemValue)
                 }>
-                <Picker.Item label="Registration Council" value="" />
+                <Picker.Item
+                  color={'#8e9393'}
+                  label="Registration Council"
+                  value=""
+                />
                 <Picker.Item label="Council XYZ1" value="CouncilXYZ1" />
                 <Picker.Item label="Council XYZ2" value="CouncilXYZ2" />
               </Picker>
@@ -386,11 +401,16 @@ function Onboarding({navigation}) {
               }}>
               <Picker
                 selectedValue={registrationYear}
-                style={{width: '100%', color: '#8e9393'}}
+                mode={'dropdown'}
+                style={{width: '100%'}}
                 onValueChange={(itemValue, itemIndex) =>
                   setRegistrationYear(itemValue)
                 }>
-                <Picker.Item label="Registration Year" value="" />
+                <Picker.Item
+                  color={'#8e9393'}
+                  label="Registration Year"
+                  value=""
+                />
                 <Picker.Item label="2020" value="2020" />
                 <Picker.Item label="2019" value="2019" />
                 <Picker.Item label="2018" value="2018" />
@@ -484,11 +504,16 @@ function Onboarding({navigation}) {
               }}>
               <Picker
                 selectedValue={yearOfExperience}
-                style={{width: '100%', color: '#8e9393', fontWeight: '100'}}
+                mode={'dropdown'}
+                style={{width: '100%', fontWeight: '100'}}
                 onValueChange={(itemValue, itemIndex) =>
                   setYearOfExperience(itemValue)
                 }>
-                <Picker.Item label="Year of Experience" value="" />
+                <Picker.Item
+                  color="#8e9393"
+                  label="Year of Experience"
+                  value=""
+                />
                 <Picker.Item label="0 year" value="0" />
                 <Picker.Item label="1 year" value="1" />
                 <Picker.Item label="2 year" value="2" />

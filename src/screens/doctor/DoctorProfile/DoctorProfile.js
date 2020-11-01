@@ -1,4 +1,4 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -25,7 +25,7 @@ import {
 } from '../../../styles/colors';
 import ReviewItem from '../../../components/molecules/Reviews/ReviewItem';
 import {Host} from '../../../utils/connection';
-
+import {useFocusEffect} from '@react-navigation/native';
 const dummyFeeback = [
   {
     name: 'Maggie Rhee',
@@ -57,22 +57,40 @@ function DoctorProfile(props) {
   const [tab, setTab] = useState('about');
   const [feedback, setFeedback] = useState(0);
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: 4,
-        duration: 700,
-        easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 4,
-        duration: 1300,
-        easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      Animated.parallel([
+        Animated.timing(translateY, {
+          toValue: 4,
+          duration: 700,
+          easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 4,
+          duration: 1300,
+          easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
+          useNativeDriver: true,
+        }),
+      ]).start();
+      return () => {
+        Animated.parallel([
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 200,
+            easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 300,
+            easing: Easing.bezier(0.21, 0.38, 0.68, 0.99),
+            useNativeDriver: true,
+          }),
+        ]).start();
+      };
+    }, []),
+  );
   const {data} = route.params;
   const {isLoggedin} = useSelector((state) => state.AuthReducer);
   const _checkLogedinAndDoTheStuff = () => {
@@ -129,15 +147,17 @@ function DoctorProfile(props) {
           ],
           flexDirection: 'row',
           alignItems: 'center',
-          marginTop: '12%',
+          marginTop: '10%',
           marginHorizontal: '7%',
+          paddingVertical: '5%',
           // height: 135,
           // borderWidth: 1,
         }}>
         <View
           style={{
             height: 140,
-            width: 140,
+            width: '45%',
+            backgroundColor: 'blue',
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 70,
@@ -164,11 +184,9 @@ function DoctorProfile(props) {
 
         <View
           style={{
-            justifyContent: 'space-evenly',
             flex: 1,
             marginLeft: '5%',
-            alignSelf: 'stretch',
-            // borderWidth: 1,
+            // backgroundColor: 'red',
           }}>
           <Text
             style={{
