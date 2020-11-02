@@ -10,18 +10,18 @@ import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loade
 import LottieView from 'lottie-react-native';
 const Meds = () => {
   const [modalVisible, setVisible] = useState(false);
-  const {medicines, gettingMedicine, addMedicineLoading} = useSelector(
+  const {medicines, gettingMedicine, addMedicineLoading, patient} = useSelector(
     (state) => state.PatientReducer,
   );
-  const {userData} = useSelector((state) => state.AuthReducer);
+
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(GetMedicine(userData.meta));
+    dispatch(GetMedicine(patient.meta._id));
   }, []);
   const onUpdate = (medicineData) => {
     const {name, amount, description} = medicineData;
     const obj = {
-      metaId: userData.meta,
+      metaId: patient.meta._id,
       medicines: {
         name,
         description,

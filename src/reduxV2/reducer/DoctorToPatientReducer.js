@@ -9,8 +9,6 @@ const initialState = {
   searchDoctorsLoading: false,
   superDocs: [],
   superDocsLoading: false,
-  uploadingImage: false,
-  errorUploadingImage: '',
 };
 
 const DoctorReducer = (state = initialState, action) => {
@@ -86,25 +84,8 @@ const DoctorReducer = (state = initialState, action) => {
         searchDoctorsLoading: false,
         superDocs: [],
         superDocsLoading: false,
-        uploadingImage: false,
-        errorUploadingImage: '',
       };
-    case 'UPLOADING_IMAGE':
-      return {
-        ...state,
-        uploadingImage: true,
-      };
-    case 'UPLOADED_IMAGE':
-      return {
-        ...state,
-        uploadingImage: false,
-      };
-    case 'ERROR_UPLOADING_IMAGE':
-      return {
-        ...state,
-        uploadingImage: false,
-        errorUploadingImage: action.payload,
-      };
+
     default:
       return state;
   }

@@ -22,8 +22,7 @@ import {
 } from '../../../styles/typography';
 import ExpandableList from '../../../components/molecules/ExpandableList/ExpandableList';
 function PatientDetails({navigation, route}) {
-  const {patient} = route.params;
-  console.log(patient);
+  const {patient: patientRouteInfo} = route.params;
   const HeightExpand = useRef(new Animated.Value(0)).current;
   const [expandedHeight, setExpandedHeight] = useState(0);
   const [addReasonModel, setAddReasonModel] = useState(false);
@@ -59,7 +58,9 @@ function PatientDetails({navigation, route}) {
         onUpdate={(temp) => {}}
       />
       <View style={{flex: 1, backgroundColor: '#fff'}}>
-        <TopNavBar headerText={'Patients Details'}></TopNavBar>
+        <TopNavBar
+          navigation={navigation}
+          headerText={'Patients Details'}></TopNavBar>
         <ScrollView
           contentContainerStyle={{
             paddingBottom: '4%',
@@ -143,9 +144,7 @@ function PatientDetails({navigation, route}) {
               borderColor: 'rgba(0,0,0,0.08)',
               borderRadius: 10,
             }}
-            title={'Symptoms'}>
-            <Text>hello</Text>
-          </ExpandableList>
+            title={'Symptoms'}></ExpandableList>
           <ExpandableList
             style={{
               paddingVertical: '5%',

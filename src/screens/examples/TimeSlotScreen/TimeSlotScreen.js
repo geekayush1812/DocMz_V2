@@ -67,6 +67,9 @@ export default function TimeSlotScreen({navigation, route}) {
   };
 
   async function onDateChange(date, type) {
+
+
+    
     if (type == 'START_DATE') {
       await setStartDate(date);
       console.log('in1', date);
