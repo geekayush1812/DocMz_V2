@@ -105,11 +105,12 @@ function Dashboard({navigation}) {
   return (
     <>
       <StatusBar
-        backgroundColor={Colors[theme].primary_background}
-        barStyle={'dark-content'}
+        animated
+        backgroundColor={Colors.primary_background[theme]}
+        barStyle={theme === 'DARK' ? 'light-content' : 'dark-content'}
       />
       <View
-        style={{flex: 1, backgroundColor: Colors[theme].primary_background}}>
+        style={{flex: 1, backgroundColor: Colors.primary_background[theme]}}>
         <TopNavBar
           navigation={navigation}
           onLeftButtonPress={() => {}}
@@ -139,7 +140,7 @@ function Dashboard({navigation}) {
               style={{
                 height: 'auto',
                 width: '55%',
-                backgroundColor: '#f4f4f4',
+                backgroundColor: Colors.ternary_color[theme],
                 borderRadius: 15,
                 paddingHorizontal: '5%',
                 paddingVertical: '4%',
@@ -158,7 +159,7 @@ function Dashboard({navigation}) {
                     height: 30,
                     width: 30,
                     borderRadius: 30,
-                    backgroundColor: '#efa860',
+                    backgroundColor: Colors.ctx_primary_color[theme],
                     justifyContent: 'center',
                     alignItems: 'center',
                   }}>
@@ -304,11 +305,20 @@ function Dashboard({navigation}) {
             {gettingAppointment ? (
               <RowLoader />
             ) : appointments.length === 0 ? (
-              <LottieView
-                source={require('../../../assets/anim_svg/empty_bottle.json')}
-                autoPlay
-                loop={false}
-              />
+              <View
+                style={{
+                  height: 100,
+                  width: 100,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <LottieView
+                  source={require('../../../assets/anim_svg/empty_bottle.json')}
+                  autoPlay
+                  loop
+                />
+              </View>
             ) : (
               appointments?.map((item) => {
                 const {patient} = item;
@@ -434,7 +444,7 @@ function Dashboard({navigation}) {
                 Recent Patients
               </Text>
             </View>
-            {recentPatient.length === 0 ? (
+            {recentPatient?.length === 0 ? (
               <View
                 style={{
                   height: 100,

@@ -252,7 +252,11 @@ function SignupV2(props) {
                 lastName != '' &&
                 firstName != ''
               ) {
-                nextpage(1);
+                if (!imageData) {
+                  setModal({text: 'You must upload a Profile picture'});
+                } else {
+                  nextpage(1);
+                }
               } else {
                 showModal(
                   lastName == '' && firstName == ''
@@ -271,6 +275,8 @@ function SignupV2(props) {
           <SignUpStep2Screen
             signupAs={signupAs}
             isLoading={signingUp}
+            imageData={imageData}
+            setModal={setModal}
             onPress={() => {
               signupAs === 'doctor' ? nextpage(2) : handleSubmit();
             }}

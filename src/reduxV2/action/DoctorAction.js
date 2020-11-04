@@ -182,15 +182,21 @@ export const GetAppointments = (patientId) => (dispatch) => {
  *  End Appointment list
  */
 
-export const GetDoctorProfile = (id) => {
+export const GetDoctorProfile = (
+  id,
+  success = () => {},
+  failure = () => {},
+) => {
   return (dispatch) => {
     dispatch(startLoading());
 
     axios.get(`${Host}/doctors/getdoc/${id}`).then((result) => {
       if (result.data.status) {
         dispatch(saveDoc(result.data.data));
+        success();
       } else {
         console.log('someting wrong');
+        failure();
         dispatch(haveingError(result.data.message));
       }
     });
@@ -380,7 +386,12 @@ const errorUploadingImage = (e) => {
   };
 };
 
-export const UploadProfilePic = (id, ImageData, success = () => {}) => {
+export const UploadProfilePic = (
+  id,
+  ImageData,
+  success = () => {},
+  failure = () => {},
+) => {
   return (dispatch) => {
     dispatch(startUploadingImage());
     const Image = {
@@ -399,10 +410,11 @@ export const UploadProfilePic = (id, ImageData, success = () => {}) => {
     axios
       .post(`${Host}/doctors/upload/image`, data, config)
       .then((responseStatus) => {
-        success();
         dispatch(uploadedImage());
+        success();
       })
       .catch((err) => {
+        failure();
         dispatch(errorUploadingImage(err));
       });
   };

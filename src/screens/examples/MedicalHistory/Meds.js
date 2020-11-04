@@ -71,9 +71,10 @@ const Meds = () => {
             />
           </View>
         ) : (
-          medicines.map((item) => (
-            <MedsItem key={item._id} data={item.medicines} />
-          ))
+          medicines?.map((item) => {
+            if (!item) return null;
+            return <MedsItem key={item._id} data={item.medicines} />;
+          })
         )}
         {/* </View>
         ))} */}

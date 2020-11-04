@@ -10,6 +10,7 @@ import {
   TouchableHighlight,
   ScrollView,
   TouchableOpacity,
+  Easing,
 } from 'react-native';
 import {ButtonGroup} from 'react-native-elements';
 import Moment from 'moment';
@@ -42,70 +43,48 @@ export default function AppoinmentSlider({
     setselectedIndex(i);
   };
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: (evt, gestureState) => true,
-    onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-    onMoveShouldSetPanResponder: (evt, gestureState) => true,
-    onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-    onPanResponderGrant: (e, gestureState) => {
-      val.setOffset(val.__getValue());
-      console.log(val.__getValue());
-    },
-    onPanResponderMove: (e, gestureState) => {
-      console.log(gestureState.dy, ' ', height * 0.25);
-      if (gestureState.moveY <= height * 0.6) {
-        // if (!pos || gestureState.dy > 0) {
-        val.setValue(gestureState.dy);
-        // }
-      }
-    },
-    onPanResponderRelease: (e, gestureState) => {
-      if (gestureState.dy < 0) {
-        console.log('in1');
-        pos == false ? val.setValue(height * -0.6) : null;
-        setPos(true);
-      } else if (gestureState.dy > 0) {
-        console.log('in2');
-        pos ? val.setValue(height * 0.6) : val.setValue(0);
-        setPos(false);
-      }
-      val.flattenOffset();
-    },
-  });
-
-  //try this one
-
-  // const panResponder = useRef(
-  //   PanResponder.create({
-  //     onStartShouldSetPanResponder: (evt, gestureState) => true,
-  //     onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-  //     onMoveShouldSetPanResponder: (evt, gestureState) => true,
-  //     onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-  //     onPanResponderGrant: (evt, gestureState) => {
-  //       panning.setOffset(panning.__getValue());
-  //     },
-  //     onPanResponderMove: (evt, gestureState) => {
-  //       const scroll = panning.__getValue();
-  //       if (scroll > 10 || gestureState.dy > 0)
-  //         panning.setValue(gestureState.dy);
-  //       if (scroll < 0) panning.setOffset(0);
-
-  //       // console.log('%%%%%%%%%%');
-  //       // console.log(scroll <= height * 0.6);
-  //       // console.log(scroll);
-  //       // console.log(height * 0.6);
-  //     },
-  //     onPanResponderTerminationRequest: (evt, gestureState) => true,
-  //     onPanResponderRelease: (evt, gestureState) => {
-  //       if (!(panning.__getValue() > height * 0.6))
-  //         panning.setOffset(panning.__getValue());
-  //       panning.setValue(0);
-  //     },
-  //     onShouldBlockNativeResponder: (evt, gestureState) => {
-  //       return true;
-  //     },
-  //   }),
-  // ).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onPanResponderGrant: (evt, gestureState) => {
+        val.setOffset(val._value);
+      },
+      onPanResponderMove: Animated.event([null, {dy: val}]),
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        if (gestureState.dy > 0) {
+          val.flattenOffset();
+          Animated.timing(val, {
+            toValue: height * 0.6,
+            duration: 400,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            val.setValue(height * 0.6);
+            val.setOffset(0);
+          });
+        } else {
+          val.flattenOffset();
+          Animated.timing(val, {
+            toValue: height * 0.01,
+            duration: 400,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            val.setValue(height * 0.01);
+            val.setOffset(0);
+          });
+        }
+        // val.flattenOffset();
+      },
+      onShouldBlockNativeResponder: (evt, gestureState) => {
+        return true;
+      },
+    }),
+  ).current;
 
   const bookAppointment = (slot) => {
     console.log(slot._id);
@@ -121,8 +100,7 @@ export default function AppoinmentSlider({
       style={{
         ...StyleSheet.absoluteFill,
         backgroundColor: PRIMARY_BACKGROUND,
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
+        borderRadius: 30,
         paddingHorizontal: 10,
         paddingVertical: 10,
         width: width,
@@ -131,15 +109,22 @@ export default function AppoinmentSlider({
         zIndex: 9999,
         elevation: 2,
       }}>
-      <Animated.View style={{height: 50}} {...panResponder.panHandlers}>
+      <Animated.View
+        style={{
+          height: 50,
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        {...panResponder.panHandlers}>
         <View
           style={{
             backgroundColor: NEW_PRIMARY_COLOR,
             height: 4,
             width: 75,
             borderRadius: 5,
-            marginBottom: 50,
-            marginTop: 30,
+            marginBottom: 10,
+            marginTop: 10,
             justifyContent: 'center',
             alignSelf: 'center',
           }}

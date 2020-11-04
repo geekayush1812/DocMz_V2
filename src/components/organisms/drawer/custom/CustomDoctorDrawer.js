@@ -26,6 +26,7 @@ import {
 } from '../../../../reduxV2/action/DoctorAction';
 import {Host} from '../../../../utils/connection';
 import ImagePicker from 'react-native-image-picker';
+import ProgressIndicator from '../../../atoms/ProgressIndicator/ProgressIndicator';
 
 const Navigation = [
   // {
@@ -106,6 +107,7 @@ const CustomDoctorDrawer = (props) => {
   const [imageSource, setImageSource] = useState(
     require('../../../../assets/images/dummy_profile.png'),
   );
+  const [completed, setCompleted] = useState(0);
 
   const dispatch = useDispatch();
   const onUpdateDoctor = () => {
@@ -120,6 +122,22 @@ const CustomDoctorDrawer = (props) => {
   const onBlock = () => {
     dispatch(BlockDoctor(userData._id));
   };
+
+  useEffect(() => {
+    const total = Object.keys(doctorProfile).length;
+    let c = 0;
+    for (let i in doctorProfile) {
+      const obj = doctorProfile[i];
+      if (Array.isArray(obj) || typeof obj === 'string') {
+        if (obj.length === 0) c++;
+      } else if (typeof obj === 'object') {
+        if (Object.keys(obj).length === 0) c++;
+      } else {
+        if (!doctorProfile[i]) c++;
+      }
+    }
+    setCompleted((1 - c / total) * 100);
+  }, []);
 
   // if (data && isLogedin && !isDoctor && data.picture) {
   //   imageSource = {
@@ -369,8 +387,8 @@ const CustomDoctorDrawer = (props) => {
               </View>
             </TouchableOpacity>
           </View>
-          <StepsTracker
-            text="Complete Your Profile (30%)"
+          <ProgressIndicator
+            text={`Complete Your Profile (${Math.floor(completed)}%)`}
             textStyle={{
               fontSize: 14,
               color: '#F8F7FF',
@@ -379,10 +397,9 @@ const CustomDoctorDrawer = (props) => {
             }}
             style={{
               width: '80%',
-              flexDirection: 'column-reverse',
-              marginTop: '10%',
+              marginTop: '8%',
             }}
-            completed={33}
+            completed={70}
             completedColor={'#EA508F'}
             incompletedColor={'#FFFFFF'}
           />

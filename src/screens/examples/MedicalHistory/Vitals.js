@@ -81,7 +81,7 @@ const Vitals = () => {
 
   useEffect(() => {
     const ar = vitalsInfo?.bloodPressure?.map((item) => Number(item.value));
-    setBloodPressure(ar);
+    if (Array.isArray(ar)) setBloodPressure(ar);
   }, [vitalsInfo.bloodPressure]);
 
   return (
@@ -195,7 +195,7 @@ const Vitals = () => {
               <View>
                 <Text style={styles.text3}>
                   Updated on :{' '}
-                  {moment(vitalsInfo.weight.date).format("DD MMM 'YY")}
+                  {moment(vitalsInfo.weight?.date).format("DD MMM 'YY")}
                 </Text>
                 <Text style={styles.text2}>BMI 26.0</Text>
               </View>
@@ -231,7 +231,7 @@ const Vitals = () => {
                 <Text style={styles.text2}>({vitalsInfo.height.value} cm)</Text>
                 <Text style={styles.text3}>
                   Recorded on :{' '}
-                  {moment(vitalsInfo.height.date).format("DD MMM 'YY")}
+                  {moment(vitalsInfo.height?.date).format("DD MMM 'YY")}
                 </Text>
               </View>
               <TouchableOpacity onPress={() => setHeightModal(true)}>
@@ -290,7 +290,7 @@ const Vitals = () => {
 
               <Text style={styles.text3}>
                 Updated on :
-                {moment(vitalsInfo.bloodPressure.date).format("DD MMM 'YY")}
+                {moment(vitalsInfo.bloodPressure?.date).format("DD MMM 'YY")}
               </Text>
             </View>
 
@@ -367,7 +367,7 @@ const Vitals = () => {
 
               <Text style={styles.text3}>
                 Updated on :{' '}
-                {moment(vitalsInfo.heartRate.date).format("DD MMM 'YY")}
+                {moment(vitalsInfo.heartRate?.date).format("DD MMM 'YY")}
               </Text>
             </View>
 
@@ -408,7 +408,7 @@ const Vitals = () => {
               <View>
                 <Text style={styles.text3}>
                   Updated on :{' '}
-                  {moment(vitalsInfo.temperature.date).format("DD MMM 'YY")}
+                  {moment(vitalsInfo.temperature?.date).format("DD MMM 'YY")}
                 </Text>
                 <Text style={styles.text2}>Fever</Text>
               </View>

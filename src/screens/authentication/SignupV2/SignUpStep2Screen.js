@@ -139,16 +139,12 @@ export default function SignUpStep2Screen(props) {
               },
               Container: {
                 width: '70%',
-                height: 46,
-                borderRadius: 23,
+                borderRadius: 80,
+                marginTop: '10%',
                 backgroundColor: SECONDARY_COLOR,
-                alignSelf: 'center',
-                marginTop: 40,
-                elevation: 2,
-                marginBottom: 5,
-                flexDirection: 'row',
-                alignItems: 'center',
                 justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
               },
             }}
             text={signupAs === 'doctor' ? 'Next' : 'CONFIRM'}

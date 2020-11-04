@@ -1,38 +1,53 @@
-import {useSelector} from 'react-redux';
-
 export const Colors = {
-  PRIMARY: {
-    primary_color: '#047b7b',
-    secondary_color: '#e6f7f5',
-    primary_background: '#fff',
-    primary_text_color: '#000',
-    secondary_text_color: '#fff',
-    ctx_primary_color: '#efa860',
-    ctx_secondary_color: '#37acac',
-    damp_color: '#a09e9e',
-    pop_color: '#ef786e',
+  primary_color: {
+    PRIMARY: '#047b7b',
+    DARK: '#00818a',
+    MINI: '#1e90ff',
   },
-  DARK: {
-    primary_color: '#00818a',
-    secondary_color: '#404b69',
-    primary_background: '#121212',
-    primary_text_color: '#f1f1f1',
-    secondary_text_color: '#404b69',
-    ctx_primary_color: '#dbedf3',
-    ctx_secondary_color: '#ced6d9',
-    damp_color: '#a09e9e',
-    pop_color: '#ef786e',
+  secondary_color: {
+    PRIMARY: '#e6f7f5',
+    DARK: '#404b69',
+    MINI: '#85c3ff',
   },
-  MINI: {
-    primary_color: '#1e90ff',
-    secondary_color: '#85c3ff',
-    primary_background: '#fff',
-    primary_text_color: '#000',
-    secondary_text_color: '#fff',
-    ctx_primary_color: '#ffa502',
-    ctx_secondary_color: '#70a1ff',
-    damp_color: '#57606f',
-    pop_color: '#ff4757',
+  ternary_color: {
+    PRIMARY: '#f4f4f4',
+    DARK: '#424242',
+    MINI: '#85c3ff',
+  },
+  primary_background: {
+    PRIMARY: '#fff',
+    DARK: '#121212',
+    MINI: '#fff',
+  },
+  primary_text_color: {
+    PRIMARY: '#000',
+    DARK: '#757575',
+    MINI: '#000',
+  },
+  secondary_text_color: {
+    PRIMARY: '#fff',
+    DARK: '#eee',
+    MINI: '#fff',
+  },
+  ctx_primary_color: {
+    PRIMARY: '#efa860',
+    DARK: '#212121',
+    MINI: '#ffa502',
+  },
+  ctx_secondary_color: {
+    PRIMARY: '#37acac',
+    DARK: '#ced6d9',
+    MINI: '#70a1ff',
+  },
+  damp_color: {
+    PRIMARY: '#a09e9e',
+    DARK: '#a09e9e',
+    MINI: '#57606f',
+  },
+  pop_color: {
+    PRIMARY: '#ef786e',
+    DARK: '#ef786e',
+    MINI: '#ff4757',
   },
 };
 

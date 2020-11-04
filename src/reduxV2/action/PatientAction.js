@@ -293,7 +293,7 @@ export const resetPatientAccountReducer = () => {
   };
 };
 
-export const GetPatientInfo = (id) => {
+export const GetPatientInfo = (id, success = () => {}, failure = () => {}) => {
   return (dispatch) => {
     dispatch(startLoading());
 
@@ -303,11 +303,13 @@ export const GetPatientInfo = (id) => {
         if (result.data.status) {
           const data = result.data.data;
           dispatch(saveUserAccount(data));
+          success();
         } else {
           throw new Error('Internal Error!!');
         }
       })
       .catch((err) => {
+        failure();
         dispatch(havingError(err));
       });
   };

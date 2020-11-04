@@ -1,8 +1,10 @@
 import React from 'react';
 import {Animated, StyleSheet, Image, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
 
 import {PRIMARY, NEW_HEADER_TEXT} from '../../../styles/colors';
+import {Colors} from '../../../styles/colorsV2';
 
 import DmzText from '../../atoms/DmzText/DmzText';
 
@@ -12,21 +14,16 @@ function TopNavBar({
   headerText,
   LeftComp,
   RightComp,
-  isClap = false,
   navigation,
   style,
   hideRightComp,
   hideLeftComp,
 }) {
+  const {theme} = useSelector((state) => state.AuthReducer);
   return (
     <Animated.View
       style={[
         Styles.Container,
-        isClap && {
-          backgroundColor: PRIMARY,
-          height: 80,
-          marginTop: 0,
-        },
         hideLeftComp && hideRightComp ? {justifyContent: 'center'} : null,
         style ? style.Container : null,
       ]}>
@@ -52,7 +49,7 @@ function TopNavBar({
         style={[
           {
             fontSize: 20,
-            color: NEW_HEADER_TEXT,
+            color: Colors.primary_text_color[theme],
             alignSelf: 'center',
             fontFamily: 'Montserrat-Medium',
           },

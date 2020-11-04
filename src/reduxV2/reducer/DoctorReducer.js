@@ -73,6 +73,7 @@ const MyDoctorReducer = (state = inititalState, action) => {
         errorUploadingImage: '',
         blockingDoctor: false,
         blockingDoctorError: '',
+        forNow: false,
       };
     case 'APPOINTMENT_LOADING':
       return {

@@ -244,9 +244,16 @@ export const signupPatient = (
           };
           dispatch(signedUp());
           dispatch(saveNewUser(__data, 'patient'));
-          dispatch(UploadProfilePicPatient(__data.id, imageData));
-          dispatch(GetPatientInfo(__data.id));
-          successCallback();
+
+          dispatch(
+            UploadProfilePicPatient(__data.id, imageData, () => {
+              dispatch(
+                GetPatientInfo(__data.id, () => {
+                  successCallback();
+                }),
+              );
+            }),
+          );
         } else {
           dispatch(errorSignup('Something Went Wrong'));
           errorCallback('Something Went Wrong');
@@ -286,9 +293,15 @@ export const signupDoctor = (
           };
           dispatch(signedUp());
           dispatch(saveNewUser(__data, 'doctor'));
-          dispatch(UploadProfilePic(__data.id, imageData));
-          dispatch(GetDoctorProfile(__data.id));
-          successCallback('Doctor Signup successful');
+          dispatch(
+            UploadProfilePic(__data.id, imageData, () => {
+              dispatch(
+                GetDoctorProfile(__data.id, () => {
+                  successCallback('Doctor Signup successful');
+                }),
+              );
+            }),
+          );
         } else {
           new Error('Something went wrong!! try again');
         }
