@@ -8,6 +8,7 @@ import {PersistGate} from 'redux-persist/integration/react';
 import AsyncStorage from '@react-native-community/async-storage';
 import allReducer from '../reducer/index';
 import MainNavigationV2 from '../../navigationV2/MainNavigationV2';
+import {StatusBar} from 'react-native';
 
 const persistConfig = {
   key: 'primary',
@@ -35,6 +36,11 @@ export default function Store() {
   return (
     <Provider store={_store}>
       <PersistGate loading={null} persistor={store}>
+        <StatusBar
+          backgroundColor={'#fff'}
+          barStyle={'dark-content'}
+          animated
+        />
         <MainNavigationV2 />
       </PersistGate>
     </Provider>

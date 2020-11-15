@@ -12,12 +12,15 @@
 import React, {useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {createStackNavigator} from '@react-navigation/stack';
-import Chats from '../screens/doctor/Chats/Chats';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
+import Chats from '../screens/common/Chats/Chats';
 import CustomDoctorDrawer from '../components/organisms/drawer/custom/CustomDoctorDrawer';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Dimensions} from 'react-native';
+import {Dimensions, useWindowDimensions} from 'react-native';
 import AddQuestionnaire from '../screens/doctor/AddQuestionnaire/AddQuestionnaire';
 import PatientDetails from '../screens/doctor/PatientDetails/PatientDetails';
 import Skins from '../screens/doctor/Skins/Skins';
@@ -26,12 +29,35 @@ import Dashboard from '../screens/doctor/Dashboard/Dashboard';
 import Onboarding from '../screens/doctor/Onboarding/Onboarding';
 import Patients from '../screens/doctor/Patients/Patients';
 import {useSelector} from 'react-redux';
-
+import Conversations from '../screens/common/Chats/Conversations';
+import io from 'socket.io-client';
+import {SocketContext} from '../utils/socketContext';
 const {width: screenWidth} = Dimensions.get('screen');
 
 const BottomTabs = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
+
+import {Host} from '../utils/connection';
+
+const socket = io(Host);
+
+function Chatting() {
+  return (
+    <SocketContext.Provider value={socket}>
+      <Stack.Navigator headerMode={'none'} initialRouteName={'Conversations'}>
+        <Stack.Screen name={'Conversations'} component={Conversations} />
+        <Stack.Screen
+          options={{
+            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+          }}
+          name={'Chats'}
+          component={Chats}
+        />
+      </Stack.Navigator>
+    </SocketContext.Provider>
+  );
+}
 
 function DoctorLanding() {
   return (
@@ -92,7 +118,7 @@ function DoctorLanding() {
         name={'PatientsList'}
         component={Patients}
       />
-      {/* <BottomTabs.Screen
+      <BottomTabs.Screen
         options={{
           tabBarIcon: ({focused}) => {
             return (
@@ -103,10 +129,11 @@ function DoctorLanding() {
               />
             );
           },
+          tabBarVisible: false,
         }}
         name={'Chats'}
-        component={Chats}
-      /> */}
+        component={Chatting}
+      />
       {/* <BottomTabs.Screen name={"WaitingRoom"} component={} /> */}
     </BottomTabs.Navigator>
   );

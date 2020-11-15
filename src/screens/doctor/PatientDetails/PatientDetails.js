@@ -23,6 +23,7 @@ import {
 import ExpandableList from '../../../components/molecules/ExpandableList/ExpandableList';
 function PatientDetails({navigation, route}) {
   const {patient: patientRouteInfo} = route.params;
+
   const HeightExpand = useRef(new Animated.Value(0)).current;
   const [expandedHeight, setExpandedHeight] = useState(0);
   const [addReasonModel, setAddReasonModel] = useState(false);
@@ -84,7 +85,7 @@ function PatientDetails({navigation, route}) {
                   fontWeight: 'bold',
                   letterSpacing: 0.5,
                 }}>
-                {`${patient.firstName} ${patient.lastName}`}
+                {`${patientRouteInfo.firstName} ${patientRouteInfo.lastName}`}
               </Text>
               <View
                 style={{
@@ -94,7 +95,7 @@ function PatientDetails({navigation, route}) {
                   justifyContent: 'space-between',
                 }}>
                 <Text style={{fontSize: FONT_SIZE_20}}>
-                  {patient.age ? patient.age : '-'}yrs
+                  {patientRouteInfo.age ? patientRouteInfo.age : '-'}yrs
                 </Text>
                 <View
                   style={{
@@ -104,7 +105,7 @@ function PatientDetails({navigation, route}) {
                     backgroundColor: '#efa860',
                   }}></View>
                 <Text style={{fontSize: FONT_SIZE_20}}>
-                  {patient.sex ? patient.sex : '-'}
+                  {patientRouteInfo.sex ? patientRouteInfo.sex : '-'}
                 </Text>
                 <View
                   style={{
@@ -114,7 +115,10 @@ function PatientDetails({navigation, route}) {
                     backgroundColor: '#efa860',
                   }}></View>
                 <Text style={{fontSize: FONT_SIZE_20}}>
-                  {patient.weight.value ? patient.weight.value : '-'} kg
+                  {patientRouteInfo.weight.value
+                    ? patientRouteInfo.weight.value
+                    : '-'}{' '}
+                  kg
                 </Text>
               </View>
             </View>
@@ -127,8 +131,12 @@ function PatientDetails({navigation, route}) {
               }}>
               <View>
                 <Text style={{letterSpacing: 0.4}}>
-                  Reason for visit:{' '}
-                  <Text style={{color: '#ef786e'}}>Fever</Text>
+                  Reason for visit:
+                  <Text style={{color: '#ef786e'}}>
+                    {patientRouteInfo.reasonForVisit
+                      ? patientRouteInfo.reasonForVisit
+                      : '--'}
+                  </Text>
                 </Text>
                 <Text style={{color: '#ef786e', marginTop: '2%'}}>
                   First Visit
