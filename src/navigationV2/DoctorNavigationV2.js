@@ -39,6 +39,7 @@ const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 import {Host} from '../utils/connection';
+import Testing from '../screens/common/Chats/Testing';
 
 const socket = io(Host);
 
@@ -133,6 +134,22 @@ function DoctorLanding() {
         }}
         name={'Chats'}
         component={Chatting}
+      />
+      <BottomTabs.Screen
+        options={{
+          tabBarIcon: ({focused}) => {
+            return (
+              <MaterialCommunityIcons
+                name="chat"
+                color={focused ? '#fff' : 'rgba(255,255,255,0.6)'}
+                size={24}
+              />
+            );
+          },
+          tabBarVisible: false,
+        }}
+        name={'testing'}
+        component={Testing}
       />
       {/* <BottomTabs.Screen name={"WaitingRoom"} component={} /> */}
     </BottomTabs.Navigator>
