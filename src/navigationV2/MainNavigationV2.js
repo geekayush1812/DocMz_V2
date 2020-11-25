@@ -7,11 +7,14 @@ import LandingPage from '../screens/common/LandingPage/LandingPage';
 import DoctorProfile from '../screens/doctor/DoctorProfile/DoctorProfile';
 // import GetStarted from '../screens/common/GetStarted/GetStarted';
 import Splash from '../screens/common/Splash/Splash';
-import AuthNavigationV2 from './AuthNavigationV2';
-import PatientNavigationV2 from './PatientNavigationV2';
-import DoctorNavigationV2 from './DoctorNavigationV2';
 import {Dimensions} from 'react-native';
 import CustomNoAuthDrawer from '../components/organisms/drawer/custom/CustomNoAuthDrawer';
+
+import AuthNavigationV2 from './AuthNavigationV2';
+let PatientNavigationV2 = null;
+//  './PatientNavigationV2';
+let DoctorNavigationV2 = null;
+//  './DoctorNavigationV2';
 
 const screenWidth = Dimensions.get('screen').width;
 const NoAuthDrawerNavigator = createDrawerNavigator();
@@ -50,8 +53,14 @@ const MainController = ({navigation, route}) => {
   const {isLoggedin, isDoctor} = useSelector((state) => state.AuthReducer);
   if (isLoggedin) {
     if (isDoctor) {
+      if (DoctorNavigationV2 === null) {
+        DoctorNavigationV2 = require('./DoctorNavigationV2').default;
+      }
       return <DoctorNavigationV2 />;
     } else {
+      if (PatientNavigationV2 === null) {
+        PatientNavigationV2 = require('./PatientNavigationV2').default;
+      }
       return <PatientNavigationV2 />;
     }
   } else {

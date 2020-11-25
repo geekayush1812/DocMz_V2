@@ -3,7 +3,7 @@ import {Button, Text, TouchableOpacity, View, AppState} from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
 export default function Testing() {
-  const putNotif = () => {
+  const createChannel = () => {
     PushNotification.createChannel(
       {
         channelId: 'jjip', // (required)
@@ -15,6 +15,9 @@ export default function Testing() {
       },
       (created) => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
     );
+  };
+  const putNotif = () => {
+    createChannel();
     PushNotification.localNotification({
       /* Android Only Properties */
       channelId: 'jjip', // (required) channelId, if the channel doesn't exist, it will be created with options passed above (importance, vibration, sound). Once the channel is created, the channel will not be update. Make sure your channelId is different if you change these options. If you have created a custom channel, it will apply options of the channel.
@@ -67,20 +70,7 @@ export default function Testing() {
   const cancelNotification = (id) => {
     PushNotification.cancelLocalNotifications({id: '0'});
   };
-  // useEffect(() => {
-  //   AppState.addEventListener('blur', function (state) {
-  //     console.log('blur ', state);
-  //   });
-  //   AppState.addEventListener('change', function (state) {
-  //     console.log('change ', state);
-  //   });
-  //   AppState.addEventListener('focus', function (state) {
-  //     console.log('focus ', state);
-  //   });
-  //   AppState.addEventListener('memoryWarning', function (state) {
-  //     console.log('memoryWarnign ', state);
-  //   });
-  // });
+
   return (
     <View>
       <TouchableOpacity style={{paddingVertical: '2%'}} onPress={putNotif}>
