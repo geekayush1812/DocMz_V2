@@ -40,21 +40,24 @@ const Stack = createStackNavigator();
 
 import {Host} from '../utils/connection';
 import Testing from '../screens/common/Chats/Testing';
+import CallScreen from '../screens/common/Chats/callScreen';
 
 const socket = io(Host);
 
 function Chatting() {
   return (
     <SocketContext.Provider value={socket}>
-      <Stack.Navigator headerMode={'none'} initialRouteName={'Conversations'}>
-        <Stack.Screen name={'Conversations'} component={Conversations} />
+      <Stack.Navigator headerMode={'none'} initialRouteName={'Testing'}>
+        {/* <Stack.Screen name={'Conversations'} component={Conversations} />
         <Stack.Screen
           options={{
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}
           name={'Chats'}
           component={Chats}
-        />
+        /> */}
+        <Stack.Screen name="testing" component={Testing} />
+        <Stack.Screen name={'videoCall'} component={CallScreen} />
       </Stack.Navigator>
     </SocketContext.Provider>
   );
@@ -135,7 +138,7 @@ function DoctorLanding() {
         name={'Chats'}
         component={Chatting}
       />
-      <BottomTabs.Screen
+      {/* <BottomTabs.Screen
         options={{
           tabBarIcon: ({focused}) => {
             return (
@@ -150,7 +153,7 @@ function DoctorLanding() {
         }}
         name={'testing'}
         component={Testing}
-      />
+      /> */}
       {/* <BottomTabs.Screen name={"WaitingRoom"} component={} /> */}
     </BottomTabs.Navigator>
   );

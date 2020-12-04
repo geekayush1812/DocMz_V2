@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.oney.WebRTCModule.WebRTCModulePackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

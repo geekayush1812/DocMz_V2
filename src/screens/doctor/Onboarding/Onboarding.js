@@ -62,7 +62,7 @@ function Onboarding({navigation}) {
   // }
 
   useEffect(() => {
-    !specialtyLoading && dispatch(getSpecialty());
+    dispatch(getSpecialty());
   }, []);
 
   const handleSubmit = () => {
