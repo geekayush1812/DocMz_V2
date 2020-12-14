@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useState} from 'react';
 import {View, StyleSheet, TextInput, Text} from 'react-native';
 import DmzText from '../../atoms/DmzText/DmzText';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -10,8 +10,44 @@ import {
   PRIMARY_COLOR,
 } from '../../../styles/colors';
 import AnimInput from '../AnimInput/AnimInput';
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
+import {useDispatch, useSelector} from 'react-redux';
+import {UpdateVitals} from '../../../redux/action/patientAccountAction';
 
-export default function WeightEditCard({style, onPress}) {
+export default function WeightEditCard({style, details}) {
+  const [diastolic, setDiastolic] = useState(
+    details.bloodPressure.split('/')[0],
+  );
+  console.log(details.heartRate);
+  const [systolic, setSystolic] = useState(details.bloodPressure.split('/')[1]);
+  const [heartRate, setHeartRate] = useState(details.heartRate);
+  const [date, setDate] = useState(details.date);
+  const dispatch = useDispatch();
+  const {patientVitals} = useSelector((state) => state.PatientAccountReducer);
+
+  const saveBp = async () => {
+    const response1 = {
+      field: 'bloodPressure',
+      data: {
+        value: `${diastolic}/${systolic}`,
+        date: date,
+      },
+    };
+    const response2 = {
+      field: 'heartRate',
+      data: {
+        value: heartRate,
+        date: date,
+      },
+    };
+    await dispatch(
+      UpdateVitals(response1, patientVitals.userId, patientVitals._id),
+    );
+    await dispatch(
+      UpdateVitals(response2, patientVitals.userId, patientVitals._id),
+    );
+  };
   return (
     <View style={{flex: 1, width: '100%', justifyContent: 'center'}}>
       <View style={[styles.Card, style ? style.Card : null]}>
@@ -27,6 +63,8 @@ export default function WeightEditCard({style, onPress}) {
           }}>
           <AnimInput
             placeholder="Systolic"
+            inputHandler={(txt) => setSystolic(txt)}
+            value={systolic}
             style={{
               Container: {...styles.Container, width: '40%'},
               Input: styles.Input,
@@ -35,6 +73,8 @@ export default function WeightEditCard({style, onPress}) {
           />
           <AnimInput
             placeholder="Diastolic"
+            inputHandler={(txt) => setDiastolic(txt)}
+            value={diastolic}
             style={{
               Container: {...styles.Container, width: '40%'},
               Input: styles.Input,
@@ -44,31 +84,71 @@ export default function WeightEditCard({style, onPress}) {
         </View>
         <AnimInput
           placeholder="Heart Rate"
+          inputHandler={(txt) => setHeartRate(txt)}
+          value={heartRate}
           style={{
             Container: styles.Container,
             Input: styles.Input,
             Placeholder: styles.Placeholder,
           }}
         />
-        <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-          <AnimInput
-            placeholder="Date"
-            style={{
-              Container: styles.Container,
-              Input: styles.Input,
-              Placeholder: styles.Placeholder,
-            }}
-          />
-          <MaterialCommunityIcons
-            name="calendar"
-            size={23}
-            color="#A7A7A7"
-            style={{marginLeft: -20, marginBottom: 15}}
-          />
-        </View>
+        <DmzText
+          lite
+          text="Date"
+          style={[styles.Placeholder, {marginTop: 20, marginBottom: -20}]}
+        />
+        <DatePicker
+          date={date}
+          mode="date"
+          placeholder="Select date"
+          format="DD MMM YYYY"
+          minDate="06 Jan 1950"
+          maxDate={Moment(new Date(), 'DD MMM YYYY')}
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          allowFontScaling={true}
+          customStyles={{
+            dateInput: {
+              borderWidth: 0,
+              fontSize: 15,
+              height: 40,
+              marginBottom: 10,
+            },
+            dateText: {
+              width: '100%',
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: PRIMARY_COLOR,
+              left: 0,
+              marginTop: 15,
+              marginBottom: -10,
+              marginLeft: 0,
+            },
+            placeholderText: {
+              width: '100%',
+              color: '#ccc',
+              fontWeight: 'normal',
+              marginTop: 0,
+              fontSize: 18,
+              left: 0,
+              marginBottom: -10,
+              marginLeft: 0,
+            },
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: '#ccc',
+            width: '100%',
+            marginTop: 20,
+            alignItems: 'center',
+          }}
+          onDateChange={(date) => {
+            setDate(date);
+          }}
+        />
       </View>
       <View style={{alignSelf: 'center', marginTop: -35, elevation: 5}}>
-        <CircularButton />
+        <CircularButton onPress={saveBp} />
       </View>
     </View>
   );

@@ -2,10 +2,19 @@ import React from 'react';
 import {StyleSheet, Text, Animated} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
-function DmzButton({text, icon = false, iconPosition, theme, onPress, style}) {
+function DmzButton({
+  text,
+  icon = false,
+  iconPosition,
+  theme,
+  onPress,
+  style,
+  disabled = false,
+}) {
   return (
     <Animated.View style={[Styles.Container, style ? style.Container : null]}>
       <TouchableOpacity
+        disabled={disabled}
         style={{
           flexDirection: 'row',
           alignItems: 'center',

@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {View, Text, StyleSheet, TextInput} from 'react-native';
 import Card from '../../atoms/Card/Card';
 import DmzText from '../../atoms/DmzText/DmzText';
@@ -11,8 +11,29 @@ import {
   PRIMARY_COLOR,
 } from '../../../styles/colors';
 import AnimInput from '../AnimInput/AnimInput';
+import DatePicker from 'react-native-datepicker';
+import Moment from 'moment';
+import {UpdateVitals} from '../../../redux/action/patientAccountAction';
+import {useDispatch, useSelector} from 'react-redux';
+export default function WeightEditCard({style, details}) {
+  const [weight, setWeight] = useState(details.infoOne);
+  const [date, setDate] = useState(details.headerTwo);
+  const dispatch = useDispatch();
+  const {data} = useSelector((state) => state.AuthReducer);
+  const {patientVitals} = useSelector((state) => state.PatientAccountReducer);
 
-export default function WeightEditCard({style, onPress}) {
+  const saveWeight = async () => {
+    const response = {
+      field: 'weight',
+      data: {
+        value: weight,
+        date: date,
+      },
+    };
+    await dispatch(
+      UpdateVitals(response, patientVitals.userId, patientVitals._id),
+    );
+  };
   return (
     <View
       style={{
@@ -31,6 +52,8 @@ export default function WeightEditCard({style, onPress}) {
             justifyContent: 'space-between',
           }}>
           <AnimInput
+            inputHandler={(txt) => setWeight(txt)}
+            value={weight}
             placeholder="Weight"
             style={{
               Container: {...styles.Container, width: '40%'},
@@ -47,25 +70,67 @@ export default function WeightEditCard({style, onPress}) {
             }}
           />
         </View>
-        <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
-          <AnimInput
-            placeholder="Date"
-            style={{
-              Container: styles.Container,
-              Input: styles.Input,
-              Placeholder: styles.Placeholder,
-            }}
-          />
-          <MaterialCommunityIcons
-            name="calendar"
-            size={23}
-            color="#A7A7A7"
-            style={{marginLeft: -20, paddingBottom: 15}}
-          />
-        </View>
+        <DmzText
+          lite
+          text="Date"
+          style={[styles.Placeholder, {marginTop: 20, marginBottom: -20}]}
+        />
+        <DatePicker
+          date={date}
+          mode="date"
+          placeholder="Select date"
+          format="DD MMM YYYY"
+          minDate="06 Jan 1950"
+          maxDate={Moment(new Date(), 'DD MMM YYYY')}
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          allowFontScaling={true}
+          customStyles={{
+            dateInput: {
+              borderWidth: 0,
+              fontSize: 15,
+              height: 40,
+              marginBottom: 10,
+            },
+            dateText: {
+              width: '100%',
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: PRIMARY_COLOR,
+              left: 0,
+              marginTop: 15,
+              marginBottom: -10,
+              marginLeft: 0,
+            },
+            placeholderText: {
+              width: '100%',
+              color: '#ccc',
+              fontWeight: 'normal',
+              marginTop: 0,
+              fontSize: 18,
+              left: 0,
+              marginBottom: -10,
+              marginLeft: 0,
+            },
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: '#ccc',
+            width: '100%',
+            marginTop: 20,
+            alignItems: 'center',
+          }}
+          onDateChange={(date) => {
+            setDate(date);
+          }}
+        />
       </View>
       <View style={{alignSelf: 'center', marginTop: -35, elevation: 5}}>
-        <CircularButton />
+        <CircularButton
+          onPress={() => {
+            saveWeight();
+          }}
+        />
       </View>
     </View>
   );

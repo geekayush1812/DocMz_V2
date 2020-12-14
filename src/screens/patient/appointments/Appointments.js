@@ -1,189 +1,214 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  LayoutAnimation,
-  UIManager,
-  Platform,
-} from 'react-native';
-import {RemoveAppointment} from '../../../redux/action/patientAccountAction';
-import NotFound from '../../../components/organisms/NotFound/NotFound';
+import {View, Text, UIManager, Platform, StyleSheet} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {GetPatientInfo} from '../../../redux/action/patientAccountAction';
-import TimelineContainer from '../../../components/molecules/TimelineContainer/TimelineContainer';
-import ProfilePic from '../../../components/atoms/ProfilePic/ProfilePic';
-import FancyHeaderLite from '../../../components/organisms/FancyHeaderLite/FancyHeaderLite';
-import Container from '../../../components/organisms/Container/Container';
+import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
+import {
+  NEW_PRIMARY_COLOR,
+  INPUT_PLACEHOLDER,
+  NEW_HEADER_TEXT,
+  GREY_BACKGROUND,
+} from '../../../styles/colors';
+import {
+  TouchableOpacity,
+  FlatList,
+  ScrollView,
+} from 'react-native-gesture-handler';
+import AppointmentHistoryItem from '../../../components/molecules/Appointments/AppointmentHistoryItem';
+import AppointmentOngoingItem from '../../../components/molecules/Appointments/AppointmentOngoingItem';
+import AppointmentUpcomingItem from '../../../components/molecules/Appointments/AppointmentUpcomingItem';
 
+import {GetAppointments} from '../../../reduxV2/action/PatientAction';
+import {ListingWithThumbnailLoader} from '../../../components/atoms/Loader/Loader';
+import LottieView from 'lottie-react-native';
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
 }
-const Appointments = ({navigation}) => {
-  const {patient, isPatientAccountReducerLoading} = useSelector(
-    (state) => state.PatientAccountReducer,
-  );
-  const dispatch = useDispatch();
-  const [timeline, setTimeline] = useState(-1);
 
+const Appointments = ({navigation}) => {
+  const {
+    gettingAppointments,
+    appointments,
+    errorGettingAppointments,
+    patient,
+  } = useSelector((state) => state.PatientReducer);
+  const dispatch = useDispatch();
+
+  const [tablocation, setTabLocation] = useState(0);
+  const [upcomingAppointmentList, setUpcomingAppointmentList] = useState([]);
+  const [historyAppointmentList, setHistoryAppointmentList] = useState([]);
+  const [extractingAppointmentList, setExtractingAppointmentList] = useState(
+    false,
+  );
   useEffect(() => {
-    !isPatientAccountReducerLoading && dispatch(GetPatientInfo(patient._id));
-    console.log('###########################');
+    !gettingAppointments && patient && dispatch(GetAppointments(patient._id));
+    !gettingAppointments && setExtractingAppointmentList(true);
   }, []);
-  const onPressRemove = (id) => {
-    const data = {
-      byPatient: false,
-      byDoctor: false,
-      reason: 'nothing',
-      id: id,
-      patientId: patient._id,
-    };
-    dispatch(RemoveAppointment(data));
-  };
+  useEffect(() => {
+    const upcoming = [];
+    const history = [];
+    appointments.length !== 0 &&
+      appointments?.forEach((item) => {
+        const today = new Date();
+        const bookedFor = new Date(item.bookedFor);
+
+        const todayFullYear = today.getFullYear();
+        const todayMonth = today.getMonth();
+        const todayDate = today.getDate();
+        const todayTime = today.getTime();
+
+        const bookedForFullYear = bookedFor.getFullYear();
+        const bookedForMonth = bookedFor.getMonth();
+        const bookedForDate = bookedFor.getDate();
+        const bookedForTime = bookedFor.getTime();
+
+        if (
+          bookedForFullYear >= todayFullYear &&
+          bookedForMonth >= todayMonth &&
+          bookedForDate >= todayDate &&
+          bookedForTime > todayTime
+        ) {
+          upcoming.push(item);
+        } else {
+          history.push(item);
+        }
+      });
+    setUpcomingAppointmentList(upcoming);
+    setHistoryAppointmentList(history);
+    setExtractingAppointmentList(false);
+  }, [appointments]);
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <FancyHeaderLite
+      <TopNavBar
         navigation={navigation}
         onLeftButtonPress={() => navigation.goBack(null)}
-        headerText={'Appointment'}
+        headerText={'My Appointments'}
         style={{Section: {overflow: 'hidden', height: '20%', marginBottom: 0}}}
       />
-      <Container
+      <View
         style={{
-          height: '75%',
-          transform: [{translateY: -30}],
-          zIndex: 999,
           backgroundColor: '#fff',
-          padding: 5,
-          paddingTop: 15,
+          padding: '2%',
+          //   borderWidth: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
         }}>
-        {isPatientAccountReducerLoading ? (
-          <ActivityIndicator
-            style={{flex: 1, alignSelf: 'center', justifyContent: 'center'}}
-          />
-        ) : patient.favourites == null ? (
-          <NotFound />
-        ) : !patient.favourites.length ? (
-          <NotFound />
-        ) : (
+        <View style={[styles.tabView, {borderRightWidth: 1}]}>
+          <TouchableOpacity onPress={() => setTabLocation(0)}>
+            <Text
+              style={
+                tablocation === 0 ? styles.activeColor : styles.inactiveColor
+              }>
+              Upcoming
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View style={[styles.tabView, {borderLeftWidth: 1}]}>
+          <TouchableOpacity onPress={() => setTabLocation(1)}>
+            <Text
+              style={
+                tablocation === 1 ? styles.activeColor : styles.inactiveColor
+              }>
+              History
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={{flex: 1, backgroundColor: GREY_BACKGROUND}}>
+        {tablocation === 1 ? (
           <FlatList
-            onEndReached={() => console.log('rech end.......')}
-            data={patient.appointments.filter((item) => item.booked)}
-            // data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
+            style={{flex: 1, padding: '3%'}}
+            data={historyAppointmentList}
+            ListEmptyComponent={
+              <View
+                style={{
+                  height: 200,
+                  width: '70%',
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <LottieView
+                  style={{height: '100%', width: '100%'}}
+                  source={require('../../../assets/anim_svg/empty_bottle.json')}
+                  autoPlay
+                  loop
+                />
+              </View>
+            }
+            keyExtractor={(item) => item._id}
             renderItem={({item}) => (
-              <TimelineContainer
-                PatientName={item.doctor ? item.doctor.basic.name : 'no name'}
-                Timing={item.bookedFor.slice(11, 16)}
-                onPress={() => {
-                  LayoutAnimation.configureNext(
-                    LayoutAnimation.Presets.easeInEaseOut,
-                  );
-                  setTimeline(item);
-                }}
-                onPressContinue={() => onPressRemove(item._id)}
-                Age={'21'}
-                Disease={'Headache'}
-                Profile={
-                  <ProfilePic
-                    style={{
-                      Container: {borderRadius: 100},
-                      Image: {borderRadius: 100},
-                    }}
-                    sourceurl={require('../../../assets/jpg/person3.jpg')}
-                  />
-                }
-                active={item === timeline}
-              />
+              <AppointmentHistoryItem item={item} style={{margin: '2%'}} />
             )}
           />
+        ) : (
+          <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+            <View style={styles.section}>
+              <Text style={styles.sectionHead}>Upcoming Appointments</Text>
+              {gettingAppointments && extractingAppointmentList ? (
+                <ListingWithThumbnailLoader />
+              ) : upcomingAppointmentList.length === 0 ? (
+                <View
+                  style={{
+                    height: 200,
+                    width: '70%',
+                    alignSelf: 'center',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <LottieView
+                    style={{height: '100%', width: '100%'}}
+                    source={require('../../../assets/anim_svg/empty_bottle.json')}
+                    autoPlay
+                    loop
+                  />
+                  <Text>0 Upcoming Appointments</Text>
+                </View>
+              ) : (
+                upcomingAppointmentList.map((item) => (
+                  <AppointmentUpcomingItem
+                    key={item._id}
+                    item={item}
+                    style={{margin: '2%'}}
+                  />
+                ))
+              )}
+            </View>
+          </ScrollView>
         )}
-      </Container>
+      </View>
     </View>
   );
 };
 
 export default Appointments;
 
-/**
- *
- * import React, {useState, useEffect} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  LayoutAnimation,
-  UIManager,
-  Platform,
-} from 'react-native';
-import NotFound from '../../../components/organisms/NotFound/NotFound';
-import BottomNavigationComponent from '../../../components/old/BottomNavigation/BottomNavigation.component';
-import GradientTopNavBar from '../../../components/molecules/TopNavBar/GradientTopNavBar';
-import {useSelector, useDispatch} from 'react-redux';
-import {GetPatientInfo} from '../../../redux/action/patientAccountAction';
-import TimelineContainer from '../../../components/molecules/TimelineContainer/TimelineContainer';
-
-if (Platform.OS === 'android') {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
-const Appointments = ({navigation}) => {
-  const {patient, isPatientAccountReducerLoading} = useSelector(
-    state => state.PatientAccountReducer,
-  );
-  const dispatch = useDispatch();
-  const [timeline, setTimeline] = useState(-1);
-
-  useEffect(() => {
-    console.log('patient ' + patient);
-    !isPatientAccountReducerLoading && dispatch(GetPatientInfo(patient.id));
-  }, []);
-
-  return (
-    <View >
-      <GradientTopNavBar
-        navigation={navigation}
-        isClap={true}
-        onLeftButtonPress={() => navigation.goBack(null)}
-        headerText={'Appointment'}
-      />
-      {isPatientAccountReducerLoading ? (
-        <ActivityIndicator />
-      ) : patient.favourites.length <= 0 ? (
-        <NotFound />
-      ) : (
-        <FlatList
-          style={{backgroundColor: '#fff', flex: 1}}
-          onEndReached={() => console.log('rech end.......')}
-          // data={patient.appointments}
-          data={[1, 2, 3, 4, 5, 6, 7, 8, 9]}
-          renderItem={({item}) => (
-            // <TimelineContainer
-            // PatientName={item.doctor.basic.first_name}
-            // Timing={item.bookedFor.slice(11,16)}
-            //   onPress={() => {
-            //     LayoutAnimation.configureNext(
-            //       LayoutAnimation.Presets.easeInEaseOut,
-            //     );
-            //     setTimeline(item);
-            //   }}
-            //   Age={'21'}
-            //   Disease={'Headache'}
-            //   Profile
-            //   active={item === timeline}
-            // />
-          <Text>{item}</Text>
-          )}
-        />
-      )}
-    </View>
-  );
-};
-
-export default Appointments;
-
- */
+const styles = StyleSheet.create({
+  tabView: {
+    flex: 1,
+    borderColor: NEW_PRIMARY_COLOR,
+    alignItems: 'center',
+    padding: 5,
+  },
+  inactiveColor: {
+    fontFamily: 'Montserrat-Regular',
+    color: INPUT_PLACEHOLDER,
+    fontSize: 18,
+  },
+  activeColor: {
+    fontFamily: 'Montserrat-SemiBold',
+    color: NEW_HEADER_TEXT,
+    fontSize: 18,
+  },
+  section: {
+    marginBottom: 15,
+  },
+  sectionHead: {
+    fontFamily: 'Montserrat-SemiBold',
+    fontSize: 18,
+    color: NEW_HEADER_TEXT,
+    marginTop: 10,
+    marginBottom: 15,
+  },
+});

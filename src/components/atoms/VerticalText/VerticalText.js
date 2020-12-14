@@ -18,15 +18,15 @@ function VerticalText({text, isActive = false}) {
 const Styles = StyleSheet.create({
   Day: {
     height: 70,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   DayText: {
     fontSize: 16,
-    color: '#9C77BC',
+    color: '#000',
   },
   DayTextActive: {
     color: '#fff',
@@ -38,7 +38,8 @@ const Styles = StyleSheet.create({
     fontWeight: '500',
   },
   DayActive: {
-    backgroundColor: '#9C77BC',
+    backgroundColor: '#efa860',
+    borderRadius: 6,
   },
 });
 

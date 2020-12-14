@@ -63,9 +63,9 @@ const FamilyMember = ({navigation}) => {
     !isPatientAccountReducerLoading && dispatch(GetFamilyMember(patient.meta));
   }, []);
 
-  BackHandler.addEventListener('hardwareBackPress', () => {
-    navigation.navigate('pageNavigation', {}, navigation.navigate('Home'));
-  });
+  // BackHandler.addEventListener('hardwareBackPress', () => {
+  //   navigation.navigate('pageNavigation', {}, navigation.navigate('Home'));
+  // });
 
   const onOpenPopup = () => {
     setState({...state, metaId: patient.meta});
@@ -79,10 +79,9 @@ const FamilyMember = ({navigation}) => {
   };
 
   const onSubmit = () => {
-    console.log(state);
     const reg = new RegExp(
       // /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/,
-      /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/,
+      /^([0-2][0-9]|(3)[0-1])(-)(((0)[0-9])|((1)[0-2]))(-)\d{4}$/,
     );
     const reg2 = new RegExp(
       /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/,
@@ -240,9 +239,9 @@ const FamilyMember = ({navigation}) => {
                   date={state.birthdate}
                   mode="date"
                   placeholder="Date of Birth"
-                  format="DD-MM-YYYY"
-                  minDate="01-01-1900"
-                  maxDate={Moment(new Date(), 'DD-MM-YYYY')}
+                  format="MM/DD/YYYY"
+                  minDate="01/01/1900"
+                  maxDate={Moment(new Date(), 'MM/DD/YYYY')}
                   showIcon={false}
                   allowFontScaling={true}
                   customStyles={{

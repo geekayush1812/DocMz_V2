@@ -10,6 +10,7 @@ import {
   TERTIARY_TEXT,
   PRIMARY_COLOR,
 } from '../../../styles/colors';
+import {useSelector} from 'react-redux';
 
 export default function PatientHistoryCardLarge({
   style,
@@ -21,6 +22,8 @@ export default function PatientHistoryCardLarge({
   onPress,
   data,
 }) {
+  const {isLogedin} = useSelector((state) => state.AuthReducer);
+
   return (
     <View style={[styles.Card, style ? style.Card : null]}>
       <View style={styles.Container}>
@@ -40,7 +43,7 @@ export default function PatientHistoryCardLarge({
         </View>
       </View>
       <Graph
-        data={data}
+        data={data ? data : [0, 30, 49]}
         hasAxis={headerOne.toUpperCase() == 'BLOOD PRESSURE'}
         style={{alignSelf: 'center'}}
       />
@@ -58,7 +61,10 @@ export default function PatientHistoryCardLarge({
           style={[styles.InfoTwo, style ? style.InfoTwo : null]}
           text={infoTwo}
         />
-        <TouchableOpacity onPress={onPress} style={{marginRight: 10}}>
+        <TouchableOpacity
+          onPress={onPress}
+          style={{marginRight: 10}}
+          disabled={!isLogedin}>
           <Entypo name="chevron-right" size={22} color="#E7E3FE" />
         </TouchableOpacity>
       </View>
@@ -70,10 +76,11 @@ const styles = StyleSheet.create({
   Card: {
     elevation: 4,
     borderRadius: 20,
-    height: 240,
+    height: 'auto',
     width: '80%',
     paddingHorizontal: 4,
     marginBottom: 50,
+    paddingBottom: 10,
     backgroundColor: '#fff',
   },
   Container: {

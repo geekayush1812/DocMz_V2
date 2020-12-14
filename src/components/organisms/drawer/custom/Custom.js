@@ -18,6 +18,7 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 import PatientLocation from '../../../../screens/examples/PatientLocation/PatientLocation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import TopNavBar from '../../../molecules/TopNavBar/TopNavBar';
+import {Host} from '../../../../utils/connection';
 const Navigation = [
   {
     active: true,
@@ -109,6 +110,12 @@ const Navigation = [
   },
   {
     active: true,
+    name: 'My HealthCare',
+    icon: 'book',
+    navigateTo: 'HealthCare',
+  },
+  {
+    active: true,
     name: 'Appointments',
     icon: 'book',
     navigateTo: 'Appointments',
@@ -137,6 +144,7 @@ const Navigation = [
     icon: 'help-rhombus-outline',
     navigateTo: 'Help',
   },
+
   // {
   //   active: true,
   //   name: 'Are you doctor ?',
@@ -153,6 +161,10 @@ const Custom = ({
 }) => {
   const {isLogedin, isDoctor, data} = useSelector((state) => state.AuthReducer);
   const {patient} = useSelector((state) => state.PatientAccountReducer);
+
+  useEffect(() => {
+    console.log(patient, 'qwerty2');
+  }, []);
 
   const dispatch = useDispatch();
   console.log(navigation);
@@ -186,6 +198,7 @@ const Custom = ({
           height: '33%',
         }}>
         <TopNavBar
+          style={{Container: {marginTop: 10}}}
           onLeftButtonPress={() => {
             console.log('pressed');
             navigation.navigate('Home');
@@ -210,7 +223,15 @@ const Custom = ({
           <TouchableOpacity
             onPress={onProfileClick}
             style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Avater type={6} style={{borderRadius: 10, borderWidth: 4}} />
+            <Avater
+              type={6}
+              style={{borderRadius: 10, borderWidth: 4}}
+              src={
+                data?.picture && data?.picture[0]
+                  ? {uri: Host + data?.picture[0].replace('public', '')}
+                  : null
+              }
+            />
             <DmzText
               text={
                 !data || data.length == 0
@@ -226,11 +247,12 @@ const Custom = ({
               fontSize: 16,
               color: TERTIARY_TEXT,
               lineHeight: 21,
+              marginTop: 5,
             }}
             style={{
               width: '60%',
               flexDirection: 'column-reverse',
-              marginTop: 5,
+              marginTop: 10,
             }}
             completed={33}
             completedColor={'#EA508F'}
@@ -253,7 +275,6 @@ const Custom = ({
                     ? patient.weight.value
                     : '--'
                   : '--'
-                // "75"
               }
               type={4}
               style={styles.floatingCardSectionHeading2}
@@ -416,7 +437,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   floatingCard: {
-    height: 70,
+    height: 'auto',
     width: '80%',
     backgroundColor: '#fafafa',
     borderRadius: 10,
@@ -443,13 +464,13 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: HEADER_TEXT,
     fontSize: 13,
-    lineHeight: 20,
+    lineHeight: 15,
   },
   floatingCardSectionHeading2: {
     textTransform: 'uppercase',
     color: HEADER_TEXT,
-    fontSize: 24,
-    marginTop: 5,
+    fontSize: 20,
+    marginTop: 2,
   },
 
   option: {},

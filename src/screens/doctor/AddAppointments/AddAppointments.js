@@ -6,7 +6,7 @@ import AppointmentCalendar from '../../../components/molecules/AppointmentCalend
 import Overlay from '../../../components/atoms/Overlay/Overlay';
 function AddAppointments({navigation}) {
   const [selectedDate, setSelectedDate] = useState('');
-  const updateDate = date => {
+  const updateDate = (date) => {
     setSelectedDate(date);
   };
   console.log(navigation);

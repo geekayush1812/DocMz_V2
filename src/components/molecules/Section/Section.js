@@ -6,9 +6,16 @@ function Section({HeaderText, children, style}) {
   return (
     <View style={[Styles.Container, style ? style.Container : null]}>
       <DmzText
+        adjustsFontSizeToFit={true}
         text={HeaderText}
         style={[
-          {fontSize: 22, marginBottom: 15, marginLeft: 25},
+          {
+            fontSize: 22,
+            marginBottom: 15,
+            marginLeft: 25,
+            numberOfLines: 1,
+            width: '90%',
+          },
           style ? style.Text : null,
         ]}
       />

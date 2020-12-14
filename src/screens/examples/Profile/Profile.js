@@ -32,18 +32,20 @@ function Profile({navigation}) {
   const dispatch = useDispatch();
   const {data} = useSelector((state) => state.AuthReducer);
   const {patient} = useSelector((state) => state.PatientAccountReducer);
+
+  const [patientData, setPatientData] = useState(patient);
   const dimen = useWindowDimensions();
   const screenWidth = dimen.width;
   const [inputFields, setInputFields] = useState({
-    firstName: patient.firstName ? patient.firstName : '',
-    lastName: patient.lastName ? patient.lastName : '',
-    phone: patient.phone ? patient.phone : '',
-    email: patient.email ? patient.email : '',
-    sex: patient.sex ? patient.sex : '',
-    dob: patient.dob ? patient.dob : '',
-    bloodGroup: patient.bloodGroup ? patient.bloodGroup : '',
-    height: patient.height.value != undefined ? patient.height.value : '',
-    weight: patient.weight.value == undefined ? '' : patient.weight.value,
+    // firstName: patient.firstName ? patient.firstName : '',
+    // lastName: patient.lastName ? patient.lastName : '',
+    // phone: patient.phone ? patient.phone : '',
+    // email: patient.email ? patient.email : '',
+    // sex: patient.sex ? patient.sex : '',
+    // dob: patient.dob ? patient.dob : '',
+    // bloodGroup: patient.bloodGroup ? patient.bloodGroup : '',
+    // height: patient.height.value != undefined ? patient.height.value : '',
+    // weight: patient.weight.value == undefined ? '' : patient.weight.value,
     // weight: data.weight.val != null ? data.weight.val : '',
   });
 
@@ -54,35 +56,31 @@ function Profile({navigation}) {
   //   // BackHandler.removeEventListener('hardwareBackPress', () => {});
   //   return true;
   // });
-  console.log('@@@@@@@', inputFields.phone);
+
   useEffect(() => {
     console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
     // const {name, phone, email, sex, dob, bloodGroup, height, weight} = patient;
     console.log(patient);
     console.log('###########', patient);
     // console.log(typeof patient.height.value);
-    patient.height.value == undefined
-      ? console.log('undefined')
-      : console.log('defined');
-    // console.log(patient.name);
-    // console.log(patient.phone);
-    // console.log(patient.email);
-    // console.log(patient.sex);
-    // console.log(patient.dob);
-    // console.log(patient.bloodGroup);
-    // console.log(patient.height);
-    // console.log(patient.weight);
-    // setInputFields({
-    //   name: `${name}`,
-    //   phone,
-    //   email,
-    //   sex,
-    //   dob,
-    //   bloodGroup,
-    //   height,
-    //   weight,
-    // });
-  }, []);
+    // patient.height.value == undefined
+    //   ? console.log('undefined')
+    //   : console.log('defined');
+    setPatientData(patient);
+    setInputFields({
+      firstName: patient.firstName ? patient.firstName : '',
+      lastName: patient.lastName ? patient.lastName : '',
+      phone: patient.phone ? patient.phone : '',
+      email: patient.email ? patient.email : '',
+      sex: patient.sex ? patient.sex : '',
+      dob: patient.dob ? patient.dob : '',
+      bloodGroup: patient.bloodGroup ? patient.bloodGroup : '',
+      height: patient.height.value != undefined ? patient.height.value : '',
+      weight: patient.weight.value == undefined ? '' : patient.weight.value,
+      // weight: data.weight.val != null ? data.weight.val : '',
+    });
+  }, [patient]);
+
   const onChoosePicture = async () => {
     const granted = await PermissionsAndroid.check(
       PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -476,7 +474,7 @@ function Profile({navigation}) {
               </Picker>
             </DmzText>
           </View>
-          <AnimInput
+          {/* <AnimInput
             placeholder="Height (in cm)"
             keyboardType="number-pad"
             inputHandler={(txt) =>
@@ -501,7 +499,7 @@ function Profile({navigation}) {
               Input: styles.Input,
               Placeholder: styles.Placeholder,
             }}
-          />
+          /> */}
         </View>
       </ScrollView>
       <View

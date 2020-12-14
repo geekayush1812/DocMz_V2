@@ -5,6 +5,15 @@ import CalendarPicker from 'react-native-calendar-picker';
 import {extendMoment} from 'moment-range';
 import Moment from 'moment';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  NEW_HEADER_TEXT,
+  SEARCH_PLACEHOLDER_COLOR,
+  NEW_UNSELECTED_TEXT,
+  NEW_PRIMARY_COLOR,
+  SECONDARY_COLOR,
+  SECONDARY_BACKGROUND,
+} from '../../../styles/colors';
+import RadioGroupV2 from '../../molecules/RadioGroup/RadioGroupV2';
 const moment = extendMoment(Moment);
 
 export default function Calendar({onDateChange, getDateView}) {
@@ -30,63 +39,86 @@ export default function Calendar({onDateChange, getDateView}) {
   const setMonth = async (i) => {
     var index = months.indexOf(i);
     var index2 = selectedIndex;
-    console.log(index2, ' --- ', index);
     if (index > index2) {
       while (index2 < index) {
         await exampleRef.current.handleOnPressNext();
-        console.log('changing');
         index2++;
       }
       setSelectedIndex(index2);
     } else if (index < index2) {
       while (index2 > index) {
         await exampleRef.current.handleOnPressPrevious();
-        console.log('changing');
         index2--;
       }
       setSelectedIndex(index2);
     }
-    console.log(index2, ' --- ', index);
   };
-
-  // const onDateChange2 = async (date, type) => {
-  //   if (type == 'START_DATE') {
-  //     await setStartDate(date);
-  //     console.log('in1', date);
-  //     // setEndDate(null);
-  //   } else if (type === 'END_DATE') {
-  //     await setEndDate(date);
-  //     console.log('in2', date);
-  //     if (date != null) {
-  //       console.log(selectedStartDate, date);
-  //       getDateView(selectedStartDate, date);
-  //     }
-  //   }
-  //   // console.log(selectedStartDate, EndDate);
-  // };
 
   useEffect(() => {
     getMonths();
   }, []);
 
+  const [activeConsultationType, setActiveConsultationType] = useState('TC');
+
   return (
-    <View>
+    <>
+      <View
+        style={{
+          height: 80,
+          paddingHorizontal: '10%',
+          justifyContent: 'space-around',
+          borderBottomWidth: 3,
+          borderBottomColor: 'rgba(237,237,237,0.9)',
+        }}>
+        <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+          Select consultation type
+        </Text>
+        <View
+          style={{flex: 1, justifyContent: 'center', paddingHorizontal: '3%'}}>
+          <RadioGroupV2
+            horizontal={true}
+            activeKey={activeConsultationType}
+            setActiveKey={setActiveConsultationType}
+            Item={[
+              {value: 'Tele-Consult', id: 'TC'},
+              {value: 'In-Person', id: 'IP'},
+            ]}></RadioGroupV2>
+        </View>
+      </View>
       <FlatList
         data={months}
         horizontal
+        style={{
+          borderBottomWidth: 3,
+          borderBottomColor: 'rgba(237,237,237,0.9)',
+          paddingVertical: '4%',
+        }}
+        showsHorizontalScrollIndicator={false}
         renderItem={({item, index}) => {
           console.log(item, index);
           return (
             <TouchableOpacity
-              style={{paddingHorizontal: 20}}
+              style={{
+                width: 150,
+                alignItems: 'center',
+                borderRightWidth: 2,
+                borderColor: NEW_PRIMARY_COLOR,
+              }}
               onPress={() => {
                 setMonth(item);
               }}>
               <Text
                 style={{
-                  fontSize: 30,
-                  color: selectedIndex == index ? '#027E97' : '#027E9750',
-                  fontWeight: 'bold',
+                  fontSize: 20,
+                  color:
+                    selectedIndex == index
+                      ? NEW_HEADER_TEXT
+                      : NEW_UNSELECTED_TEXT,
+                  // fontWeight: 'bold',
+                  fontFamily:
+                    selectedIndex == index
+                      ? 'Montserrat-Bold'
+                      : 'Montserrat-Regular',
                 }}>
                 {item}
               </Text>
@@ -107,9 +139,9 @@ export default function Calendar({onDateChange, getDateView}) {
               }}>
               <Text
                 style={{
-                  fontSize: 22,
-                  color: '#027E97',
-                  fontWeight: '300',
+                  fontSize: 18,
+                  color: NEW_HEADER_TEXT,
+                  fontFamily: 'Montserrat-SemiBold',
                   width: '100%',
                   textAlign: 'center',
                 }}>
@@ -120,43 +152,47 @@ export default function Calendar({onDateChange, getDateView}) {
         }}
       />
       <CalendarPicker
+        disabledDates={(date) => {
+          const t2 = new Date();
+          return (
+            Moment(date).format('DD-MM-YYYY') < Moment(t2).format('DD-MM-YYYY')
+          );
+        }}
         ref={exampleRef}
         startFromMonday={false}
         allowRangeSelection={true}
         minDate={minDate}
         maxDate={maxDate}
         todayBackgroundColor="transparent"
-        selectedDayColor="rgba(2, 126, 151, 0.24)"
         selectedDayStyle={{
-          backgroundColor: '#FF7A59',
-          borderRadius: 11,
+          backgroundColor: SECONDARY_COLOR,
+          borderRadius: 6,
         }}
         nextTitleStyle={{height: 0}}
         previousTitleStyle={{height: 0}}
         todayTextStyle={{
-          borderRadius: 11,
-          borderWidth: 1.5,
+          borderRadius: 6,
+          borderWidth: 1,
           width: 30,
           height: 30,
           textAlignVertical: 'center',
           textAlign: 'center',
-          borderColor: '#FF7A59',
+          borderColor: NEW_PRIMARY_COLOR,
         }}
         textStyle={{
-          color: '#015A6B',
+          color: NEW_HEADER_TEXT,
+          fontFamily: 'Montserrat-Regular',
         }}
-        selectedDayTextColor="#FFFFFF"
+        selectedDayTextColor="#000000"
         onDateChange={onDateChange}
         selectedRangeStartStyle={{
-          backgroundColor: '#FF7A59',
-          borderRadius: 11,
+          backgroundColor: SECONDARY_COLOR,
         }}
         selectedRangeEndStyle={{
-          backgroundColor: '#FF7A59',
-          borderRadius: 11,
+          backgroundColor: SECONDARY_COLOR,
         }}
         selectedRangeStyle={{
-          backgroundColor: 'rgba(2, 126, 151, 0.24)',
+          backgroundColor: SECONDARY_BACKGROUND,
           paddingVertical: -20,
         }}
         weekdays={['S', 'M', 'T', 'W', 'T', 'F', 'S']}
@@ -167,7 +203,7 @@ export default function Calendar({onDateChange, getDateView}) {
           backgroundColor: 'transaprent',
           maxHeight: 0,
           width: 2,
-          marginBottom: -25,
+          marginBottom: -30,
         }}
         showDayStragglers
         monthYearHeaderWrapperStyle={{
@@ -175,6 +211,6 @@ export default function Calendar({onDateChange, getDateView}) {
           width: 0,
         }}
       />
-    </View>
+    </>
   );
 }

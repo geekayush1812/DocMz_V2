@@ -9,82 +9,121 @@ import {
   PanResponder,
   TouchableHighlight,
   ScrollView,
+  TouchableOpacity,
+  Easing,
 } from 'react-native';
 import {ButtonGroup} from 'react-native-elements';
 import Moment from 'moment';
+import {
+  PRIMARY_BACKGROUND,
+  NEW_HEADER_TEXT,
+  SECONDARY_COLOR,
+  NEW_PRIMARY_COLOR,
+  NEW_UNSELECTED_TEXT,
+} from '../../../styles/colors';
+import NewToggleButton from '../ToggleButton/NewToggleButton';
 
 const height = Dimensions.get('screen').height;
 const width = Dimensions.get('screen').width;
 
-export default function AppoinmentSlider({slots, navigation}) {
+export default function AppoinmentSlider({
+  slots,
+  navigation,
+  setModal,
+  doctorData,
+}) {
   const [pos, setPos] = useState(false);
   const [selectedIndex, setselectedIndex] = useState(0);
   const [timeValue, setTimeValue] = useState('');
+  const [isAM, setAM] = useState(true);
+  const [more, setMore] = useState(false);
   const val = useRef(new Animated.Value(height * 0.6)).current;
 
   const updateIndex = (i) => {
     setselectedIndex(i);
   };
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: (evt, gestureState) => true,
-    onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-    onMoveShouldSetPanResponder: (evt, gestureState) => true,
-    onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-    onPanResponderGrant: (e, gestureState) => {
-      val.setOffset(val.__getValue());
-      console.log(val.__getValue());
-    },
-    onPanResponderMove: (e, gestureState) => {
-      console.log(gestureState.dy, ' ', height * 0.25);
-      if (gestureState.moveY <= height * 0.6) {
-        if (!pos || gestureState.dy > 0) {
-          val.setValue(gestureState.dy);
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onPanResponderGrant: (evt, gestureState) => {
+        val.setOffset(val._value);
+      },
+      onPanResponderMove: Animated.event([null, {dy: val}]),
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        if (gestureState.dy > 0) {
+          val.flattenOffset();
+          Animated.timing(val, {
+            toValue: height * 0.6,
+            duration: 400,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            val.setValue(height * 0.6);
+            val.setOffset(0);
+          });
+        } else {
+          val.flattenOffset();
+          Animated.timing(val, {
+            toValue: height * 0.01,
+            duration: 400,
+            easing: Easing.ease,
+            useNativeDriver: true,
+          }).start(() => {
+            val.setValue(height * 0.01);
+            val.setOffset(0);
+          });
         }
-      }
-    },
-    onPanResponderRelease: (e, gestureState) => {
-      if (gestureState.dy < 0) {
-        console.log('in1');
-        pos == false ? val.setValue(height * -0.6) : null;
-        setPos(true);
-      } else if (gestureState.dy > 0) {
-        console.log('in2');
-        pos ? val.setValue(height * 0.6) : val.setValue(0);
-        setPos(false);
-      }
-      val.flattenOffset();
-    },
-  });
+        // val.flattenOffset();
+      },
+      onShouldBlockNativeResponder: (evt, gestureState) => {
+        return true;
+      },
+    }),
+  ).current;
 
-  const bookAppointment = (id) => {
-    console.log(id);
-    navigation.navigate('ConfirmAppointment', {data: []});
+  const bookAppointment = (slot) => {
+    console.log(slot._id);
+    setModal({
+      visible: true,
+      onNext: () =>
+        navigation.navigate('ConfirmAppointment', {data: slot, doctorData}),
+    });
   };
 
   return (
     <Animated.View
       style={{
         ...StyleSheet.absoluteFill,
-        backgroundColor: '#EBFAFF',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
+        backgroundColor: PRIMARY_BACKGROUND,
+        borderRadius: 30,
         paddingHorizontal: 10,
         paddingVertical: 10,
         width: width,
         height: 'auto',
         transform: [{translateY: val}],
-        zIndex: 10,
+        zIndex: 9999,
         elevation: 2,
       }}>
-      <Animated.View style={{height: 50}} {...panResponder.panHandlers}>
+      <Animated.View
+        style={{
+          height: 50,
+          width: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        {...panResponder.panHandlers}>
         <View
           style={{
-            backgroundColor: '#027E97',
-            height: 5,
-            width: 30,
+            backgroundColor: NEW_PRIMARY_COLOR,
+            height: 4,
+            width: 75,
             borderRadius: 5,
-            marginBottom: 50,
+            marginBottom: 10,
             marginTop: 10,
             justifyContent: 'center',
             alignSelf: 'center',
@@ -94,53 +133,46 @@ export default function AppoinmentSlider({slots, navigation}) {
       <ScrollView style={{flex: 1, paddingBottom: 50}} scrollEnabled={pos}>
         {slots &&
           slots.map((u, i) => {
-            const date = Moment(u._id).format('dddd , Do');
+            const date = Moment(u._id).format('MMMM, DD');
             const {appointments} = u;
             return (
-              <View style={{marginVertical: 5}} key={u._id}>
+              <View
+                style={{
+                  marginVertical: 5,
+                  borderBottomWidth: 1,
+                  borderColor: NEW_UNSELECTED_TEXT,
+                  marginTop: 20,
+                }}
+                key={u._id}>
                 <View
                   style={{
                     flexDirection: 'row',
                     alignItems: 'center',
                     marginLeft: 10,
+                    justifyContent: 'space-between',
                   }}>
                   <Text
                     style={{
                       fontSize: 20,
-                      color: '#027E97',
-                      fontWeight: 'bold',
-                      fontFamily: 'Acumin-RPro',
+                      color: NEW_HEADER_TEXT,
+                      // fontWeight: 'bold',
+                      fontFamily: 'Montserrat-Medium',
+                      marginLeft: 10,
                     }}>
                     {date}
                   </Text>
-                  <ButtonGroup
-                    onPress={updateIndex}
-                    selectedIndex={selectedIndex}
-                    buttons={['AM', 'PM']}
-                    containerStyle={{
-                      height: 50,
-                      width: 150,
-                      backgroundColor: 'transparent',
-                      borderWidth: 0,
-                      marginLeft: 'auto',
+                  <NewToggleButton
+                    text0="AM"
+                    text1="PM"
+                    toggle={isAM}
+                    onToggle={() => {
+                      setAM(!isAM);
                     }}
-                    buttonStyle={{
-                      width: 50,
-                      height: 50,
-                      backgroundColor: 'white',
-                      borderRadius: 9,
-                      borderWidth: 0,
-                    }}
-                    selectedButtonStyle={{
-                      width: 50,
-                      height: 50,
-                      backgroundColor: '#027E97',
-                      borderWidth: 0,
-                      borderRadius: 9,
-                    }}
+                    style={{width: 100, marginRight: 20, height: 32}}
                     textStyle={{
-                      fontSize: 18,
-                      fontWeight: 'normal',
+                      fontSize: 16,
+                      fontFamily: 'Montserrat-SemiBold',
+                      margin: 2,
                     }}
                   />
                 </View>
@@ -152,61 +184,69 @@ export default function AppoinmentSlider({slots, navigation}) {
                     justifyContent: 'space-around',
                   }}>
                   {appointments &&
-                    appointments.map((u, i) => {
-                      const time = Moment(u.bookedFor).format('HH:mm');
-                      return (
-                        <View
-                          key={u._id}
-                          style={{
-                            width: width * 0.3,
-                            height: 38,
-                            marginBottom: 10,
-                          }}>
-                          <TouchableHighlight
+                    (more ? appointments : appointments.slice(0, 6)).map(
+                      (u, i) => {
+                        const time = Moment(u.bookedFor).format('HH:mm');
+                        return (
+                          <View
+                            key={u._id}
                             style={{
-                              width: 85,
+                              width: width * 0.3,
                               height: 38,
-                              backgroundColor:
-                                timeValue === time ? '#FF7A59' : 'white',
-                              borderWidth: 0,
-                              borderRadius: 11,
-                              elevation: 5,
-                            }}
-                            onPress={() => {
-                              setTimeValue(time);
-                              bookAppointment(u._id);
+                              marginBottom: 10,
+                              alignItems: 'center',
                             }}>
-                            <Text
+                            <TouchableHighlight
                               style={{
-                                fontSize: 20,
-                                fontWeight: '200',
-                                width: '100%',
-                                height: '100%',
-                                textAlign: 'center',
-                                textAlignVertical: 'center',
-                                fontFamily: 'Acumin-RPro',
+                                width: 85,
+                                height: 38,
+                                backgroundColor:
+                                  timeValue === time
+                                    ? SECONDARY_COLOR
+                                    : 'transparent',
+                                borderWidth: 0,
+                                borderRadius: 6,
+                              }}
+                              onPress={() => {
+                                setTimeValue(time);
+                                bookAppointment(u);
                               }}>
-                              {time}
-                            </Text>
-                          </TouchableHighlight>
-                        </View>
-                      );
-                    })}
+                              <Text
+                                style={{
+                                  fontSize: 20,
+                                  fontWeight: '200',
+                                  width: '100%',
+                                  height: '100%',
+                                  textAlign: 'center',
+                                  textAlignVertical: 'center',
+                                  fontFamily: 'Montserrat-Regular',
+                                  color:
+                                    timeValue === time ? '#ffffff' : '#000000',
+                                }}>
+                                {time}
+                              </Text>
+                            </TouchableHighlight>
+                          </View>
+                        );
+                      },
+                    )}
                 </View>
-                <Text
-                  style={{
-                    marginLeft: 'auto',
-                    marginRight: 20,
-                    color: '#9D9D9D',
-                    textDecorationLine: 'underline',
-                    fontSize: 18,
-                    lineHeight: 20,
-                    marginTop: 10,
-                    marginBottom: 20,
-                    fontFamily: 'Acumin-RPro',
-                  }}>
-                  more
-                </Text>
+                <TouchableOpacity onPress={() => setMore(!more)}>
+                  <Text
+                    style={{
+                      marginLeft: 'auto',
+                      marginRight: 20,
+                      color: NEW_PRIMARY_COLOR,
+                      textDecorationLine: 'underline',
+                      fontSize: 17,
+                      lineHeight: 20,
+                      marginTop: 10,
+                      marginBottom: 20,
+                      fontFamily: 'Montserrat-Regular',
+                    }}>
+                    {more ? 'less' : 'more'}
+                  </Text>
+                </TouchableOpacity>
               </View>
             );
           })}

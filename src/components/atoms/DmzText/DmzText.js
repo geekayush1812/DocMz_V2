@@ -35,6 +35,7 @@ const DmzText = (props) => {
     style,
     viewStyle,
     numberOfLines,
+    adjustsFontSizeToFit = false,
   } = props;
 
   const customStyles = [
@@ -57,7 +58,10 @@ const DmzText = (props) => {
 
   return (
     <View style={[{flexDirection: 'row'}, viewStyle ? viewStyle : null]}>
-      <Text style={customStyles} numberOfLines={numberOfLines}>
+      <Text
+        adjustsFontSizeToFit={adjustsFontSizeToFit}
+        style={customStyles}
+        numberOfLines={numberOfLines}>
         {text}
       </Text>
       {children}
@@ -67,10 +71,11 @@ const DmzText = (props) => {
 
 const Styles = StyleSheet.create({
   Container: {
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     fontSize: 14,
     lineHeight: 30,
-    textTransform: 'capitalize',
+    fontFamily: 'Montserrat-Regular',
+    // textTransform: 'capitalize',
   },
   centerText: {textAlign: 'center'},
 });

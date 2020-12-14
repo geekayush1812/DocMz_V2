@@ -1,6 +1,11 @@
 import React from 'react';
-import {View, StyleSheet, Text, ActivityIndicator} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 
 function DmzButton({
   text,
@@ -10,6 +15,7 @@ function DmzButton({
   disabled,
   style,
   numberOfLines,
+  adjustsFontSizeToFit = false,
   isLoading = false,
 }) {
   return (
@@ -22,6 +28,7 @@ function DmzButton({
         <ActivityIndicator color="#fff" />
       ) : (
         <Text
+          adjustsFontSizeToFit={adjustsFontSizeToFit}
           numberOfLines={numberOfLines}
           style={[
             Styles.Text,
@@ -48,7 +55,6 @@ const Styles = StyleSheet.create({
   },
   Text: {
     fontSize: 14,
-    fontWeight: 'bold',
   },
 });
 

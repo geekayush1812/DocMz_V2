@@ -58,6 +58,9 @@ const Orders = ({navigation}) => {
             alignSelf: 'center',
             width: '50%',
           },
+          Container: {
+            marginTop: 10,
+          },
         }}
       />
       <TouchableOpacity

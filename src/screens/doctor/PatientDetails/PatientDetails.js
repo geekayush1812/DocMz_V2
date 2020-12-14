@@ -1,130 +1,424 @@
-import React from 'react';
-import {View, Text} from 'react-native';
-import RadialGradient from 'react-native-radial-gradient';
+import React, {useRef, useState} from 'react';
+import {
+  View,
+  Animated,
+  Text,
+  TouchableWithoutFeedback,
+  Easing,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
-import Avater from '../../../components/atoms/Avater/Avater';
-import Reports from '../../../assets/svg/Reports_for_patient.svg';
-import MedicalHistory from '../../../assets/svg/medical_history.svg';
-import AppointmentsSvg from '../../../assets/svg/Appointment.svg';
-import DmzButton from '../../../components/atoms/DmzButton/DmzButton';
-import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
+import SearchBarSolid from '../../../components/molecules/SearchBarSolid/SearchBarSolid';
+import {NEW_PRIMARY_COLOR} from '../../../styles/colors';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Chatbox from '../../../assets/svg/chatbox.svg';
+import SignleField from '../../../components/molecules/Modal/SingleField';
+import {
+  FONT_SIZE_22,
+  FONT_SIZE_20,
+  FONT_SIZE_19,
+  FONT_SIZE_18,
+} from '../../../styles/typography';
+import ExpandableList from '../../../components/molecules/ExpandableList/ExpandableList';
+function PatientDetails({navigation, route}) {
+  const {patient: patientRouteInfo} = route.params;
 
-function PatientDetails({navigation}) {
-  const {patient} = navigation.state.params;
+  const HeightExpand = useRef(new Animated.Value(0)).current;
+  const [expandedHeight, setExpandedHeight] = useState(0);
+  const [addReasonModel, setAddReasonModel] = useState(false);
+  const [addReason, setAddReason] = useState('');
+  const [showContent, setShowContent] = useState({
+    symptoms: false,
+    medicalHistory: false,
+    assessmentPlan: false,
+  });
+  const onExpand = (name) => {
+    setShowContent({
+      ...showContent,
+      [`${name}`]: !showContent[`${name}`],
+    });
+    Animated.timing(HeightExpand, {
+      delay: 200,
+      easing: Easing.bounce,
+      duration: 1000,
+      useNativeDriver: false,
+      toValue: showContent[`${name}`] ? 0 : 1,
+    }).start();
+  };
+  const onLayout = (e) => {
+    setExpandedHeight(e.nativeEvent.layout.height);
+  };
+  const AnimatedIcon = Animated.createAnimatedComponent(MaterialIcon);
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
-      <View
-        style={{
-          height: '40%',
-          overflow: 'hidden',
-          borderBottomRightRadius: 50,
-        }}>
-        <RadialGradient
-          style={{width: '100%', height: '100%', zIndex: 0}}
-          colors={['#F8F7FF', '#E9E5FF']}
-          stops={[0.0, 0.2, 0.75]}
-          center={[130, 100]}
-          radius={200}>
-          <TopNavBar
-            // onRightButtonPress={() => {}}
-            navigation={navigation}
-            style={{
-              Container: {
-                height: '5%',
-              },
-            }}></TopNavBar>
-          <Text
-            style={{
-              fontSize: 38,
-              letterSpacing: 1.8,
-              textAlign: 'center',
-              color: '#6859A2',
-              fontWeight: 'bold',
-              marginTop: 5,
-            }}>
-            Patient Details
-          </Text>
+    <>
+      <SignleField
+        visible={addReasonModel}
+        onCancel={() => setAddReasonModel(false)}
+        headingText="Add Reason"
+        onUpdate={(temp) => {}}
+      />
+      <View style={{flex: 1, backgroundColor: '#fff'}}>
+        <TopNavBar
+          navigation={navigation}
+          headerText={'Patients Details'}></TopNavBar>
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: '4%',
+          }}>
           <View
+            style={{
+              paddingVertical: '5%',
+              paddingHorizontal: '6%',
+              elevation: 2,
+              backgroundColor: '#fff',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}>
+              <Text
+                style={{
+                  fontSize: FONT_SIZE_22,
+                  fontWeight: 'bold',
+                  letterSpacing: 0.5,
+                }}>
+                {`${patientRouteInfo.firstName} ${patientRouteInfo.lastName}`}
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  width: '45%',
+                  justifyContent: 'space-between',
+                }}>
+                <Text style={{fontSize: FONT_SIZE_20}}>
+                  {patientRouteInfo.age ? patientRouteInfo.age : '-'}yrs
+                </Text>
+                <View
+                  style={{
+                    height: 7,
+                    width: 7,
+                    borderRadius: 15,
+                    backgroundColor: '#efa860',
+                  }}></View>
+                <Text style={{fontSize: FONT_SIZE_20}}>
+                  {patientRouteInfo.sex ? patientRouteInfo.sex : '-'}
+                </Text>
+                <View
+                  style={{
+                    height: 7,
+                    width: 7,
+                    borderRadius: 15,
+                    backgroundColor: '#efa860',
+                  }}></View>
+                <Text style={{fontSize: FONT_SIZE_20}}>
+                  {patientRouteInfo.weight.value
+                    ? patientRouteInfo.weight.value
+                    : '-'}{' '}
+                  kg
+                </Text>
+              </View>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginTop: '2%',
+              }}>
+              <View>
+                <Text style={{letterSpacing: 0.4}}>
+                  Reason for visit:
+                  <Text style={{color: '#ef786e'}}>
+                    {patientRouteInfo.reasonForVisit
+                      ? patientRouteInfo.reasonForVisit
+                      : '--'}
+                  </Text>
+                </Text>
+                <Text style={{color: '#ef786e', marginTop: '2%'}}>
+                  First Visit
+                </Text>
+              </View>
+              <Chatbox />
+            </View>
+          </View>
+          <ExpandableList
+            style={{
+              paddingVertical: '5%',
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'Symptoms'}></ExpandableList>
+          <ExpandableList
+            style={{
+              paddingVertical: '5%',
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'Medical History'}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Vitals</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Medication</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Reports</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Surgeries</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Allergies</Text>
+              <MaterialIcon
+                name={'chevron-right'}
+                size={28}
+                color={'#a09e9e'}
+              />
+            </View>
+          </ExpandableList>
+          <ExpandableList
+            style={{
+              paddingVertical: '5%',
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'Assessment & Plan'}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Assessment</Text>
+              <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Add Tests</Text>
+              <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingVertical: '4%',
+                paddingHorizontal: '5%',
+                borderBottomWidth: 1.5,
+                borderBottomColor: 'rgba(0,0,0,0.1)',
+              }}>
+              <Text>Add Medications</Text>
+              <MaterialIcon name={'plus'} size={24} color={'#a09e9e'} />
+            </View>
+          </ExpandableList>
+          <ExpandableList
+            style={{
+              paddingVertical: '5%',
+              borderWidth: 1,
+              borderColor: 'rgba(0,0,0,0.08)',
+              borderRadius: 10,
+            }}
+            title={'test'}>
+            <Text>hello</Text>
+          </ExpandableList>
+
+          <TouchableOpacity
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'space-around',
-              paddingHorizontal: 60,
-              marginTop: 30,
+              justifyContent: 'center',
+              marginTop: '5%',
+              backgroundColor: '#e6f7f5',
+              width: '85%',
+              alignSelf: 'center',
+              paddingVertical: '3%',
+              borderRadius: 15,
+              elevation: 3,
+            }}
+            onPress={() => {
+              setAddReasonModel(true);
             }}>
-            <Avater
-              type={8}
-              style={{borderRadius: 30, borderWidth: 5}}></Avater>
+            <MaterialIcon name={'plus'} size={30} color={NEW_PRIMARY_COLOR} />
             <Text
               style={{
-                fontSize: 20,
-                color: '#9C77BC',
                 fontWeight: 'bold',
+                fontSize: FONT_SIZE_18,
+                marginLeft: '2%',
               }}>
-              {`${patient.firstName} ${patient.lastName}`}
+              Add Reason
             </Text>
-          </View>
-        </RadialGradient>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
-      <ScrollView
-        style={{
-          flex: 1,
-          paddingVertical: 40,
-          paddingHorizontal: 50,
-        }}>
-        <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
-          <TouchableOpacity style={{alignItems: 'center'}}>
-            <MedicalHistory width={100} />
-            <Text style={{color: '#AAA4C5', lineHeight: 40}}>
-              Medical History
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={{alignItems: 'center'}}>
-            <Reports width={100} />
-            <Text style={{color: '#AAA4C5', lineHeight: 40}}>Reports</Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            marginTop: 20,
-          }}>
-          <TouchableOpacity style={{alignItems: 'center'}}>
-            <AppointmentsSvg width={100} />
-            <Text style={{color: '#AAA4C5', lineHeight: 40}}>Appointments</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={{alignItems: 'center'}}>
-            <View
-              style={{
-                height: 100,
-                width: 100,
-                borderWidth: 2,
-                borderColor: '#E9E5FF',
-                borderRadius: 10,
-              }}></View>
-            <Text style={{color: '#AAA4C5', lineHeight: 40}}>Notes</Text>
-          </TouchableOpacity>
-        </View>
-        <DmzButton
-          text={'SAVE CHANGES'}
-          style={{
-            Container: {
-              backgroundColor: '#9C77BC',
-              elevation: 1,
-              width: '70%',
-              height: 'auto',
-              paddingVertical: 10,
-              alignSelf: 'center',
-              marginTop: 15,
-            },
-            Text: {color: '#fff'},
-          }}></DmzButton>
-      </ScrollView>
-    </View>
+    </>
   );
 }
 
 export default PatientDetails;
+
+// const ExpandableList = ({children, title}) => {
+//   const AnimatedIcon = Animated.createAnimatedComponent(MaterialIcon);
+//   const HeightExpand = useRef(new Animated.Value(0)).current;
+//   const [expandedHeight, setExpandedHeight] = useState(0);
+//   const onLayout = (e) => {
+//     setExpandedHeight(e.nativeEvent.layout.height);
+//   };
+//   const [showContent, setShowContent] = useState(false);
+//   const onToggleExpand = () => {
+//     setShowContent(!showContent);
+//     Animated.timing(HeightExpand, {
+//       delay: 200,
+//       easing: Easing.bounce,
+//       duration: 1000,
+//       useNativeDriver: false,
+//       toValue: showContent ? 0 : 1,
+//     }).start();
+//   };
+//   return (
+//     <View
+//       style={{
+//         backgroundColor: '#fff',
+//         elevation: 4,
+//         paddingVertical: '5%',
+//         paddingHorizontal: '8%',
+//         marginBottom: 5,
+//       }}>
+//       <View
+//         style={{
+//           flexDirection: 'row',
+//           alignItems: 'center',
+//           justifyContent: 'space-between',
+//         }}>
+//         <Text style={{fontSize: FONT_SIZE_19, fontWeight: 'bold'}}>
+//           {title}
+//         </Text>
+//         <TouchableWithoutFeedback onPress={onToggleExpand}>
+//           <AnimatedIcon
+//             style={{
+//               transform: [
+//                 {
+//                   rotate: HeightExpand.interpolate({
+//                     inputRange: [0, 1],
+//                     outputRange: ['0deg', showContent ? '-180deg' : '0deg'],
+//                   }),
+//                 },
+//               ],
+//             }}
+//             name={'chevron-down'}
+//             size={30}
+//             color={'#047b7b'}
+//           />
+//         </TouchableWithoutFeedback>
+//       </View>
+
+//       {showContent && (
+//         <Animated.View
+//           style={{
+//             height: HeightExpand.interpolate({
+//               inputRange: [0, 1],
+//               outputRange: [0, expandedHeight],
+//             }),
+//             marginTop: HeightExpand.interpolate({
+//               inputRange: [0, 1],
+//               outputRange: [0, 30],
+//             }),
+//             overflow: 'hidden',
+//           }}>
+//           <View
+//             onLayout={onLayout}
+//             style={{
+//               paddingVertical: '5%',
+//               borderWidth: 1,
+//               borderColor: 'rgba(0,0,0,0.08)',
+//             }}>
+//             {children}
+//           </View>
+//         </Animated.View>
+//       )}
+//     </View>
+//   );
+// };

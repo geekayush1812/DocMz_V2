@@ -1,35 +1,29 @@
 import React from 'react';
-import {Animated, StyleSheet} from 'react-native';
+import {Animated, StyleSheet, Image, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {useSelector} from 'react-redux';
 
-import NavBackButton from '../../../assets/svg/nav_back.svg';
-import NavHamButton from '../../../assets/svg/nav_ham.svg';
-
-import {PRIMARY} from '../../../styles/colors';
+import {PRIMARY, NEW_HEADER_TEXT} from '../../../styles/colors';
+import {Colors} from '../../../styles/colorsV2';
 
 import DmzText from '../../atoms/DmzText/DmzText';
 
 function TopNavBar({
-  onLeftButtonPress = () => navigation.goBack(null),
+  onLeftButtonPress = () => navigation.goBack(),
   onRightButtonPress = () => navigation.openDrawer(),
   headerText,
   LeftComp,
   RightComp,
-  isClap = false,
   navigation,
   style,
   hideRightComp,
   hideLeftComp,
 }) {
+  const {theme} = useSelector((state) => state.AuthReducer);
   return (
     <Animated.View
       style={[
         Styles.Container,
-        isClap && {
-          backgroundColor: PRIMARY,
-          height: 80,
-          marginTop: 0,
-        },
         hideLeftComp && hideRightComp ? {justifyContent: 'center'} : null,
         style ? style.Container : null,
       ]}>
@@ -38,32 +32,38 @@ function TopNavBar({
           style={Styles.TouchableOpacity}
           onPress={onLeftButtonPress}>
           {!LeftComp ? (
-            <NavBackButton
+            <Image
+              source={require('../../../assets/icons/back.png')}
               style={[Styles.BackButton, style ? style.BackButton : null]}
             />
           ) : (
+            // <Iconicons name="chevron-back" size={20} />
             LeftComp
           )}
         </TouchableOpacity>
       )}
       <DmzText
         text={headerText}
+        numberOfLines={1}
+        adjustsFontSizeToFit
         style={[
           {
             fontSize: 20,
-            color: '#fff',
+            color: Colors.primary_text_color[theme],
             alignSelf: 'center',
+            fontFamily: 'Montserrat-Medium',
           },
           style ? style.Header : null,
         ]}
       />
-      {!hideRightComp && (
+      {!hideRightComp ? (
         <TouchableOpacity
           style={Styles.TouchableOpacity}
           // onPress={() => onRightButtonPress()}>
           onPress={() => onRightButtonPress()}>
           {!RightComp ? (
-            <NavHamButton
+            <Image
+              source={require('../../../assets/icons/hamburger_menu.png')}
               style={[
                 Styles.HamburgerButton,
                 style ? style.HamburgerButton : null,
@@ -73,6 +73,8 @@ function TopNavBar({
             RightComp
           )}
         </TouchableOpacity>
+      ) : (
+        <View />
       )}
     </Animated.View>
   );
@@ -86,12 +88,13 @@ const Styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 8,
+    marginTop: 5,
   },
   TouchableOpacity: {
     padding: 10,
     borderRadius: 20,
   },
-  BackButton: {height: 20, marginLeft: 10},
-  HamburgerButton: {height: 20, width: 20, marginRight: 15},
+  BackButton: {height: 19, width: 10},
+  HamburgerButton: {height: 19, width: 24},
 });
 export default TopNavBar;

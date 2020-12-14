@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Animated, FlatList } from 'react-native';
+import {View, Text, StyleSheet, Animated, FlatList} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import _ from 'lodash'
+import _ from 'lodash';
 import DmzButton from '../../atoms/DmzButton/DmzButton';
-import { TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
+import {TouchableOpacity, ScrollView} from 'react-native-gesture-handler';
 
 class ScheduleAppointment extends React.Component {
   constructor(props) {
@@ -12,10 +12,12 @@ class ScheduleAppointment extends React.Component {
     this.DateScrollerRef = React.createRef();
     this.activeId = props.activeId;
     this.doctors = props.doctors;
-    this.obj = props.obj
+    this.obj = props.obj;
 
-    console.log('######### schedule apointment ###############################################')
-    console.log(this.doctors)
+    console.log(
+      '######### schedule apointment ###############################################',
+    );
+    console.log(this.doctors);
 
     this.state = {
       monthIndex: 1,
@@ -86,7 +88,6 @@ class ScheduleAppointment extends React.Component {
   }
 
   componentDidMount() {
-
     // console.log('Form schedule data------------------------->')
     // console.log(this.doctors)
 
@@ -113,7 +114,7 @@ class ScheduleAppointment extends React.Component {
                   : this.state.selectedDate - 1,
             });
           })
-          .catch(e => {
+          .catch((e) => {
             console.log(e);
           });
       },
@@ -137,7 +138,7 @@ class ScheduleAppointment extends React.Component {
               : this.state.selectedDate - 1,
         });
       })
-      .catch(e => {
+      .catch((e) => {
         console.log(e);
       });
   };
@@ -148,7 +149,7 @@ class ScheduleAppointment extends React.Component {
     for (let i = 1; i <= 31; i++) {
       let d = new Date(year, this.state.monthIndex, i);
       if (d.getMonth() === this.state.monthIndex) {
-        arr.push({ day: d.getDay(), date: d.getDate(), month: d.getMonth() });
+        arr.push({day: d.getDay(), date: d.getDate(), month: d.getMonth()});
       } else {
         break;
       }
@@ -193,7 +194,7 @@ class ScheduleAppointment extends React.Component {
       );
     }
   };
-  formatDateSuffix = date => {
+  formatDateSuffix = (date) => {
     switch (date % 10) {
       case 1:
         return 'st';
@@ -206,7 +207,7 @@ class ScheduleAppointment extends React.Component {
     }
   };
   onDayPress = () => {
-    this.setState({ selectedDate: item.date }, () =>
+    this.setState({selectedDate: item.date}, () =>
       this.DateScrollerRef.scrollToIndex({
         index:
           this.state.selectedDate > 5
@@ -216,34 +217,34 @@ class ScheduleAppointment extends React.Component {
     );
   };
   render() {
-    const { PopupTranslateY, onPress, showPopup } = this.props;
+    const {PopupTranslateY, onPress, showPopup} = this.props;
     // const {output} = this.props.doctors
 
-    // const timing = [
-    //   {time: '8:00', isBooked: false},
-    //   {time: '9:00', isBooked: false},
-    //   {time: '10:00', isBooked: true},
-    //   {time: '11:00', isBooked: false},
-    //   {time: '13:00', isBooked: true},
-    //   {time: '17:00', isBooked: true},
-    //   {time: '18:00', isBooked: false},
-    //   {time: '17:00', isBooked: true},
-    //   {time: '18:00', isBooked: false},
-    //   {time: '17:00', isBooked: true},
-    //   {time: '18:00', isBooked: false},
-    //   {time: '17:00', isBooked: true},
-    //   {time: '18:00', isBooked: false},
-    //   {time: '17:00', isBooked: true},
-    //   {time: '18:00', isBooked: false},
-    //   {time: '17:00', isBooked: true},
-    //   {time: '18:00', isBooked: false},
-    // ];
+    const timing = [
+      {time: '8:00', isBooked: false},
+      {time: '9:00', isBooked: false},
+      {time: '10:00', isBooked: true},
+      {time: '11:00', isBooked: false},
+      {time: '13:00', isBooked: true},
+      {time: '17:00', isBooked: true},
+      {time: '18:00', isBooked: false},
+      {time: '17:00', isBooked: true},
+      {time: '18:00', isBooked: false},
+      {time: '17:00', isBooked: true},
+      {time: '18:00', isBooked: false},
+      {time: '17:00', isBooked: true},
+      {time: '18:00', isBooked: false},
+      {time: '17:00', isBooked: true},
+      {time: '18:00', isBooked: false},
+      {time: '17:00', isBooked: true},
+      {time: '18:00', isBooked: false},
+    ];
 
-    const timing = _.orderBy(this.doctors.filter(item =>
-      item.booked === false
-      && new Date(item.bookedFor).getUTCFullYear() === new Date().getUTCFullYear()
-      && new Date(item.bookedFor).getUTCMonth() === this.state.monthIndex
-      && new Date(item.bookedFor).getDate() === this.state.selectedDate), ['bookedFor'], ['asc']).map(appoint => ({ id: appoint._id, time: `${(new Date(appoint.bookedFor).getUTCHours())}:${(new Date(appoint.bookedFor).getUTCMinutes())}`, isBooked: appoint.booked }))
+    // const timing = _.orderBy(this.doctors.filter(item =>
+    //   item.booked === false
+    //   && new Date(item.bookedFor).getUTCFullYear() === new Date().getUTCFullYear()
+    //   && new Date(item.bookedFor).getUTCMonth() === this.state.monthIndex
+    //   && new Date(item.bookedFor).getDate() === this.state.selectedDate), ['bookedFor'], ['asc']).map(appoint => ({ id: appoint._id, time: `${(new Date(appoint.bookedFor).getUTCHours())}:${(new Date(appoint.bookedFor).getUTCMinutes())}`, isBooked: appoint.booked }))
 
     // console.log(`Select date: ${this.state.selectedDate} and selected month: ${this.state.monthIndex} so date: ${new Date().getFullYear().toString().concat('-').concat(this.state.monthIndex).concat('-').concat(this.state.selectedDate)}`)
 
@@ -251,7 +252,7 @@ class ScheduleAppointment extends React.Component {
       <Animated.View
         style={[
           ScheduleAppointmentStyles.Overlay,
-          { opacity: PopupTranslateY, zIndex: showPopup ? 999 : 0 },
+          {opacity: PopupTranslateY, zIndex: showPopup ? 999 : 0},
         ]}>
         <Animated.View
           style={[
@@ -272,7 +273,7 @@ class ScheduleAppointment extends React.Component {
             Schedule an appointment
           </Text>
           <View style={ScheduleAppointmentStyles.MonthScroller}>
-            <View style={{ flex: 1 }}>
+            <View style={{flex: 1}}>
               <TouchableOpacity onPress={this.onBackwardMonth}>
                 <MaterialCommunityIcons
                   name="chevron-left"
@@ -286,7 +287,7 @@ class ScheduleAppointment extends React.Component {
                 flex: 5,
               }}>
               <FlatList
-                ref={ref => {
+                ref={(ref) => {
                   this.MonthScrollerRef = ref;
                 }}
                 scrollEnabled={false}
@@ -301,7 +302,7 @@ class ScheduleAppointment extends React.Component {
                   overflow: 'hidden',
                   justifyContent: 'space-between',
                 }}
-                renderItem={({ item }) => (
+                renderItem={({item}) => (
                   <View
                     style={{
                       width: 100,
@@ -311,10 +312,10 @@ class ScheduleAppointment extends React.Component {
                     <Text>{item.name}</Text>
                   </View>
                 )}
-                keyExtractor={item => `${item.month}`}
+                keyExtractor={(item) => `${item.month}`}
               />
             </View>
-            <View style={{ flex: 1 }}>
+            <View style={{flex: 1}}>
               <TouchableOpacity onPress={this.onForwardMonth}>
                 <MaterialCommunityIcons
                   name="chevron-right"
@@ -326,17 +327,17 @@ class ScheduleAppointment extends React.Component {
           </View>
           <View style={ScheduleAppointmentStyles.DayScroller}>
             <FlatList
-              ref={ref => {
+              ref={(ref) => {
                 this.DateScrollerRef = ref;
               }}
               onScrollToIndexFailed={this.onScrollToIndexFailed}
               horizontal={true}
               data={this.state.dayNdate}
-              keyExtractor={item => `${item.date}`}
-              renderItem={({ item }) => (
+              keyExtractor={(item) => `${item.date}`}
+              renderItem={({item}) => (
                 <TouchableOpacity
                   onPress={() =>
-                    this.setState({ selectedDate: item.date }, () =>
+                    this.setState({selectedDate: item.date}, () =>
                       this.DateScrollerRef.scrollToIndex({
                         index:
                           this.state.selectedDate > 5
@@ -369,10 +370,12 @@ class ScheduleAppointment extends React.Component {
                 this.state.selectedDate,
               )} ${this.state.months[this.state.monthIndex].name}, ${
                 this.state.selectedDay
-                }`}
+              }`}
             </Text>
           </View>
-          <ScrollView style={ScheduleAppointmentStyles.TimingContainer} horizontal={true}>
+          <ScrollView
+            style={ScheduleAppointmentStyles.TimingContainer}
+            horizontal={true}>
             {timing.map((item, index) => (
               <DmzButton
                 key={index}
@@ -381,8 +384,8 @@ class ScheduleAppointment extends React.Component {
                 onPress={() => this.props.navigation.navigate('Questionnaire')}
                 style={{
                   Container: item.isBooked
-                    ? { margin: 5, ...ScheduleAppointmentStyles.activeButton }
-                    : { margin: 5 },
+                    ? {margin: 5, ...ScheduleAppointmentStyles.activeButton}
+                    : {margin: 5},
                 }}
               />
             ))}
@@ -477,7 +480,7 @@ const ScheduleAppointmentStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: '98%',
-    height: 200
+    height: 200,
     // justifyContent: 'center',
   },
   activeButton: {
@@ -486,42 +489,6 @@ const ScheduleAppointmentStyles = StyleSheet.create({
   },
 });
 export default ScheduleAppointment;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 import React from 'react';

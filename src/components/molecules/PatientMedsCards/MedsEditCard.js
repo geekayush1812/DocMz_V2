@@ -56,8 +56,7 @@ export default function MedsEditCard({style, data, onPress}) {
         <TouchableOpacity
           style={{alignSelf: 'center', height: 50, justifyContent: 'center'}}
           onPress={onPress}>
-          <Text
-            style={{color: HEADER_TEXT, fontWeight: 'bold', fontSize: 16}}>
+          <Text style={{color: HEADER_TEXT, fontWeight: 'bold', fontSize: 16}}>
             Cancel
           </Text>
         </TouchableOpacity>

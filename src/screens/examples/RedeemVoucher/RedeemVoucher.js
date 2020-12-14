@@ -34,7 +34,7 @@ export default function RedeemVoucher({navigation}) {
 
   return (
     <View style={{backgroundColor: '#fff', flex: 1}}>
-      <TopNavBar navigation={navigation} />
+      <TopNavBar navigation={navigation} style={{Container: {marginTop: 10}}} />
       <View
         style={{
           marginHorizontal: 15,
@@ -49,10 +49,12 @@ export default function RedeemVoucher({navigation}) {
             color: HEADER_TEXT,
             fontSize: 20,
             textTransform: 'uppercase',
-            marginLeft: 20,
+            marginLeft: 7.5,
           }}
         />
         <DmzButton
+          numberOfLines={1}
+          adjustsFontSizeToFit
           onPress={() => {
             setVisible(true);
           }}

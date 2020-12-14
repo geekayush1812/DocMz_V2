@@ -1,38 +1,49 @@
 /* eslint-disable react-native/no-inline-styles */
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, StyleSheet} from 'react-native';
+import {floor} from 'lodash';
+import {NEW_PRIMARY_COLOR, INACTIVE_STEP} from '../../../styles/colors';
 
 export default function StepsTracker({
   text,
   completed,
-  textStyle,
-  completedColor,
+  mode = [25, 50, 75, 100],
   style,
-  incompletedColor,
 }) {
   return (
     <View
       style={[
-        {width: '80%', alignSelf: 'center', marginTop: 30},
+        {width: '80%', alignSelf: 'center', marginTop: 5},
         style ? style : null,
       ]}>
-      <Text style={[textStyle ? textStyle : null]}>{text}</Text>
-      <View style={{marginTop: 5, flexDirection: 'row'}}>
-        <View
-          style={{
-            height: 5,
-            width: `${completed}%`,
-            backgroundColor: completedColor ? completedColor : 'black',
-          }}
-        />
-        <View
-          style={{
-            height: 5,
-            width: `${100 - completed}%`,
-            backgroundColor: incompletedColor ? incompletedColor : 'grey',
-          }}
-        />
+      <Text
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        style={{fontSize: 24, fontFamily: 'Montserrat-Regular'}}>
+        {text}
+      </Text>
+      <View style={{marginTop: 15, flexDirection: 'row'}}>
+        {mode.map((no) => (
+          <View
+            style={[
+              styles.indicator,
+              {
+                backgroundColor:
+                  no <= completed ? NEW_PRIMARY_COLOR : INACTIVE_STEP,
+                marginRight: no == 100 ? 0 : 10,
+              },
+            ]}
+          />
+        ))}
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  indicator: {
+    flex: 1,
+    height: 5,
+    borderRadius: 5,
+  },
+});

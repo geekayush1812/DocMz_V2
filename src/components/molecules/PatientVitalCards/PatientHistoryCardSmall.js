@@ -9,6 +9,7 @@ import Height from '../../../assets/svg/height.svg';
 import Temp from '../../../assets/svg/temprature.svg';
 import Microscope from '../../../assets/svg/microscope.svg';
 import {PRIMARY_TEXT, TERTIARY_TEXT} from '../../../styles/colors';
+import {useSelector} from 'react-redux';
 
 export default function PatientHistoryCardSmall({
   style,
@@ -19,6 +20,8 @@ export default function PatientHistoryCardSmall({
   infoThree,
   onPress,
 }) {
+  const {isLogedin} = useSelector((state) => state.AuthReducer);
+
   const getIcon = () => {
     if (headerOne == 'Weight') {
       return <Notepad style={{marginRight: 15, marginTop: 10}} />;
@@ -58,7 +61,10 @@ export default function PatientHistoryCardSmall({
           style={[styles.InfoThree, style ? style.InfoThree : null]}
           text={infoThree}
         />
-        <TouchableOpacity onPress={onPress} style={{marginRight: 10}}>
+        <TouchableOpacity
+          onPress={onPress}
+          style={{marginRight: 10}}
+          disabled={!isLogedin}>
           <Entypo name="chevron-right" size={22} color="#E7E3FE" />
         </TouchableOpacity>
       </View>
@@ -70,9 +76,10 @@ const styles = StyleSheet.create({
   Card: {
     elevation: 4,
     borderRadius: 30,
-    height: 140,
-    width: 142,
+    height: 'auto',
+    width: '40%',
     paddingHorizontal: 4,
+    paddingBottom: 10,
   },
   Container: {
     flexDirection: 'row',

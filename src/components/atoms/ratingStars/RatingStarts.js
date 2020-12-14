@@ -25,6 +25,7 @@ function RatingStarts({rating, activeColor, passiveColor, size, filled}) {
             name="star"
             size={size || 11}
             color={passiveColor || '#fafafa'}
+            style={{marginRight: 4}}
           />
         ) : (
           <Icon
@@ -32,6 +33,7 @@ function RatingStarts({rating, activeColor, passiveColor, size, filled}) {
             name="star"
             size={(size && size - 2) || 9}
             color={passiveColor || '#F4C130'}
+            style={{marginRight: 4}}
           />
         ),
       );

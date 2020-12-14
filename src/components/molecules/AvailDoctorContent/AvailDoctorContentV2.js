@@ -1,14 +1,18 @@
-/* eslint-disable prettier/prettier */
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import RatingStars from '../../atoms/ratingStars/RatingStarts';
+import React, {useState, useEffect} from 'react';
+import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import {
   HEADER_TEXT,
   TERTIARY_TEXT_TWO,
   TERTIARY_TEXT,
   PRIMARY_COLOR,
+  SECONDARY_BACKGROUND,
+  NEW_HEADER_TEXT,
+  NEW_PRIMARY_COLOR,
 } from '../../../styles/colors';
+import moment from 'moment';
+import {useSelector, useDispatch} from 'react-redux';
+import {AddFevDoc} from '../../../reduxV2/action/PatientAction';
 function AvailDoctorContentV2({
   Profile,
   DoctorName,
@@ -20,65 +24,123 @@ function AvailDoctorContentV2({
   data,
   toggle,
 }) {
+  const [heartActive, setHeartActive] = useState(false);
+  const {isLoggedin} = useSelector((state) => state.AuthReducer);
+  const {patient} = useSelector((state) => state.PatientReducer);
+  const dispatch = useDispatch();
+  const heartHandle = () => {
+    if (!isLoggedin) {
+      navigation.navigate('Auth');
+    } else {
+      dispatch(AddFevDoc(data._id, patient._id));
+    }
+  };
+  useEffect(() => {
+    const res = patient?.favourites?.some((item) => {
+      return item._id === data._id;
+    });
+    setHeartActive(res);
+  }, [patient]);
   return (
     <>
-      <View
-        style={{
-          alignItems: 'flex-end',
-          alignSelf: 'stretch',
-        }}>
-        <RatingStars
-          size={14}
-          filled
-          activeColor={'#AAA4C5'}
-          passiveColor={'rgba(0, 0, 0, 0.15)'}
-          rating={rating}
-        />
-      </View>
       <TouchableOpacity
-        style={CardContentStyles.AvailableDoctorsCardContent}
-        onPress={() => {}}>
+        onPress={() => navigation.navigate('DoctorProfile', {data: data})}
+        style={{
+          flex: 4.5,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
         {Profile}
-        <View style={CardContentStyles.AvailableDoctorsDetails}>
-          <Text style={CardContentStyles.AvailableDoctorsName}>
-            {DoctorName}
-          </Text>
-          <Text style={CardContentStyles.AvailableDoctorsSpecialization}>
-            {Specialization}
-          </Text>
-          {/* can be made as molecule and touchable if needed */}
-          <View style={CardContentStyles.AvailableDoctorsAvailableTimes}>
-            {schedule &&
-              schedule
-                .filter((item) => {
-                  if (item.bookedFor) {
-                    return (
-                      item.bookedFor.slice(11, 16) >
-                      new Date().toISOString().slice(11, 16)
-                    );
-                  } else false;
-                })
-                .slice(0, 4)
-                .map((item) => {
-                  console.log(item);
-                  return (
-                    <Text
-                      style={[
-                        CardContentStyles.AvailableDoctorsAvailableTime,
-                        item.booked &&
-                          CardContentStyles.AvailableDoctorsAvailableTimeActive,
-                      ]}>
-                      {item.bookedFor.slice(11, 16)}
+        <View
+          style={{
+            paddingLeft: '3%',
+            flex: 1,
+          }}>
+          <View style={{flex: 1, justifyContent: 'space-between'}}>
+            <Text
+              adjustsFontSizeToFit
+              style={CardContentStyles.AvailableDoctorsName}>
+              {DoctorName}
+            </Text>
+            <Text style={{textTransform: 'capitalize'}}>{Specialization}</Text>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginTop: '1.5%',
+            }}>
+            {schedule.map((item, index) => {
+              return (
+                <>
+                  <Text
+                    key={`${item.bookedFor}-${index}`}
+                    style={{
+                      fontSize: 13,
+                      marginRight: index === schedule.length - 1 ? 0 : '2%',
+                      marginLeft: index === 0 ? 0 : '2%',
+                    }}>
+                    {moment(item.bookedFor).format('hh:mm a')}
+                  </Text>
+                  {schedule.length - 1 === index ? null : (
+                    <Text style={{fontWeight: 'bold', color: '#efa860'}}>
+                      |
                     </Text>
-                  );
-                })}
+                  )}
+                </>
+              );
+            })}
           </View>
         </View>
       </TouchableOpacity>
       <View style={CardContentStyles.AvailableDoctorsContinueButton}>
-        <TouchableOpacity onPress={onPress} style={{zIndex: 2000}}>
-          <FontAwesomeIcon name="angle-right" size={22} color="#ffffff" />
-        </TouchableOpacity>
+        <View
+          style={{
+            borderRadius: 5,
+            padding: '1%',
+            backgroundColor: SECONDARY_BACKGROUND,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+          }}>
+          <Image
+            source={require('../../../assets/icons/star.png')}
+            style={{height: 15, width: 15}}
+          />
+          <Text
+            style={{
+              marginHorizontal: '1.5%',
+              fontFamily: 'Montserrat-SemiBold',
+            }}>
+            {parseFloat(rating).toFixed(1)}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity onPress={heartHandle}>
+            <FontAwesomeIcon
+              name="heart"
+              size={28}
+              color={heartActive ? '#ef786e' : '#a09e9e'}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('DoctorProfile', {data: data})}
+            style={{zIndex: 2000}}>
+            <FontAwesomeIcon
+              name="angle-right"
+              size={30}
+              color={NEW_PRIMARY_COLOR}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
     </>
   );
@@ -86,30 +148,33 @@ function AvailDoctorContentV2({
 const CardContentStyles = StyleSheet.create({
   AvailableDoctorsCardContent: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     alignSelf: 'stretch',
   },
   AvailableDoctorsDetails: {
     marginLeft: 15,
     alignSelf: 'stretch',
+    justifyContent: 'space-between',
   },
   AvailableDoctorsName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: HEADER_TEXT,
+    fontSize: 19,
+    color: NEW_HEADER_TEXT,
     textTransform: 'capitalize',
+    fontFamily: 'Montserrat-SemiBold',
   },
 
   AvailableDoctorsSpecialization: {
-    color: TERTIARY_TEXT,
-    fontSize: 13,
-    lineHeight: 18,
+    color: NEW_HEADER_TEXT,
+    fontSize: 12,
+    lineHeight: 14,
     textTransform: 'capitalize',
+    fontFamily: 'Montserrat-Regular',
   },
   AvailableDoctorsAvailableTimes: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 15,
+    marginTop: 5,
   },
   AvailableDoctorsAvailableTime: {
     paddingHorizontal: 4,
@@ -124,15 +189,10 @@ const CardContentStyles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   AvailableDoctorsContinueButton: {
-    backgroundColor: '#E7E3FE',
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    padding: 5,
-    paddingHorizontal: 20,
-    borderBottomRightRadius: 20,
-    borderTopLeftRadius: 20,
-    zIndex: 1000,
+    flex: 1,
+    marginLeft: '4%',
+    alignSelf: 'stretch',
+    justifyContent: 'space-around',
   },
 });
 

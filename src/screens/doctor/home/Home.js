@@ -51,57 +51,57 @@ const Home = ({navigation}) => {
       .join(' ');
     return splited;
   };
-  const dispatch = useDispatch();
-  const {
-    appointmentLoading,
-    appointments,
-    appointmentFetchError,
-    allAppointmentLoading,
-    allAppointments,
-    allAppointmentFetchError,
-  } = useSelector((state) => state.MyDoctorReducer);
-  const {data} = useSelector((state) => state.AuthReducer);
+  // const dispatch = useDispatch();
+  // const {
+  //   appointmentLoading,
+  //   appointments,
+  //   appointmentFetchError,
+  //   allAppointmentLoading,
+  //   allAppointments,
+  //   allAppointmentFetchError,
+  // } = useSelector((state) => state.MyDoctorReducer);
+  // const {data} = useSelector((state) => state.AuthReducer);
   const {height, width} = Dimensions.get('window');
-  const [dayNdate, setdayNdate] = useState([]);
-  const [activeAppointments, setActiveAppointments] = useState([]);
-  const date = new Date();
-  const [activeDate, setActiveDate] = useState(date.getDate());
-  const [globalShowCalendar, setGlobalShowCalendar] = useState(false);
-  useEffect(() => {
-    const date = new Date();
-    !allAppointmentLoading &&
-      dispatch(
-        FetchAllAppointments(
-          data.id,
-          new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString(),
-        ),
-      );
-  }, []);
-  useEffect(() => {
-    let arr = calculateMonths(date.getMonth());
-    if (!allAppointmentLoading) {
-      arr = arr.map((item) => {
-        if (allAppointments[item.date]) {
-          return {
-            ...item,
-            active: true,
-          };
-        }
-        return {
-          ...item,
-          active: false,
-        };
-      });
-      setdayNdate(arr);
-    }
-    const todayDate = date.getDate();
-    if (allAppointments[todayDate]) {
-      setActiveDate(todayDate);
-      setActiveAppointments(allAppointments[todayDate]);
-    } else {
-      setActiveAppointments([]);
-    }
-  }, [allAppointments]);
+  // const [dayNdate, setdayNdate] = useState([]);
+  // const [activeAppointments, setActiveAppointments] = useState([]);
+  // const date = new Date();
+  // const [activeDate, setActiveDate] = useState(date.getDate());
+  // const [globalShowCalendar, setGlobalShowCalendar] = useState(false);
+  // useEffect(() => {
+  //   const date = new Date();
+  //   !allAppointmentLoading &&
+  //     dispatch(
+  //       FetchAllAppointments(
+  //         data.id,
+  //         new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString(),
+  //       ),
+  //     );
+  // }, []);
+  // useEffect(() => {
+  //   let arr = calculateMonths(date.getMonth());
+  //   if (!allAppointmentLoading) {
+  //     arr = arr.map((item) => {
+  //       if (allAppointments[item.date]) {
+  //         return {
+  //           ...item,
+  //           active: true,
+  //         };
+  //       }
+  //       return {
+  //         ...item,
+  //         active: false,
+  //       };
+  //     });
+  //     setdayNdate(arr);
+  //   }
+  //   const todayDate = date.getDate();
+  //   if (allAppointments[todayDate]) {
+  //     setActiveDate(todayDate);
+  //     setActiveAppointments(allAppointments[todayDate]);
+  //   } else {
+  //     setActiveAppointments([]);
+  //   }
+  // }, [allAppointments]);
 
   // getting recent appointments
   // useEffect(() => {
@@ -148,15 +148,15 @@ const Home = ({navigation}) => {
       },
     }),
   ).current;
-  const setDate = (date) => {
-    if (allAppointments[date]) {
-      setActiveDate(date);
-      setActiveAppointments(allAppointments[date]);
-      console.log(allAppointments[date]);
-    } else {
-      setActiveAppointments([]);
-    }
-  };
+  // const setDate = (date) => {
+  //   if (allAppointments[date]) {
+  //     setActiveDate(date);
+  //     setActiveAppointments(allAppointments[date]);
+  //     console.log(allAppointments[date]);
+  //   } else {
+  //     setActiveAppointments([]);
+  //   }
+  // };
   return (
     <RadialGradient
       style={{width: '100%', height: '100%', zIndex: 0}}
@@ -182,12 +182,12 @@ const Home = ({navigation}) => {
         }}>
         Appointments
       </Text>
-      <CalenderMonth
+      {/* <CalenderMonth
         style={{Container: {marginTop: 30}}}
         dayNdate={dayNdate}
         activeDate={activeDate}
         setGlobalShowCalendar={setGlobalShowCalendar}
-        setDate={setDate}></CalenderMonth>
+        setDate={setDate}></CalenderMonth> */}
       <Animated.View
         style={{
           ...StyleSheet.absoluteFill,
@@ -204,23 +204,24 @@ const Home = ({navigation}) => {
         }}>
         <View style={{marginLeft: 15}} {...panResponder.panHandlers}>
           <Text style={{color: '#AAA4C5', fontWeight: 'bold', fontSize: 16}}>
-            Hello {data.basic.name.toTitleCase()},
+            Hello
+            {/* {data.basic.name.toTitleCase()}, */}
           </Text>
           <Text style={{color: '#AAA4C5', fontWeight: 'bold', fontSize: 16}}>
             You have{' '}
             <Text style={{color: '#6859A2'}}>
-              {activeAppointments.length} Appointments
+              {/* {activeAppointments.length} */}
+              Appointments
             </Text>
           </Text>
         </View>
         <ScrollView>
           {/* still have to create search bar */}
-          {activeAppointments.map((item, index) => {
+          {/* {activeAppointments.map((item, index) => {
             const {patient} = item;
             return (
               <TouchableOpacity
                 onPress={() => {
-                  console.log('poskfs');
                   navigation.navigate('PatientDetails', {patient: patient});
                 }}
                 style={{marginTop: 25}}>
@@ -287,6 +288,7 @@ const Home = ({navigation}) => {
               </TouchableOpacity>
             );
           })}
+        */}
         </ScrollView>
       </Animated.View>
     </RadialGradient>

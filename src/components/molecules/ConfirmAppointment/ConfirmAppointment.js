@@ -1,5 +1,12 @@
 import React, {useState, useReducer, useRef} from 'react';
-import {View, StyleSheet, Text, Animated, Easing} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Animated,
+  Easing,
+  TextInput,
+} from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {ScrollView, TouchableOpacity} from 'react-native-gesture-handler';
 import Available from '../../../assets/svg/available.svg';
@@ -13,57 +20,61 @@ import GradientTopNavBar from '../../molecules/TopNavBar/GradientTopNavBar';
 import ProfileColText from '../../molecules/ProfileCol/ProfileColText';
 import TopNavBarProfile from '../../molecules/TopNavBar/TopNavBarProfile';
 import ScheduleAppointment from '../../organisms/ScheduleAppointment/ScheduleAppointment';
+import {
+  NEW_HEADER_TEXT,
+  GREY_OUTLINE,
+  SECONDARY_COLOR,
+  INPUT_PLACEHOLDER,
+} from '../../../styles/colors';
+import AppointmentQuestion from '../Modal/AppointmentQuestion';
+import DmzButton from '../../atoms/DmzButton/DmzButton';
+import {Picker} from '@react-native-community/picker';
+import {useSelector, useDispatch} from 'react-redux';
+import moment from 'moment';
 
-const Data = [
-  {
-    name: 'kamalesh biswas',
-    reasonForVisit: 'head pain',
-    contact: '8001981992',
-  },
-  {
-    name: 'kamalesh biswas',
-    reasonForVisit: 'head pain',
-    contact: '8001981992',
-  },
-  {
-    name: 'kamalesh biswas',
-    reasonForVisit: 'head pain',
-    contact: '8001981992',
-  },
-  {
-    name: 'samiran biswas',
-    reasonForVisit: 'cancer',
-    contact: '9001981991',
-  },
-];
-
-const ConfirmAppointment = ({navigation}) => {
-  const data = navigation.state.params.data;
+const ConfirmAppointment = ({navigation, route}) => {
+  const {data: slotData, doctorData} = route.params;
+  const dispatch = useDispatch();
   const [showPopup, setShowPopup] = useState(false);
+  const [memberCredential, setMemberCredential] = useState({
+    id: '',
+    name: '',
+    contact: '',
+    date: '',
+  });
+  const [reasonForVisit, setReasonForVisit] = useState('');
   const PopupTranslateY = useRef(new Animated.Value(0)).current;
 
-  console.log('************************************');
-  console.log(data.output || data.appointments);
+  const {familyMember, patient} = useSelector((state) => state.PatientReducer);
 
-  const [state, setState] = useState({
-    name: '',
-    reasonForVisit: '',
-    contact: '',
-  });
-
-  const initialChoosenState = (_state) => {
-    setState(_state);
+  const credentialSet = (id) => {
+    const member = familyMember.find((item) => item._id === id);
+    setMemberCredential({
+      id: id,
+      name: `${member.firstName} ${member.lastName}`,
+      date: moment(slotData.bookedFor).format('ddd,MMMM M - HH:mm a'),
+      contact: patient.phone,
+    });
   };
 
   const handelAppointmentSubmit = () => {
-    console.log('Handel appointment submit.');
-    console.log(state);
-    navigation.navigate('Questionnaire');
+    const member = familyMember.find(
+      (item) => item._id === memberCredential.id,
+    );
+    const data = {
+      timeSlot: slotData._id,
+      patient: patient._id,
+      forWhom: member.relationship,
+      patientInfo: JSON.stringify(member),
+      reasonForVisit: reasonForVisit,
+    };
+    navigation.navigate('Questionnaire', {
+      doctorData,
+      appointmentBookingData: data,
+    });
   };
 
   const onPress = (id) => {
-    // setActiveId(id);
-    // __id = id
     Animated.sequence([
       Animated.timing(PopupTranslateY, {
         toValue: showPopup ? 0 : 1,
@@ -77,126 +88,130 @@ const ConfirmAppointment = ({navigation}) => {
 
   return (
     <View style={ConfirmAppointmentStyles.Container}>
-      <GradientTopNavBar
+      <TopNavBar
+        headerText="Appointment Summary"
         navigation={navigation}
-        isClap={true}
-        onLeftButtonPress={() => navigation.goBack(null)}
-        headerText={'Book an Appointment'}
-        style={{margin: -25, marginTop: -30}}
+        style={{
+          Container: {
+            height: 'auto',
+            marginTop: 5,
+          },
+        }}
       />
-      <ScrollView
-        style={ConfirmAppointmentStyles.ScrollView}
-        showsVerticalScrollIndicator={false}>
-        <View style={ConfirmAppointmentStyles.ScheduleAvailability}>
-          <Section HeaderText="Appointment History">
-            <CardInRow
-              style={{
-                paddingTop: 15,
-                paddingLeft: 10,
-                paddingRight: 10,
-                paddingBottom: 8,
-                borderTopWidth: 1,
-                BorderBottomWidth: 1,
-                borderColor: '#F2EBEB',
-              }}>
-              {Data.map((item) => (
-                <ProfileColText
-                  ProfileName={item.name}
-                  ProfileEmail={item.contact}
-                  trigger={() => initialChoosenState(item)}
-                />
-              ))}
-            </CardInRow>
-          </Section>
-          <View style={ConfirmAppointmentStyles.ScheduleTiming}>
-            <MaterialCommunityIcons name="calendar" size={32} color="#6230CC" />
-            <View style={ConfirmAppointmentStyles.DateAndTime}>
-              <Text style={ConfirmAppointmentStyles.Date}>Friday,March 27</Text>
-              <Text style={ConfirmAppointmentStyles.Time}>
-                10:00 - 11:00 AM
-              </Text>
+
+      <ScrollView style={ConfirmAppointmentStyles.ScrollView}>
+        <View style={[ConfirmAppointmentStyles.rootGroup, {marginTop: 40}]}>
+          <Text style={ConfirmAppointmentStyles.rootHeading}>
+            Patient Details
+          </Text>
+          <View style={ConfirmAppointmentStyles.inputGroup}>
+            <View
+              style={[
+                ConfirmAppointmentStyles.text,
+                ConfirmAppointmentStyles.upperText,
+              ]}>
+              <Picker
+                style={{height: 20, width: '100%'}}
+                selectedValue={memberCredential.id}
+                onValueChange={credentialSet}>
+                <Picker.Item color="#777" label="Select Name" value={null} />
+                {familyMember.map((item) => (
+                  <Picker.Item
+                    label={`${item.firstName} ${item.lastName}`}
+                    value={item._id}
+                  />
+                ))}
+              </Picker>
             </View>
-          </View>
-          <View style={ConfirmAppointmentStyles.Available}>
-            <Available />
-            <Text style={ConfirmAppointmentStyles.AvailableText}>
-              Available
+            <Text style={[ConfirmAppointmentStyles.text]}>
+              {memberCredential.contact}
+            </Text>
+            <Text
+              style={[
+                ConfirmAppointmentStyles.text,
+                ConfirmAppointmentStyles.bottomText,
+              ]}>
+              I am a new patient
             </Text>
           </View>
         </View>
-        <Text style={ConfirmAppointmentStyles.InputLabel}>Patient Name</Text>
-        <TextInputCustom
-          inputHandler={(txt) => setState({...state, name: txt})}
-          value={state.name}
-          placeholder="Name"
-          textContentType="name"
-        />
-        <Text style={ConfirmAppointmentStyles.InputLabel}>
-          Reason for visit
-        </Text>
-        <TextInputCustom
-          inputHandler={(txt) => setState({...state, reasonForVisit: txt})}
-          value={state.reasonForVisit}
-          placeholder="Reason"
-          textContentType="name"
-        />
-        <Text style={ConfirmAppointmentStyles.InputLabel}>Contact Number</Text>
-        <TextInputCustom
-          inputHandler={(txt) => setState({...state, contact: txt})}
-          value={state.contact}
-          placeholder="Contact"
-          textContentType="telephoneNumber"
-          keyboardType="phone-pad"
-        />
-        <View style={ConfirmAppointmentStyles.ConsultFeeContainer}>
-          <ConsultFeeIcon />
-          <Text style={{marginLeft: 5}}>Consultation Fee</Text>
-          <Text style={{fontWeight: 'bold', marginLeft: 5}}>$250.00</Text>
+
+        <View style={ConfirmAppointmentStyles.rootGroup}>
+          <Text style={ConfirmAppointmentStyles.rootHeading}>Appointment</Text>
+          <View style={ConfirmAppointmentStyles.inputGroup}>
+            <TextInput
+              placeholder={'Reason for visit'}
+              onChangeText={(text) => {
+                setReasonForVisit(text);
+              }}
+              style={[
+                ConfirmAppointmentStyles.text,
+                ConfirmAppointmentStyles.upperText,
+              ]}></TextInput>
+            <Text style={[ConfirmAppointmentStyles.text]}>
+              {memberCredential.date}
+            </Text>
+            <Text style={[ConfirmAppointmentStyles.text]}>
+              Dr. {doctorData.basic.name} - {doctorData.specialty}
+            </Text>
+            <Text
+              style={[
+                ConfirmAppointmentStyles.text,
+                ConfirmAppointmentStyles.bottomText,
+              ]}>
+              Consultation Fee - ₹600
+            </Text>
+          </View>
         </View>
-        <View
+
+        <View style={ConfirmAppointmentStyles.rootGroup}>
+          <Text style={ConfirmAppointmentStyles.rootHeading}>Notes</Text>
+          <View style={ConfirmAppointmentStyles.inputGroup}>
+            {/* <Text
+                style={[
+                  ConfirmAppointmentStyles.text,
+                  ConfirmAppointmentStyles.bottomText,
+                  ConfirmAppointmentStyles.upperText,
+                ]}>
+                Add notes for the doctor
+              </Text> */}
+            <TextInput
+              style={[
+                ConfirmAppointmentStyles.text,
+                ConfirmAppointmentStyles.bottomText,
+                ConfirmAppointmentStyles.upperText,
+              ]}
+              placeholder="Add notes for the doctor"
+              placeholderTextColor={INPUT_PLACEHOLDER}
+            />
+          </View>
+        </View>
+
+        <DmzButton
+          onPress={handelAppointmentSubmit}
           style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            marginTop: 40,
-          }}>
-          <TouchableOpacity
-            style={{flex: 6, padding: 5, paddingBottom: 30}}
-            onPress={() => navigation.goBack(null)}>
-            <BasicCard
-              active
-              style={{
-                CardContainer: {
-                  height: '100%',
-                  width: '100%',
-                  backgroundColor: '#fff',
-                  borderWidth: 2,
-                  borderColor: '#F4C130',
-                },
-              }}>
-              <Text style={{color: '#F4C130', fontWeight: 'bold'}}>Cancel</Text>
-            </BasicCard>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{flex: 6, padding: 5, paddingBottom: 30}}
-            onPress={() => handelAppointmentSubmit()}>
-            <BasicCard
-              active
-              style={{
-                CardContainer: {
-                  height: '100%',
-                  width: '100%',
-                  backgroundColor: '#F4C130',
-                },
-              }}>
-              <Text style={{color: '#fff', fontWeight: 'bold'}}>
-                Book Appointment
-              </Text>
-            </BasicCard>
-          </TouchableOpacity>
-        </View>
+            Text: {
+              width: '100%',
+              textAlign: 'center',
+              color: '#fff',
+              fontSize: 18,
+              fontFamily: 'Montserrat-SemiBold',
+            },
+            Container: {
+              width: 250,
+              height: 46,
+              borderRadius: 25,
+              backgroundColor: SECONDARY_COLOR,
+              alignSelf: 'center',
+              marginVertical: 20,
+              elevation: 3,
+            },
+          }}
+          text="CONFIRM"
+        />
       </ScrollView>
-      <ScheduleAppointment
+
+      {/* <ScheduleAppointment
         doctors={data.output || data.appointments}
         activeId={0}
         PopupTranslateY={PopupTranslateY}
@@ -204,7 +219,7 @@ const ConfirmAppointment = ({navigation}) => {
         showPopup={showPopup}
         navigation={navigation}
         // obj ={ _.dropRightWhile(doctors, ['_id', __id])}
-      />
+      /> */}
     </View>
   );
 };
@@ -216,11 +231,10 @@ const ConfirmAppointmentStyles = StyleSheet.create({
     height: '100%',
   },
   ScrollView: {
-    marginTop: 45,
-    marginBottom: -40,
+    flex: 1,
   },
   ScheduleAvailability: {
-    flexDirection: 'row',
+    // flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
@@ -229,6 +243,7 @@ const ConfirmAppointmentStyles = StyleSheet.create({
     position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
+    height: 200,
   },
   DateAndTime: {
     marginLeft: 5,
@@ -260,6 +275,39 @@ const ConfirmAppointmentStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  rootGroup: {
+    margin: 15,
+    marginVertical: 20,
+  },
+  rootHeading: {
+    fontSize: 19,
+    fontFamily: 'Montserrat-SemiBold',
+    color: NEW_HEADER_TEXT,
+    marginBottom: 10,
+  },
+  inputGroup: {
+    borderRadius: 15,
+    // padding: 10,
+    borderWidth: 1,
+    borderColor: GREY_OUTLINE,
+    overflow: 'hidden',
+  },
+  text: {
+    fontFamily: 'Montserrat-Regular',
+    padding: 15,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: GREY_OUTLINE,
+    // paddingVertical: 20,
+  },
+  upperText: {
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
+  },
+  bottomText: {
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
   },
 });
 
