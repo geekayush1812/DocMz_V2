@@ -7,12 +7,12 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  AppState,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import SearchBarSolid from '../../../components/molecules/SearchBarSolid/SearchBarSolid';
 // import io from 'socket.io-client';
-import {useWindowDimensions} from 'react-native';
 import {
   SEARCH_PLACEHOLDER_COLOR,
   SECONDARY_BACKGROUND,
@@ -30,6 +30,61 @@ function Conversations({navigation}) {
   // const toDoctor1 = '5f8ddcc849673739d463ff91';
   // const toDoctor2 = '5f9033aa48f5d430608a3b7c';
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
+  const startBackgroundTask = async () => {
+    const options = {
+      taskName: ' ',
+      taskTitle: ' ',
+      taskDesc: ' ',
+      taskIcon: {
+        name: 'ic_launcher',
+        type: 'mipmap',
+      },
+      color: '#ff00ff',
+      // linkingURI: 'exampleScheme://chat/jane',
+      parameters: {
+        delay: 1000,
+      },
+    };
+    const taskRandom = async () => {
+      console.log('taskRandom called');
+      socket.on('receive_message', function ({from, message}) {
+        console.log('received in task random');
+        console.log(from, message);
+        // try {
+        //   BackgroundJob.updateNotification({
+        //     taskTitle: from,
+        //     taskDesc: message,
+        //   });
+        // } catch (E) {
+        //   console.log(E);
+        // }
+      });
+    };
+  };
+  const endBackgroundTask = async () => {
+    console.log('ended background task');
+  };
+  useEffect(() => {
+    // AppState.addEventListener('blur', function (data) {
+    //   console.log(`blur ${data}`);
+    //   // turn background service on
+    //   if (!BackgroundJob.isRunning()) startBackgroundTask();
+    // });
+    AppState.addEventListener('change', function (state) {
+      console.log(state);
+      if (state === 'background') {
+        startBackgroundTask();
+      } else {
+        endBackgroundTask();
+      }
+    });
+    // AppState.addEventListener('focus', function (data) {
+    //   console.log(`focus ${data}`);
+    //   //turn background service off
+    //   endBackgroundTask();
+    // });
+  }, []);
+
   useEffect(() => {
     socket.emit('set_online', {
       id: userData._id,

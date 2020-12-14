@@ -23,7 +23,6 @@ function Chats({navigation, route}) {
   const [pushedNewMessage, setPushedNewMessage] = useState(0);
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
   const textInputRef = useRef();
-  const messageFlatlistRef = useRef();
 
   const to = fromWhom;
   const from = userData._id;
@@ -82,54 +81,49 @@ function Chats({navigation, route}) {
         headerText={'Chat'}
       />
       <View style={{flex: 1, backgroundColor: '#fcfcfc', marginBottom: 10}}>
+        <View
+          style={{
+            width: '100%',
+            backgroundColor: '#047b7b',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <View
+            style={{
+              flex: 1.5,
+              paddingVertical: '3%',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image
+              style={{
+                height: 45,
+                width: 45,
+                borderRadius: 45,
+                margin: 0,
+              }}
+              source={require('../../../assets/jpg/person2.jpg')}
+            />
+          </View>
+          <View
+            style={{
+              flex: 5,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{fontSize: 18, color: '#fff'}}>Allen Paul</Text>
+          </View>
+          <View style={{flex: 2}}></View>
+        </View>
         <FlatList
           data={Messages}
-          ref={messageFlatlistRef}
-          onContentSizeChange={() =>
-            messageFlatlistRef.current.scrollToEnd({animated: false})
-          }
           showsVerticalScrollIndicator={false}
-          stickyHeaderIndices={[0]}
+          // stickyHeaderIndices={[0]}
+          inverted
           contentContainerStyle={{}}
           extraData={pushedNewMessage}
           fadingEdgeLength={10}
           keyExtractor={(item) => item._id}
-          ListHeaderComponent={
-            <View
-              style={{
-                width: '100%',
-                backgroundColor: '#047b7b',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-              }}>
-              <View
-                style={{
-                  flex: 1.5,
-                  paddingVertical: '3%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Image
-                  style={{
-                    height: 45,
-                    width: 45,
-                    borderRadius: 45,
-                    margin: 0,
-                  }}
-                  source={require('../../../assets/jpg/person2.jpg')}
-                />
-              </View>
-              <View
-                style={{
-                  flex: 5,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                <Text style={{fontSize: 18, color: '#fff'}}>Allen Paul</Text>
-              </View>
-              <View style={{flex: 2}}></View>
-            </View>
-          }
           renderItem={({item}) => {
             return <Message chat={item} to={to} from={from} />;
           }}></FlatList>

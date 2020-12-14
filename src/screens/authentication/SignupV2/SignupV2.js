@@ -9,7 +9,6 @@ import ImagePicker from 'react-native-image-picker';
 import {signupDoctor, signupPatient} from '../../../reduxV2/action/AuthAction';
 import Toast from 'react-native-root-toast';
 import {useDispatch, useSelector} from 'react-redux';
-import AsyncStorage from '@react-native-community/async-storage';
 import {UploadProfilePic} from '../../../reduxV2/action/DoctorAction';
 import {UploadProfilePicPatient} from '../../../reduxV2/action/PatientAction';
 import SignUpStep2Screen from './SignUpStep2Screen';
