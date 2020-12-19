@@ -6,6 +6,10 @@ import {
   Text,
   useWindowDimensions,
   View,
+  Image,
+  TouchableOpacity,
+  StatusBar,
+  Dimensions,
 } from 'react-native';
 import {SocketContext} from '../../../utils/socketContext';
 import {
@@ -21,7 +25,8 @@ import {
 import {useSelector} from 'react-redux';
 
 import InCallManager from 'react-native-incall-manager';
-
+import {Host} from '../../../utils/connection';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 const DEFAULT_ICE = {
   // we need to fork react-native-webrtc for relay-only to work.
   //  iceTransportPolicy: "relay",
@@ -32,11 +37,11 @@ const DEFAULT_ICE = {
   ],
 };
 let isFront = true;
-export default function VideoCallScreen({route}) {
+const {width, height} = Dimensions.get('screen');
+export default function VideoCallScreen({route, navigation}) {
   const {mode, User, type} = route.params;
   const socket = useContext(SocketContext);
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
-  const {width} = useWindowDimensions();
 
   const [localStreamURL, setLocalStreamURL] = useState({toURL: () => null});
   const [remoteStreamURL, setRemoteStreamURL] = useState({toURL: () => null});
@@ -55,6 +60,22 @@ export default function VideoCallScreen({route}) {
   const peer = useRef(null);
   const Offer = useRef(null);
 
+  let imageSource = require('../../../assets/images/dummy_profile.png');
+  if (Array.isArray(User.picture)) {
+    if (User.picture.length !== 0)
+      imageSource = {
+        uri: `${Host}${User.picture[0]
+          .replace('public', '')
+          .replace('\\\\', '/')}`,
+      };
+  } else {
+    if (User.picture && User.picture !== '')
+      imageSource = {
+        uri: `${Host}${User.picture
+          .replace('public', '')
+          .replace('\\\\', '/')}`,
+      };
+  }
   useEffect(() => {
     // Setup Socket
 
@@ -83,7 +104,7 @@ export default function VideoCallScreen({route}) {
           video: {
             mandatory: {
               minWidth: width,
-              minHeight: 300,
+              minHeight: height,
               minFrameRate: 60,
             },
             facingMode: isFront ? 'user' : 'environment',
@@ -103,6 +124,9 @@ export default function VideoCallScreen({route}) {
               fromSocket,
             );
             on_Offer_Received({offer, fromSocket});
+          }
+          if (mode === 'thisSide') {
+            handleConnect();
           }
         })
         .catch((e) => {
@@ -164,6 +188,8 @@ export default function VideoCallScreen({route}) {
           peer.current.close();
           setRemoteStreamURL({toURL: () => null});
           remoteStream.current = null;
+          navigation.goBack();
+          // busy sound
         }
         break;
     }
@@ -216,6 +242,13 @@ export default function VideoCallScreen({route}) {
             },
             to: User._id,
             type: type === 'Practise' ? 'doctor' : 'patient',
+            User: {
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              picture: userData.picture,
+              _id: userData.id,
+            },
+            UserType: isDoctor ? 'doctor' : 'patient',
           });
         }
       } else {
@@ -229,7 +262,8 @@ export default function VideoCallScreen({route}) {
 
   const on_Add_Stream = (e) => {
     console.info(userData.firstName, ' Remote Stream Added:', e.stream);
-    setRemoteStreamURL(e.stream);
+    setLocalStreamURL(e.stream);
+    setRemoteStreamURL(localStream.current);
     remoteStream.current = e.stream;
   };
 
@@ -280,32 +314,104 @@ export default function VideoCallScreen({route}) {
     });
   };
 
-  return (
-    <ScrollView style={{flex: 1}}>
-      <RTCView
-        style={{
-          height: 500,
-          width: width,
-          marginBottom: 10,
-        }}
-        mirror
-        streamURL={localStreamURL.toURL()}
-      />
-      {mode === 'thisSide' && <Button title={'call'} onPress={handleConnect} />}
-      <RTCView
-        style={{
-          height: 500,
-          width: width,
-          marginBottom: 10,
-        }}
-        mirror
-        streamURL={remoteStreamURL.toURL()}
-      />
+  const onHangUp = () => {
+    peer.current.close();
+    navigation.goBack();
+  };
 
-      {offerDetails.offer_received && (
-        <Button title={'answer call'} onPress={handleAnswer} />
-      )}
-    </ScrollView>
+  return (
+    <>
+      <StatusBar backgroundColor={'rgba(0,0,0,0)'} translucent />
+      <View style={{flex: 1}}>
+        <RTCView
+          objectFit={'cover'}
+          style={{
+            height: height,
+            width: width,
+            marginBottom: 10,
+          }}
+          mirror
+          streamURL={localStreamURL.toURL()}
+        />
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.65)',
+          }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Image
+              source={imageSource}
+              style={{height: 95, width: 95, borderRadius: 100}}
+            />
+            <Text
+              style={{
+                color: '#999',
+                fontSize: 24,
+                lineHeight: 70,
+              }}>{`${User.firstName} ${User.lastName}`}</Text>
+          </View>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
+              alignItems: 'center',
+            }}>
+            {(offerDetails.offer_answered || !offerDetails.offer_received) && (
+              <TouchableOpacity
+                onPress={onHangUp} // on press hangup
+                style={{
+                  backgroundColor: '#ef0000',
+                  padding: '3%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 100,
+                  zIndex: 999,
+                }}>
+                <MaterialIcon name="call" size={32} color={'#bbb'} />
+              </TouchableOpacity>
+            )}
+            <RTCView
+              objectFit={'cover'}
+              style={{
+                height: height * 0.27,
+                width: width * 0.42,
+                backgroundColor: 'transparent',
+                position: 'absolute',
+                bottom: 32,
+                right: 16,
+              }}
+              mirror
+              streamURL={remoteStreamURL.toURL()}
+            />
+
+            {offerDetails.offer_received && !offerDetails.offer_answered && (
+              <TouchableOpacity
+                onPress={handleAnswer} // on press hangup
+                style={{
+                  backgroundColor: '#1f912a',
+                  padding: '3%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 100,
+                  zIndex: 999,
+                }}>
+                <MaterialIcon name="call" size={32} color={'#bbb'} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </View>
+    </>
   );
 }
 

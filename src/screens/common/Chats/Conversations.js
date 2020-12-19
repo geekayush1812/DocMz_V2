@@ -38,18 +38,13 @@ function Conversations({navigation}) {
     });
   }, []);
   useEffect(() => {
-    socket.on('call-made', function ({offer, fromSocket}) {
+    socket.on('call-made', function ({offer, fromSocket, User, type}) {
       navigation.navigate('videoCall', {
         offer,
         fromSocket,
         mode: 'thatSide',
-        User: {
-          _id: 'abcdefghij',
-          firstName: 'XYZ',
-          lastName: 'ABC',
-          picture: [],
-        },
-        type: 'doctor',
+        User,
+        type,
       });
     });
   }, []);
