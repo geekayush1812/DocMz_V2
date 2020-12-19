@@ -15,8 +15,10 @@ import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import {useWindowDimensions} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {SocketContext} from '../../../utils/socketContext';
+import {Host} from '../../../utils/connection';
+
 function Chats({navigation, route}) {
-  const {Chats, fromWhom} = route.params;
+  const {Chats, fromWhom, User, type} = route.params;
   const [textMessage, setTextMessage] = useState('');
   const socket = useContext(SocketContext);
   const [Messages, setMessages] = useState([]);
@@ -27,14 +29,22 @@ function Chats({navigation, route}) {
   const to = fromWhom;
   const from = userData._id;
 
-  // {
-  //   timestamp: '2020-11-10T19:01:10.119Z', //new Date().toISOString()
-  //   _id: '5faae3910fedeb207897dcc8', // uuid
-  //   message: 'have you seen ayush?',
-  //   fromWhom: '5f9033aa48f5d430608a3b7c',
-  //   readReceipt: 1,
-  //   __v: 0,
-  // },
+  let imageSource = require('../../../assets/images/dummy_profile.png');
+  if (Array.isArray(User.picture)) {
+    if (User.picture.length !== 0)
+      imageSource = {
+        uri: `${Host}${User.picture[0]
+          .replace('public', '')
+          .replace('\\\\', '/')}`,
+      };
+  } else {
+    if (User.picture && User.picture !== '')
+      imageSource = {
+        uri: `${Host}${User.picture
+          .replace('public', '')
+          .replace('\\\\', '/')}`,
+      };
+  }
   useEffect(() => {
     setMessages(Chats);
   }, [Chats]);
@@ -46,7 +56,7 @@ function Chats({navigation, route}) {
       from,
       to,
       message: textMessage,
-      toType: 'doctor',
+      toType: type === 'Practise' ? 'doctor' : 'patient',
       fromType: isDoctor ? 'doctor' : 'patient',
     });
   };
@@ -102,7 +112,8 @@ function Chats({navigation, route}) {
                 borderRadius: 45,
                 margin: 0,
               }}
-              source={require('../../../assets/jpg/person2.jpg')}
+              loadingIndicatorSource={require('../../../assets/images/dummy_profile.png')}
+              source={imageSource}
             />
           </View>
           <View
@@ -111,9 +122,29 @@ function Chats({navigation, route}) {
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-            <Text style={{fontSize: 18, color: '#fff'}}>Allen Paul</Text>
+            <Text
+              style={{
+                fontSize: 18,
+                color: '#fff',
+              }}>{`${User.firstName} ${User.lastName}`}</Text>
           </View>
-          <View style={{flex: 2}}></View>
+          <View
+            style={{
+              flex: 2,
+              // backgroundColor: 'red',
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('videoCall', {
+                  mode: 'thisSide',
+                  User,
+                  type,
+                });
+              }}
+              style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+              <FeatherIcon name={'video'} size={28} color={'#fafafa'} />
+            </TouchableOpacity>
+          </View>
         </View>
         <FlatList
           data={Messages}

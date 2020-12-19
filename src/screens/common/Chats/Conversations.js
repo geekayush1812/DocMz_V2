@@ -30,65 +30,27 @@ function Conversations({navigation}) {
   // const toDoctor1 = '5f8ddcc849673739d463ff91';
   // const toDoctor2 = '5f9033aa48f5d430608a3b7c';
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
-  const startBackgroundTask = async () => {
-    const options = {
-      taskName: ' ',
-      taskTitle: ' ',
-      taskDesc: ' ',
-      taskIcon: {
-        name: 'ic_launcher',
-        type: 'mipmap',
-      },
-      color: '#ff00ff',
-      // linkingURI: 'exampleScheme://chat/jane',
-      parameters: {
-        delay: 1000,
-      },
-    };
-    const taskRandom = async () => {
-      console.log('taskRandom called');
-      socket.on('receive_message', function ({from, message}) {
-        console.log('received in task random');
-        console.log(from, message);
-        // try {
-        //   BackgroundJob.updateNotification({
-        //     taskTitle: from,
-        //     taskDesc: message,
-        //   });
-        // } catch (E) {
-        //   console.log(E);
-        // }
-      });
-    };
-  };
-  const endBackgroundTask = async () => {
-    console.log('ended background task');
-  };
-  useEffect(() => {
-    // AppState.addEventListener('blur', function (data) {
-    //   console.log(`blur ${data}`);
-    //   // turn background service on
-    //   if (!BackgroundJob.isRunning()) startBackgroundTask();
-    // });
-    AppState.addEventListener('change', function (state) {
-      console.log(state);
-      if (state === 'background') {
-        startBackgroundTask();
-      } else {
-        endBackgroundTask();
-      }
-    });
-    // AppState.addEventListener('focus', function (data) {
-    //   console.log(`focus ${data}`);
-    //   //turn background service off
-    //   endBackgroundTask();
-    // });
-  }, []);
 
   useEffect(() => {
     socket.emit('set_online', {
       id: userData._id,
       type: isDoctor ? 'doctor' : 'patient',
+    });
+  }, []);
+  useEffect(() => {
+    socket.on('call-made', function ({offer, fromSocket}) {
+      navigation.navigate('videoCall', {
+        offer,
+        fromSocket,
+        mode: 'thatSide',
+        User: {
+          _id: 'abcdefghij',
+          firstName: 'XYZ',
+          lastName: 'ABC',
+          picture: [],
+        },
+        type: 'doctor',
+      });
     });
   }, []);
   useEffect(() => {
@@ -177,7 +139,6 @@ function Conversations({navigation}) {
         renderItem={({item}) => {
           return (
             <Convo
-              socket={socket}
               conversation={item}
               navigation={navigation}
               newMessages={newMessages[item.User._id]}
@@ -195,10 +156,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const Convo = ({conversation, navigation, socket, newMessages}) => {
+const Convo = ({conversation, navigation, newMessages}) => {
   const [lastMessage, setLastMessage] = useState({});
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
-  const {Chats, User} = conversation;
+  const {Chats, User, fromWhom} = conversation;
   const handleSetLastMessage = (chats) => {
     if (chats.length !== 0) {
       const last = chats[chats.length - 1];
@@ -216,7 +177,12 @@ const Convo = ({conversation, navigation, socket, newMessages}) => {
   }, [newMessages]);
 
   const onPressConvo = () => {
-    navigation.navigate('Chats', {Chats, fromWhom: User._id});
+    navigation.navigate('Chats', {
+      Chats,
+      fromWhom: User._id,
+      User,
+      type: fromWhom,
+    });
   };
   let imageSource = require('../../../assets/images/dummy_profile.png');
 

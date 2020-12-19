@@ -6,7 +6,6 @@ import {
   Text,
   useWindowDimensions,
   View,
-  DeviceEventEmitter,
 } from 'react-native';
 import {SocketContext} from '../../../utils/socketContext';
 import {
@@ -33,10 +32,10 @@ const DEFAULT_ICE = {
   ],
 };
 let isFront = true;
-export default function VideoCallScreen() {
-  registerGlobals();
+export default function VideoCallScreen({route}) {
+  const {mode, User, type} = route.params;
   const socket = useContext(SocketContext);
-  const {userData} = useSelector((state) => state.AuthReducer);
+  const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
   const {width} = useWindowDimensions();
 
   const [localStreamURL, setLocalStreamURL] = useState({toURL: () => null});
@@ -56,18 +55,12 @@ export default function VideoCallScreen() {
   const peer = useRef(null);
   const Offer = useRef(null);
 
-  // useEffect(() => {
-  //   DeviceEventEmitter.addListener('Proximity', function (data) {
-  //     console.log(data);
-  //   });
-  // }, []);
-
   useEffect(() => {
     // Setup Socket
 
     // offer received
     // on_offer_received
-    socket.on('call-made', on_Offer_Received);
+    // socket.on('call-made', on_Offer_Received);
 
     // answer received
     // on_Answer_Received
@@ -101,6 +94,16 @@ export default function VideoCallScreen() {
           console.log(userData.firstName, ' got stream ', stream);
           setLocalStreamURL(stream);
           localStream.current = stream;
+          if (mode === 'thatSide') {
+            const {offer, fromSocket} = route.params;
+            console.log(
+              userData.firstName,
+              ' called after call-made received with ',
+              offer,
+              fromSocket,
+            );
+            on_Offer_Received({offer, fromSocket});
+          }
         })
         .catch((e) => {
           console.error('Failed to setup stream:', e);
@@ -139,15 +142,6 @@ export default function VideoCallScreen() {
 
       await peer.current.setLocalDescription(offer);
       console.info(userData.firstName, ' localDescription set!');
-
-      // TODO: should send localDescription or offer
-      // For now send localDescription
-
-      //   socket.emit('call-user', {
-      //     offer,
-      //     to: '5fa290afa2535e308000c47e',
-      //     type: 'doctor',
-      //   });
     } catch (e) {
       console.error(userData.firstName, ' Failed to setup local offer');
       console.error(e);
@@ -161,9 +155,6 @@ export default function VideoCallScreen() {
       ' ICE Connection State Changed:',
       e.target.iceConnectionState,
     );
-    // this.setState({
-    //   ice_connection_state: e.target.iceConnectionState,
-    // });
 
     switch (e.target.iceConnectionState) {
       case 'closed':
@@ -186,14 +177,12 @@ export default function VideoCallScreen() {
       let pendingRemoteIceCandidates = pendingCandidates.current;
       if (Array.isArray(pendingRemoteIceCandidates)) {
         console.info(userData.firstName, 'pendingRemoteIceCandidates is array');
-        // setPendingCandidates([...pendingRemoteIceCandidates, candidate]);
         pendingCandidates.current = [...pendingRemoteIceCandidates, candidate];
       } else {
         console.info(
           userData.firstName,
           'pendingRemoteIceCandidates is not array',
         );
-        // setPendingCandidates([candidate]);
         pendingCandidates.current = [candidate];
       }
     } else {
@@ -207,6 +196,9 @@ export default function VideoCallScreen() {
         if (offerDetails.offer_received) {
           //answer
           console.log(userData.firstName, ' make-user');
+          console.log(peer.current.localDescription);
+          console.log(pendingCandidates.current);
+          console.log(offerDetails.offer.fromSocket);
           socket.emit('make-answer', {
             answer: {
               answer: peer.current.localDescription,
@@ -222,8 +214,8 @@ export default function VideoCallScreen() {
               offer: peer.current.localDescription,
               candidates: pendingCandidates.current,
             },
-            to: '5fa290afa2535e308000c47e',
-            type: 'doctor',
+            to: User._id,
+            type: type === 'Practise' ? 'doctor' : 'patient',
           });
         }
       } else {
@@ -232,18 +224,6 @@ export default function VideoCallScreen() {
           ' Failed to send an offer/answer: No candidates',
         );
       }
-    }
-  };
-
-  const on_Remote_ICE_Candidate = async (data) => {
-    if (data.payload) {
-      if (peer.current) {
-        await peer.current.addIceCandidate(new RTCIceCandidate(data.payload));
-      } else {
-        console.error(userData.firstName, ' Peer is not ready');
-      }
-    } else {
-      console.info(userData.firstName, ' Remote ICE Candidates Gathered!');
     }
   };
 
@@ -280,6 +260,7 @@ export default function VideoCallScreen() {
   const handleAnswer = async () => {
     console.log(userData.firstName, ' answered');
     const {offer} = offerDetails.offer; // candidate is not available , need to send along with offer
+    console.log(offer);
     await setupWebRTC();
 
     await peer.current.setRemoteDescription(
@@ -301,7 +282,6 @@ export default function VideoCallScreen() {
 
   return (
     <ScrollView style={{flex: 1}}>
-      <Text>Your video</Text>
       <RTCView
         style={{
           height: 500,
@@ -311,10 +291,7 @@ export default function VideoCallScreen() {
         mirror
         streamURL={localStreamURL.toURL()}
       />
-
-      <Button title={'call'} onPress={handleConnect} />
-
-      <Text>Friend's video</Text>
+      {mode === 'thisSide' && <Button title={'call'} onPress={handleConnect} />}
       <RTCView
         style={{
           height: 500,

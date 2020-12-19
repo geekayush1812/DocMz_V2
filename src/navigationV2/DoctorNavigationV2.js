@@ -47,15 +47,15 @@ const socket = io(Host);
 function Chatting() {
   return (
     <SocketContext.Provider value={socket}>
-      <Stack.Navigator headerMode={'none'} initialRouteName={'Testing'}>
-        {/* <Stack.Screen name={'Conversations'} component={Conversations} />
+      <Stack.Navigator headerMode={'none'} initialRouteName={'Conversations'}>
+        <Stack.Screen name={'Conversations'} component={Conversations} />
         <Stack.Screen
           options={{
             cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           }}
           name={'Chats'}
           component={Chats}
-        /> */}
+        />
         <Stack.Screen name="testing" component={Testing} />
         <Stack.Screen name={'videoCall'} component={VideoCallScreen} />
       </Stack.Navigator>
