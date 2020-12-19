@@ -118,13 +118,13 @@ export default function VideoCallScreen() {
     console.info(userData.firstName, ' localStream:', localStream.current);
     pc.addStream(localStream.current);
     peer.current = pc;
-    try {
-      InCallManager.start({media: 'video', ringback: '_DEFAULT_'});
-      InCallManager.setForceSpeakerphoneOn(true);
-      InCallManager.setSpeakerphoneOn(true);
-    } catch (err) {
-      console.log('InApp Caller ---------------------->', err);
-    }
+    // try {
+    //   InCallManager.start({media: 'video', ringback: '_DEFAULT_'});
+    //   InCallManager.setForceSpeakerphoneOn(true);
+    //   InCallManager.setSpeakerphoneOn(true);
+    // } catch (err) {
+    //   console.log('InApp Caller ---------------------->', err);
+    // }
   };
 
   const handleConnect = async (e) => {
@@ -171,7 +171,7 @@ export default function VideoCallScreen() {
       case 'failed':
         if (peer.current) {
           peer.current.close();
-          setRemoteStreamURL(() => null);
+          setRemoteStreamURL({toURL: () => null});
           remoteStream.current = null;
         }
         break;
@@ -312,12 +312,7 @@ export default function VideoCallScreen() {
         streamURL={localStreamURL.toURL()}
       />
 
-      <Button
-        title={'call'}
-        onPress={() => {
-          MediaStreamTrack.prototype._switchCamera();
-        }}
-      />
+      <Button title={'call'} onPress={handleConnect} />
 
       <Text>Friend's video</Text>
       <RTCView
