@@ -31,6 +31,7 @@ import {RowLoader} from '../../../components/atoms/Loader/Loader';
 import moment from 'moment';
 import {Colors} from '../../../styles/colorsV2';
 import LottieView from 'lottie-react-native';
+import messaging from '@react-native-firebase/messaging';
 function Dashboard({navigation}) {
   const {
     recentPatient,
@@ -45,6 +46,48 @@ function Dashboard({navigation}) {
   const [imageSource, setImageSource] = useState(
     require('../../../assets/images/dummy_profile.png'),
   );
+  const saveTokenToDatabase = (token) => {
+    fetch(`${Host}/doctors/setDeviceToken`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token,
+        id: userData.id,
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+  useEffect(() => {
+    try {
+      messaging()
+        .getToken()
+        .then((token) => {
+          return saveTokenToDatabase(token);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    } catch (E) {
+      console.error(E);
+    }
+
+    // If using other push notification providers (ie Amazon SNS, etc)
+    // you may need to get the APNs token instead for iOS:
+    // if(Platform.OS == 'ios') { messaging().getAPNSToken().then(token => { return saveTokenToDatabase(token); }); }
+
+    // Listen to whether the token changes
+    return messaging().onTokenRefresh((token) => {
+      saveTokenToDatabase(token);
+    });
+  }, []);
+
   useEffect(() => {
     if (doctorProfile.picture?.length) {
       setImageSource({

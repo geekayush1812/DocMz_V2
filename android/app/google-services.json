@@ -1,42 +1,33 @@
 {
   "project_info": {
-    "project_number": "548402708395",
-    "firebase_url": "https://docmz-d6a46.firebaseio.com",
-    "project_id": "docmz-d6a46",
-    "storage_bucket": "docmz-d6a46.appspot.com"
+    "project_number": "141384830072",
+    "project_id": "docez-ab2ed",
+    "storage_bucket": "docez-ab2ed.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:548402708395:android:1422b9bcfee4cbce099cee",
+        "mobilesdk_app_id": "1:141384830072:android:b214bafa1977841cd8b18d",
         "android_client_info": {
           "package_name": "com.docmz_v2"
         }
       },
       "oauth_client": [
         {
-          "client_id": "548402708395-celffgcear902pullvbh25pl3a30ct3k.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.docmz_v2",
-            "certificate_hash": "7146ac6126653cb9bf50dba48be236a4dbc98c0a"
-          }
-        },
-        {
-          "client_id": "548402708395-t0qn9hg90h8cfaadtg8epf7m0s0uunr4.apps.googleusercontent.com",
+          "client_id": "141384830072-3lhh8oaf3rtb2v5a6sqaekpp5qptb5vh.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyARbLrBvwKBmM2bB_zVwDptA89-1D7uaB4"
+          "current_key": "AIzaSyCTn-hJV8yn7xZ4GggIYgWcsBmrQdvXRWc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "548402708395-t0qn9hg90h8cfaadtg8epf7m0s0uunr4.apps.googleusercontent.com",
+              "client_id": "141384830072-3lhh8oaf3rtb2v5a6sqaekpp5qptb5vh.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
