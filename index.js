@@ -3,6 +3,7 @@ import {name as appName} from './app.json';
 import Store from './src/reduxV2/config/store';
 import 'react-native-gesture-handler';
 import messaging from '@react-native-firebase/messaging';
+import IncomingCall from 'react-native-incoming-call';
 
 import PushNotification from 'react-native-push-notification';
 // Register background handler
@@ -50,11 +51,11 @@ const putNotif = () => {
 
     when: null, // (optionnal) Add a timestamp pertaining to the notification (usually the time the event occurred). For apps targeting Build.VERSION_CODES.N and above, this time is not shown anymore by default and must be opted into by using `showWhen`, default: null.
     usesChronometer: false, // (optional) Show the `when` field as a stopwatch. Instead of presenting `when` as a timestamp, the notification will show an automatically updating display of the minutes and seconds since when. Useful when showing an elapsed time (like an ongoing phone call), default: false.
-    timeoutAfter: null, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
+    timeoutAfter: 10 * 1000, // (optional) Specifies a duration in milliseconds after which this notification should be canceled, if it is not already canceled, default: null
 
     messageId: 'google:message_id', // (optional) added as `message_id` to intent extras so opening push notification can find data stored by @react-native-firebase/messaging module.
 
-    //   actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
+    actions: ['Yes', 'No'], // (Android only) See the doc for notification actions to know more
     invokeApp: true, // (optional) This enable click on actions to bring back the application to foreground or stay in background, default: true
 
     /* iOS only properties */
@@ -77,9 +78,11 @@ const cancelNotification = (id) => {
 };
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  putNotif();
   PushNotification.invokeApp();
-  PushNotification.cancelAllLocalNotifications();
-
+  IncomingCall.display({
+    uuid: 'augh',
+  });
   console.log('Message handled in the background!', remoteMessage);
 });
 

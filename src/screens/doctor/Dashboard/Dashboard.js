@@ -58,10 +58,10 @@ function Dashboard({navigation}) {
       }),
     })
       .then((res) => {
-        console.log(res);
+        console.log('res', res);
       })
       .catch((e) => {
-        console.log(e);
+        console.log('errpr', e);
       });
   };
   useEffect(() => {

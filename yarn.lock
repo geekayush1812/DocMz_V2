@@ -7066,6 +7066,11 @@ react-native-incall-manager@^3.3.0:
   resolved "https://registry.yarnpkg.com/react-native-incall-manager/-/react-native-incall-manager-3.3.0.tgz#69f4ada83b5a8db464b1cfae368dadbae4a949eb"
   integrity sha512-SvomgHUoKqVso/BGv02b4ndBqenlqYqW3pptZz5qHwteidKFNWI6ny+PPw5X55MdK0lyTbzBoiT3DwS06Qu0lg==
 
+react-native-incoming-call@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-incoming-call/-/react-native-incoming-call-2.0.3.tgz#c786a2868498477b8e8027729cb72a9813c0d2a2"
+  integrity sha512-G1HyoQcXwqQQQPdenOyJkcN4D9jbHosRKaQPfdG/6oIrkHThy3iWywIJHCCyqKvJwhF0Qz1WhEMFckzH1kvGhw==
+
 react-native-invoke-app@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/react-native-invoke-app/-/react-native-invoke-app-1.0.4.tgz#098d9ab778c8fe57c9e1aad973f413f36e5c32a9"
