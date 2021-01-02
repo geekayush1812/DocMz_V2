@@ -28,10 +28,11 @@ import {
 import {Host} from '../../../utils/connection';
 import NetInfo from '@react-native-community/netinfo';
 import {RowLoader} from '../../../components/atoms/Loader/Loader';
-import moment from 'moment';
+
 import {Colors} from '../../../styles/colorsV2';
 import LottieView from 'lottie-react-native';
 import messaging from '@react-native-firebase/messaging';
+import moment from 'moment';
 function Dashboard({navigation}) {
   const {
     recentPatient,
@@ -41,7 +42,6 @@ function Dashboard({navigation}) {
     gettingAppointment,
     errorGettingAppointment,
   } = useSelector((state) => state.DoctorReducer);
-  console.log(appointments);
   const {userData, theme} = useSelector((state) => state.AuthReducer);
   const [imageSource, setImageSource] = useState(
     require('../../../assets/images/dummy_profile.png'),

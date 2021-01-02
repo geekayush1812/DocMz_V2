@@ -12,7 +12,6 @@ import {
 import {useSelector} from 'react-redux';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import SearchBarSolid from '../../../components/molecules/SearchBarSolid/SearchBarSolid';
-// import io from 'socket.io-client';
 import {
   SEARCH_PLACEHOLDER_COLOR,
   SECONDARY_BACKGROUND,
@@ -21,14 +20,10 @@ import AntIcon from 'react-native-vector-icons/AntDesign';
 import {SocketContext} from '../../../utils/socketContext';
 import {Host} from '../../../utils/connection';
 
-// const socket = io(Host);
-
 function Conversations({navigation}) {
   const [conversations, setConversations] = useState([]);
   const [newMessages, setNewMessages] = useState({});
   const socket = useContext(SocketContext);
-  // const toDoctor1 = '5f8ddcc849673739d463ff91';
-  // const toDoctor2 = '5f9033aa48f5d430608a3b7c';
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
 
   useEffect(() => {
@@ -55,34 +50,34 @@ function Conversations({navigation}) {
     });
   }, []);
   useEffect(() => {
-    socket.on('receive_message', function ({from, message}) {
-      console.log('received');
-      console.log(from, message);
-      const chatMessage = {
-        timestamp: new Date().toISOString(),
-        _id: `${Date.now()}`,
-        message,
-        fromWhom: from,
-        readReceipt: 1,
-      };
-      if (!newMessages[from]) {
-        const chat = {
-          [`${from}`]: [chatMessage],
-        };
-        setNewMessages({...newMessages, ...chat});
-      } else {
-        const messages = newMessages[from];
-        messages.push(chatMessage);
-        const chat = {
-          [`${from}`]: messages,
-        };
-        setNewMessages({...newMessages, ...chat});
-      }
-    });
+    // socket.on('receive_message', function ({from, message}) {
+    //   console.log('received');
+    //   console.log(from, message);
+    //   const chatMessage = {
+    //     timestamp: new Date().toISOString(),
+    //     _id: `${Date.now()}`,
+    //     message,
+    //     fromWhom: from,
+    //     readReceipt: 1,
+    //   };
+    //   if (!newMessages[from]) {
+    //     const chat = {
+    //       [`${from}`]: [chatMessage],
+    //     };
+    //     setNewMessages({...newMessages, ...chat});
+    //   } else {
+    //     const messages = newMessages[from];
+    //     messages.push(chatMessage);
+    //     const chat = {
+    //       [`${from}`]: messages,
+    //     };
+    //     setNewMessages({...newMessages, ...chat});
+    //   }
+    // });
   }, []);
-  useEffect(() => {
-    console.log(newMessages);
-  }, [newMessages]);
+  // useEffect(() => {
+  //   console.log(newMessages);
+  // }, [newMessages]);
   useEffect(() => {
     socket.on('receive_conversation', function ({conversation}) {
       setConversations([...conversations, conversation]);
@@ -136,7 +131,7 @@ function Conversations({navigation}) {
             <Convo
               conversation={item}
               navigation={navigation}
-              newMessages={newMessages[item.User._id]}
+              // newMessages={newMessages[item.User._id]}
             />
           );
         }}></FlatList>
@@ -151,7 +146,12 @@ const styles = StyleSheet.create({
   },
 });
 
-const Convo = ({conversation, navigation, newMessages}) => {
+const Convo = ({
+  conversation,
+  navigation,
+  //  newMessages
+}) => {
+  console.log('convo');
   const [lastMessage, setLastMessage] = useState({});
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
   const {Chats, User, fromWhom} = conversation;
@@ -164,12 +164,12 @@ const Convo = ({conversation, navigation, newMessages}) => {
   useEffect(() => {
     handleSetLastMessage(Chats);
   }, [Chats]);
-  useEffect(() => {
-    if (newMessages) handleSetLastMessage(newMessages);
-    console.log('a new message arrived ', newMessages);
-    //set current count of newMessages and set active/unread messages
-    //read about setParams for not to use function as a prop,,or just updating any param of another screeen
-  }, [newMessages]);
+  // useEffect(() => {
+  //   if (newMessages) handleSetLastMessage(newMessages);
+  //   console.log('a new message arrived ', newMessages);
+  //   //set current count of newMessages and set active/unread messages
+  //   //read about setParams for not to use function as a prop,,or just updating any param of another screeen
+  // }, [newMessages]);
 
   const onPressConvo = () => {
     navigation.navigate('Chats', {

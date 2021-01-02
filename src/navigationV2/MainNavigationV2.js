@@ -11,6 +11,7 @@ import {Dimensions} from 'react-native';
 import CustomNoAuthDrawer from '../components/organisms/drawer/custom/CustomNoAuthDrawer';
 
 import AuthNavigationV2 from './AuthNavigationV2';
+import VideoCallScreen from '../screens/common/Chats/VideoCallScreen';
 let PatientNavigationV2 = null;
 //  './PatientNavigationV2';
 let DoctorNavigationV2 = null;
@@ -56,7 +57,7 @@ const MainController = ({navigation, route}) => {
       if (DoctorNavigationV2 === null) {
         DoctorNavigationV2 = require('./DoctorNavigationV2').default;
       }
-      return <DoctorNavigationV2 />;
+      return <DoctorNavigationV2 navigation={navigation} />;
     } else {
       if (PatientNavigationV2 === null) {
         PatientNavigationV2 = require('./PatientNavigationV2').default;
@@ -85,10 +86,13 @@ function MainNavigation() {
         {splash ? (
           <MainStack.Screen name={'Splash'} component={Splash} />
         ) : (
-          <MainStack.Screen
-            name={'MainController'}
-            component={MainController}
-          />
+          <>
+            <MainStack.Screen
+              name={'MainController'}
+              component={MainController}
+            />
+            <MainStack.Screen name={'videoCall'} component={VideoCallScreen} />
+          </>
         )}
       </MainStack.Navigator>
     </NavigationContainer>

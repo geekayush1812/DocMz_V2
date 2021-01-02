@@ -2,22 +2,20 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
   View,
   StyleSheet,
-  ScrollView,
   Text,
   FlatList,
   Image,
   TouchableOpacity,
   TextInput,
-  Keyboard,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
-import {useWindowDimensions} from 'react-native';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {SocketContext} from '../../../utils/socketContext';
 import {Host} from '../../../utils/connection';
 
-function Chats({navigation, route}) {
+function ChatsComponent({navigation, route}) {
+  console.log('ChatsRendered');
   const {Chats, fromWhom, User, type} = route.params;
   const [textMessage, setTextMessage] = useState('');
   const socket = useContext(SocketContext);
@@ -68,14 +66,30 @@ function Chats({navigation, route}) {
       fromWhom: from,
       readReceipt: 1,
     };
-    const messages = Messages;
-    messages.push(chatMessage);
-    setMessages(messages);
+    // const messages = Messages;
+    // messages.unshift(chatMessage);
+    setMessages([chatMessage, ...Messages]);
     setPushedNewMessage(pushedNewMessage + 1);
     textInputRef.current.clear();
     textInputRef.current.focus();
     sendMessage(textMessage);
   };
+  useEffect(() => {
+    socket.on('receive_message', function messageReceived({from, message}) {
+      console.log('received_message');
+      console.log(from, message);
+
+      const chatMessage = {
+        timestamp: new Date().toISOString(),
+        _id: `${Date.now()}`,
+        message,
+        fromWhom: from,
+        readReceipt: 1,
+      };
+      setMessages([chatMessage, ...Messages]);
+      // setPushedNewMessage(pushedNewMessage + 1);
+    });
+  }, []);
 
   return (
     <View style={styles.Container}>
@@ -289,4 +303,4 @@ const Message = ({chat, to, from}) => {
   );
 };
 
-export default Chats;
+export default ChatsComponent;

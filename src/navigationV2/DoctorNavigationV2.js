@@ -1,15 +1,4 @@
-// import Home from '../screens/doctor/home/Home';
-// import {Colors} from '../styles';
-// import AddAppointments from '../screens/doctor/AddAppointments/AddAppointments';
-// import QuestionnairePP from '../screens/patient/questionnaire/QuestionnairePP';
-// import DoctorProfile from '../screens/examples/DoctorProfile/DoctorProfile';
-// import Settings from '../screens/examples/Settings/Settings';
-// import Referrals from '../screens/doctor/Referrals/Referrals';
-// import Languages from '../screens/doctor/Languages/Languages';
-// import Settings from '../screens/doctor/Settings/Settings';
-// import AddCategoryQuestions from '../screens/doctor/AddQuestionnaire/AddCategoryQuestions';
-
-import React, {useState} from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {
@@ -30,6 +19,7 @@ import Onboarding from '../screens/doctor/Onboarding/Onboarding';
 import Patients from '../screens/doctor/Patients/Patients';
 import {useSelector} from 'react-redux';
 import Conversations from '../screens/common/Chats/Conversations';
+// import messaging from '@react-native-firebase/messaging';
 import io from 'socket.io-client';
 import {SocketContext} from '../utils/socketContext';
 const {width: screenWidth} = Dimensions.get('screen');
@@ -39,7 +29,7 @@ const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
 import {Host} from '../utils/connection';
-import Testing from '../screens/common/Chats/Testing';
+// import Testing from '../screens/common/Chats/Testing';
 import VideoCallScreen from '../screens/common/Chats/VideoCallScreen';
 
 const socket = io(Host);
@@ -56,7 +46,7 @@ function Chatting() {
           name={'Chats'}
           component={Chats}
         />
-        <Stack.Screen name="testing" component={Testing} />
+        {/* <Stack.Screen name="testing" component={Testing} /> */}
         <Stack.Screen name={'videoCall'} component={VideoCallScreen} />
       </Stack.Navigator>
     </SocketContext.Provider>
@@ -184,9 +174,15 @@ function DoctorDrawer() {
   );
 }
 
-function DoctorNavigationV2() {
+function DoctorNavigationV2({navigation}) {
   const {doctorProfile, forNow} = useSelector((state) => state.DoctorReducer);
+  // useEffect(function firebaseMessageHandling() {
+  //   const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+  //     console.log(`The ${remoteMessage}`);
+  //   });
 
+  //   return unsubscribe;
+  // }, []);
   return (
     <Stack.Navigator headerMode={'none'}>
       {!forNow && !doctorProfile.onBoarding && (
