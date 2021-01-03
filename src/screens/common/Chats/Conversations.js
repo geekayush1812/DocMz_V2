@@ -19,11 +19,12 @@ import {
 import AntIcon from 'react-native-vector-icons/AntDesign';
 import {SocketContext} from '../../../utils/socketContext';
 import {Host} from '../../../utils/connection';
+import {useNavigation} from '@react-navigation/native';
 
-function Conversations({navigation}) {
-  const [conversations, setConversations] = useState([]);
-  const [newMessages, setNewMessages] = useState({});
+function ConversationsScreen({navigation}) {
+  console.log('Conversations');
   const socket = useContext(SocketContext);
+  const [conversations, setConversations] = useState([]);
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
 
   useEffect(() => {
@@ -31,8 +32,6 @@ function Conversations({navigation}) {
       id: userData._id,
       type: isDoctor ? 'doctor' : 'patient',
     });
-  }, []);
-  useEffect(() => {
     socket.on('call-made', function ({offer, fromSocket, User, type}) {
       navigation.navigate('videoCall', {
         offer,
@@ -42,48 +41,15 @@ function Conversations({navigation}) {
         type,
       });
     });
-  }, []);
-  useEffect(() => {
     socket.on('fetch_conversations', function (convo) {
-      setConversations(convo.conversations);
+      console.log('fetched conversations');
       console.log(convo.conversations);
+      setConversations(convo.conversations);
     });
-  }, []);
-  useEffect(() => {
-    // socket.on('receive_message', function ({from, message}) {
-    //   console.log('received');
-    //   console.log(from, message);
-    //   const chatMessage = {
-    //     timestamp: new Date().toISOString(),
-    //     _id: `${Date.now()}`,
-    //     message,
-    //     fromWhom: from,
-    //     readReceipt: 1,
-    //   };
-    //   if (!newMessages[from]) {
-    //     const chat = {
-    //       [`${from}`]: [chatMessage],
-    //     };
-    //     setNewMessages({...newMessages, ...chat});
-    //   } else {
-    //     const messages = newMessages[from];
-    //     messages.push(chatMessage);
-    //     const chat = {
-    //       [`${from}`]: messages,
-    //     };
-    //     setNewMessages({...newMessages, ...chat});
-    //   }
-    // });
-  }, []);
-  // useEffect(() => {
-  //   console.log(newMessages);
-  // }, [newMessages]);
-  useEffect(() => {
     socket.on('receive_conversation', function ({conversation}) {
       setConversations([...conversations, conversation]);
     });
   }, []);
-
   return (
     <View style={styles.Container}>
       <TopNavBar
@@ -130,7 +96,6 @@ function Conversations({navigation}) {
           return (
             <Convo
               conversation={item}
-              navigation={navigation}
               // newMessages={newMessages[item.User._id]}
             />
           );
@@ -148,22 +113,22 @@ const styles = StyleSheet.create({
 
 const Convo = ({
   conversation,
-  navigation,
   //  newMessages
 }) => {
   console.log('convo');
-  const [lastMessage, setLastMessage] = useState({});
-  const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
+  const navigation = useNavigation();
   const {Chats, User, fromWhom} = conversation;
-  const handleSetLastMessage = (chats) => {
-    if (chats.length !== 0) {
-      const last = chats[chats.length - 1];
-      setLastMessage(last);
-    }
-  };
-  useEffect(() => {
-    handleSetLastMessage(Chats);
-  }, [Chats]);
+  // const [lastMessage, setLastMessage] = useState({});
+  // const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
+  // const handleSetLastMessage = (chats) => {
+  //   if (chats.length !== 0) {
+  //     const last = chats[0];
+  //     setLastMessage(last);
+  //   }
+  // };
+  // useEffect(() => {
+  //   handleSetLastMessage(Chats);
+  // }, [Chats]);
   // useEffect(() => {
   //   if (newMessages) handleSetLastMessage(newMessages);
   //   console.log('a new message arrived ', newMessages);
@@ -237,11 +202,11 @@ const Convo = ({
         <Text
           style={{color: '#222'}}>{`${User.firstName} ${User.lastName}`}</Text>
         <Text style={{color: '#666'}}>
-          {lastMessage && lastMessage.message}
+          {/* {lastMessage && lastMessage.message} */}{' '}
         </Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default Conversations;
+export default ConversationsScreen;

@@ -16,10 +16,10 @@ import {Host} from '../../../utils/connection';
 
 function ChatsComponent({navigation, route}) {
   console.log('ChatsRendered');
+  const socket = useContext(SocketContext);
   const {Chats, fromWhom, User, type} = route.params;
   const [textMessage, setTextMessage] = useState('');
-  const socket = useContext(SocketContext);
-  const [Messages, setMessages] = useState([]);
+  const [Messages, setMessages] = useState(Chats);
   const [pushedNewMessage, setPushedNewMessage] = useState(0);
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
   const textInputRef = useRef();
@@ -43,12 +43,6 @@ function ChatsComponent({navigation, route}) {
           .replace('\\\\', '/')}`,
       };
   }
-  useEffect(() => {
-    setMessages(Chats);
-  }, [Chats]);
-  const onChangeText = (text) => {
-    setTextMessage(text.trim());
-  };
   const sendMessage = (textMessage) => {
     socket.emit('send_message', {
       from,
@@ -59,26 +53,25 @@ function ChatsComponent({navigation, route}) {
     });
   };
   const handleSendMessage = () => {
+    const trimmedMessage = textMessage.trim();
     const chatMessage = {
       timestamp: new Date().toISOString(),
       _id: `${Date.now()}`,
-      message: textMessage,
+      message: trimmedMessage,
       fromWhom: from,
       readReceipt: 1,
     };
-    // const messages = Messages;
-    // messages.unshift(chatMessage);
-    setMessages([chatMessage, ...Messages]);
-    setPushedNewMessage(pushedNewMessage + 1);
-    textInputRef.current.clear();
+    const messages = Messages;
+    messages.unshift(chatMessage);
+    setMessages(messages);
+    // setPushedNewMessage(pushedNewMessage + 1);
+    setTextMessage('');
+    // textInputRef.current.clear();
     textInputRef.current.focus();
-    sendMessage(textMessage);
+    sendMessage(trimmedMessage);
   };
   useEffect(() => {
-    socket.on('receive_message', function messageReceived({from, message}) {
-      console.log('received_message');
-      console.log(from, message);
-
+    socket.on('receive_message', ({from, message}) => {
       const chatMessage = {
         timestamp: new Date().toISOString(),
         _id: `${Date.now()}`,
@@ -86,7 +79,9 @@ function ChatsComponent({navigation, route}) {
         fromWhom: from,
         readReceipt: 1,
       };
-      setMessages([chatMessage, ...Messages]);
+      const messages = Messages;
+      messages.unshift(chatMessage);
+      setMessages(messages);
       // setPushedNewMessage(pushedNewMessage + 1);
     });
   }, []);
@@ -165,8 +160,9 @@ function ChatsComponent({navigation, route}) {
           showsVerticalScrollIndicator={false}
           // stickyHeaderIndices={[0]}
           inverted
+          initialNumToRender={15}
           contentContainerStyle={{}}
-          extraData={pushedNewMessage}
+          // extraData={pushedNewMessage}
           fadingEdgeLength={10}
           keyExtractor={(item) => item._id}
           renderItem={({item}) => {
@@ -205,7 +201,8 @@ function ChatsComponent({navigation, route}) {
             multiline
             style={{maxHeight: 100}}
             ref={textInputRef}
-            onChangeText={onChangeText}
+            value={textMessage}
+            onChangeText={setTextMessage}
           />
         </View>
         <View
