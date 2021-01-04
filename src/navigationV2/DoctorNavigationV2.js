@@ -39,13 +39,7 @@ function Chatting() {
     <SocketContext.Provider value={socket}>
       <Stack.Navigator headerMode={'none'} initialRouteName={'Conversations'}>
         <Stack.Screen name={'Conversations'} component={Conversations} />
-        <Stack.Screen
-          options={{
-            cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          }}
-          name={'Chats'}
-          component={Chats}
-        />
+        <Stack.Screen name={'Chats'} component={Chats} />
         {/* <Stack.Screen name="testing" component={Testing} /> */}
         {/* <Stack.Screen name={'videoCall'} component={VideoCallScreen} /> */}
       </Stack.Navigator>

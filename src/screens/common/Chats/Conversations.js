@@ -42,14 +42,20 @@ function ConversationsScreen({navigation}) {
     //     type,
     //   });
     // });
-    socket.on('fetch_conversations', function (convo) {
+    function fetchConversations(convo) {
       console.log('fetched conversations');
       console.log(convo.conversations);
       setConversations(convo.conversations);
-    });
-    socket.on('receive_conversation', function ({conversation}) {
+    }
+    function receiveConversation({conversation}) {
       setConversations([...conversations, conversation]);
-    });
+    }
+    socket.on('fetch_conversations', fetchConversations);
+    socket.on('receive_conversation', receiveConversation);
+    return () => {
+      socket.off('fetch_conversations', fetchConversations);
+      socket.off('receive_conversation', receiveConversation);
+    };
   }, []);
   return (
     <View style={styles.Container}>
