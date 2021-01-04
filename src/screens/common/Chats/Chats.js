@@ -7,19 +7,21 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  VirtualizedList,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import TopNavBar from '../../../components/molecules/TopNavBar/TopNavBar';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {SocketContext} from '../../../utils/socketContext';
 import {Host} from '../../../utils/connection';
+import {ScrollView} from 'react-native';
 
 function ChatsComponent({navigation, route}) {
   console.log('ChatsRendered');
   const socket = useContext(SocketContext);
   const {Chats, fromWhom, User, type} = route.params;
   const [textMessage, setTextMessage] = useState('');
-  const [Messages, setMessages] = useState(Chats);
+  const [Messages, setMessages] = useState([]);
   const [pushedNewMessage, setPushedNewMessage] = useState(0);
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
   const textInputRef = useRef();
@@ -54,38 +56,54 @@ function ChatsComponent({navigation, route}) {
   };
   const handleSendMessage = () => {
     const trimmedMessage = textMessage.trim();
-    const chatMessage = {
-      timestamp: new Date().toISOString(),
-      _id: `${Date.now()}`,
-      message: trimmedMessage,
-      fromWhom: from,
-      readReceipt: 1,
-    };
-    const messages = Messages;
-    messages.unshift(chatMessage);
-    setMessages(messages);
+
+    // const messages = Array.from(Messages);
+    // messages.unshift(chatMessage);
+    console.log(Messages);
+    setMessages([
+      {
+        timestamp: Date.now().toString(),
+        _id: `${Date.now().toString()}`,
+        message: trimmedMessage,
+        fromWhom: from,
+        readReceipt: 1,
+      },
+      ...Messages,
+    ]);
     // setPushedNewMessage(pushedNewMessage + 1);
     setTextMessage('');
     // textInputRef.current.clear();
     textInputRef.current.focus();
     sendMessage(trimmedMessage);
   };
-  useEffect(() => {
-    socket.on('receive_message', ({from, message}) => {
-      const chatMessage = {
-        timestamp: new Date().toISOString(),
-        _id: `${Date.now()}`,
-        message,
-        fromWhom: from,
-        readReceipt: 1,
-      };
-      const messages = Messages;
-      messages.unshift(chatMessage);
-      setMessages(messages);
+  const onReceiveMessage = ({from, message}) => {
+    console.log(userData.firstName, ' receive_message');
+    if (from == fromWhom) {
+      // const messages = Array.from(Messages);
+      // messages.unshift(chatMessage);
+      console.log(Messages);
+      setMessages([
+        {
+          timestamp: Date.now().toString(),
+          _id: `${Date.now().toString()}`,
+          message,
+          fromWhom: from,
+          readReceipt: 1,
+        },
+        ...Messages,
+      ]);
       // setPushedNewMessage(pushedNewMessage + 1);
-    });
+    }
+  };
+
+  useEffect(() => {
+    socket.on('receive_message', onReceiveMessage);
+    return () => socket.off('receive_message', onReceiveMessage);
   }, []);
 
+  useEffect(() => {
+    console.log('messages array ', Messages);
+  }, [Messages]);
   return (
     <View style={styles.Container}>
       <TopNavBar
@@ -156,18 +174,23 @@ function ChatsComponent({navigation, route}) {
           </View>
         </View>
         <FlatList
-          data={Messages}
+          data={[...Messages, ...Chats]}
           showsVerticalScrollIndicator={false}
           // stickyHeaderIndices={[0]}
           inverted
           initialNumToRender={15}
           contentContainerStyle={{}}
-          // extraData={pushedNewMessage}
+          extraData={{to, from}}
           fadingEdgeLength={10}
           keyExtractor={(item) => item._id}
           renderItem={({item}) => {
             return <Message chat={item} to={to} from={from} />;
           }}></FlatList>
+        {/* <ScrollView>
+          {Messages.map((item) => {
+            return <Text key={item._id}>{item.message}</Text>;
+          })}
+        </ScrollView> */}
       </View>
       <View
         style={{
@@ -213,7 +236,7 @@ function ChatsComponent({navigation, route}) {
             alignItems: 'center',
             justifyContent: 'space-evenly',
           }}>
-          {textMessage === '' ? (
+          {/* {textMessage === '' ? (
             <>
               <TouchableOpacity style={{paddingHorizontal: '3%'}}>
                 <FeatherIcon name={'paperclip'} size={17} color={'#a09e9e'} />
@@ -225,32 +248,32 @@ function ChatsComponent({navigation, route}) {
                 <FeatherIcon name={'mic'} size={17} color={'#a09e9e'} />
               </TouchableOpacity>
             </>
-          ) : (
-            <TouchableOpacity
-              onPress={handleSendMessage}
+          ) : ( */}
+          <TouchableOpacity
+            onPress={handleSendMessage}
+            style={{
+              backgroundColor: '#047b7b',
+              height: 40,
+              width: 40,
+              alignSelf: 'center',
+              borderRadius: 100,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <FeatherIcon
+              name={'send'}
               style={{
-                backgroundColor: '#047b7b',
-                height: 40,
-                width: 40,
-                alignSelf: 'center',
-                borderRadius: 100,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <FeatherIcon
-                name={'send'}
-                style={{
-                  transform: [
-                    {
-                      rotate: '45deg',
-                    },
-                  ],
-                }}
-                color={'#fafafa'}
-                size={20}
-              />
-            </TouchableOpacity>
-          )}
+                transform: [
+                  {
+                    rotate: '45deg',
+                  },
+                ],
+              }}
+              color={'#fafafa'}
+              size={20}
+            />
+          </TouchableOpacity>
+          {/* )} */}
         </View>
       </View>
     </View>
@@ -264,7 +287,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Message = ({chat, to, from}) => {
+const Message = React.memo(({chat, to, from}) => {
   const {message, fromWhom} = chat;
   return (
     <View
@@ -298,6 +321,6 @@ const Message = ({chat, to, from}) => {
       </Text>
     </View>
   );
-};
+});
 
 export default ChatsComponent;

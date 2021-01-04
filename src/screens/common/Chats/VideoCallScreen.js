@@ -11,7 +11,7 @@ import {
   StatusBar,
   Dimensions,
 } from 'react-native';
-import {SocketContext} from '../../../utils/socketContext';
+// import {SocketContext} from '../../../utils/socketContext';
 import {
   RTCView,
   mediaDevices,
@@ -38,9 +38,11 @@ const DEFAULT_ICE = {
 };
 let isFront = true;
 const {width, height} = Dimensions.get('screen');
-export default function VideoCallScreen({route, navigation}) {
+export default function VideoCallScreen({route, navigation, socket}) {
   const {mode, User, type} = route.params;
-  const socket = useContext(SocketContext);
+  // if (!socket) {
+  //   var socket = useContext(SocketContext);
+  // }
   const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
 
   const [localStreamURL, setLocalStreamURL] = useState({toURL: () => null});
@@ -188,7 +190,9 @@ export default function VideoCallScreen({route, navigation}) {
           peer.current.close();
           setRemoteStreamURL({toURL: () => null});
           remoteStream.current = null;
-          navigation.goBack();
+          // navigation.goBack();
+          if (navigation.canGoBack()) navigation.goBack();
+          else navigation.navigate('MainController');
           // busy sound
         }
         break;
@@ -316,7 +320,7 @@ export default function VideoCallScreen({route, navigation}) {
 
   const onHangUp = () => {
     peer.current.close();
-    navigation.goBack();
+    // navigation.goBack();
   };
 
   return (

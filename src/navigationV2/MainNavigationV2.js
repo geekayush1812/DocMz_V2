@@ -86,13 +86,10 @@ function MainNavigation() {
         {splash ? (
           <MainStack.Screen name={'Splash'} component={Splash} />
         ) : (
-          <>
-            <MainStack.Screen
-              name={'MainController'}
-              component={MainController}
-            />
-            <MainStack.Screen name={'videoCall'} component={VideoCallScreen} />
-          </>
+          <MainStack.Screen
+            name={'MainController'}
+            component={MainController}
+          />
         )}
       </MainStack.Navigator>
     </NavigationContainer>

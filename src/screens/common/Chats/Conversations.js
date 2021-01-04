@@ -32,15 +32,16 @@ function ConversationsScreen({navigation}) {
       id: userData._id,
       type: isDoctor ? 'doctor' : 'patient',
     });
-    socket.on('call-made', function ({offer, fromSocket, User, type}) {
-      navigation.navigate('videoCall', {
-        offer,
-        fromSocket,
-        mode: 'thatSide',
-        User,
-        type,
-      });
-    });
+    // socket.on('call-made', function ({offer, fromSocket, User, type}) {
+    //   console.log('call-made in socket');
+    //   navigation.navigate('videoCall', {
+    //     offer,
+    //     fromSocket,
+    //     mode: 'thatSide',
+    //     User,
+    //     type,
+    //   });
+    // });
     socket.on('fetch_conversations', function (convo) {
       console.log('fetched conversations');
       console.log(convo.conversations);

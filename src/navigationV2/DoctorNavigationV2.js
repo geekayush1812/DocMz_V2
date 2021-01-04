@@ -19,7 +19,7 @@ import Onboarding from '../screens/doctor/Onboarding/Onboarding';
 import Patients from '../screens/doctor/Patients/Patients';
 import {useSelector} from 'react-redux';
 import Conversations from '../screens/common/Chats/Conversations';
-// import messaging from '@react-native-firebase/messaging';
+import messaging from '@react-native-firebase/messaging';
 import io from 'socket.io-client';
 import {SocketContext} from '../utils/socketContext';
 const {width: screenWidth} = Dimensions.get('screen');
@@ -47,7 +47,7 @@ function Chatting() {
           component={Chats}
         />
         {/* <Stack.Screen name="testing" component={Testing} /> */}
-        <Stack.Screen name={'videoCall'} component={VideoCallScreen} />
+        {/* <Stack.Screen name={'videoCall'} component={VideoCallScreen} /> */}
       </Stack.Navigator>
     </SocketContext.Provider>
   );
@@ -148,7 +148,24 @@ function DoctorLanding() {
     </BottomTabs.Navigator>
   );
 }
-function DoctorDrawer() {
+function DoctorDrawer({navigation}) {
+  const {userData, isDoctor} = useSelector((state) => state.AuthReducer);
+  useEffect(() => {
+    socket.emit('set_online', {
+      id: userData._id,
+      type: isDoctor ? 'doctor' : 'patient',
+    });
+    socket.on('call-made', function ({offer, fromSocket, User, type}) {
+      console.log('call-made in socket');
+      navigation.navigate('videoCall', {
+        offer,
+        fromSocket,
+        mode: 'thatSide',
+        User,
+        type,
+      });
+    });
+  }, []);
   return (
     <Drawer.Navigator
       initialRouteName={'Home'}
@@ -165,6 +182,9 @@ function DoctorDrawer() {
       <Drawer.Screen name={'PatientsList'} component={Patients} />
       <Drawer.Screen name={'PatientDetails'} component={PatientDetails} />
       <Drawer.Screen name={'Skins'} component={Skins} />
+      <Drawer.Screen name={'videoCall'}>
+        {(props) => <VideoCallScreen {...props} socket={socket} />}
+      </Drawer.Screen>
       {/* <Drawer.Screen name={'Clinics'} component={Skins} /> 
       // Referrals: Referrals,
     // Languages: Languages,
@@ -176,13 +196,13 @@ function DoctorDrawer() {
 
 function DoctorNavigationV2({navigation}) {
   const {doctorProfile, forNow} = useSelector((state) => state.DoctorReducer);
-  // useEffect(function firebaseMessageHandling() {
-  //   const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-  //     console.log(`The ${remoteMessage}`);
-  //   });
+  useEffect(function firebaseMessageHandling() {
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      console.log(`The ${remoteMessage}`);
+    });
 
-  //   return unsubscribe;
-  // }, []);
+    return unsubscribe;
+  }, []);
   return (
     <Stack.Navigator headerMode={'none'}>
       {!forNow && !doctorProfile.onBoarding && (
