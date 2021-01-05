@@ -140,7 +140,7 @@ class ChatsComponent extends React.Component {
               paddingVertical: '2%',
             },
           }}
-          navigation={this.navigation}
+          navigation={this.props.navigation}
           headerText={'Chat'}
         />
         <View style={{flex: 1, backgroundColor: '#fcfcfc', marginBottom: 10}}>
@@ -188,7 +188,7 @@ class ChatsComponent extends React.Component {
               }}>
               <TouchableOpacity
                 onPress={() => {
-                  this.navigation.navigate('videoCall', {
+                  this.props.navigation.navigate('videoCall', {
                     mode: 'thisSide',
                     User: this.User,
                     type: this.type,
