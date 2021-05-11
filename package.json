@@ -19,7 +19,7 @@
     "@react-native-firebase/app": "^7.3.0",
     "@react-native-firebase/auth": "^8.0.7",
     "axios": "^0.19.2",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "moment": "^2.26.0",
     "moment-array-dates": "^2.0.3",
     "moment-range": "^4.0.2",
